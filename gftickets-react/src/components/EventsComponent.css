@@ -1,0 +1,142 @@
+:root {
+  --brand-color: #4f46e5;
+  --brand-hover: #4338ca;
+  --dark: #0f172a;
+  --muted: #64748b;
+  --border: #f1f5f9;
+}
+
+/* Tarjeta optimizada para repetición */
+.catalog-card {
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: system-ui, sans-serif;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.catalog-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.08);
+}
+
+/* Contenedor de imagen más compacto */
+.catalog-card__media {
+  position: relative;
+  height: 160px; /* Altura fija para consistencia en el catálogo */
+  width: 100%;
+  background-color: #f8fafc;
+}
+
+.catalog-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.catalog-card__tag {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--dark);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Cuerpo interno */
+.catalog-card__body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.catalog-card__meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Evita que recintos largos rompan la línea */
+}
+
+.catalog-card__meta span {
+  color: var(--brand-color);
+  font-weight: 600;
+}
+
+/* Control de títulos largos (Máximo 2 líneas) */
+.catalog-card__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 10px 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.6em; /* Mantiene la misma altura tengan 1 o 2 líneas */
+}
+
+/* Horarios en una sola línea */
+.catalog-card__schedule {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: #334155;
+  margin-bottom: 14px;
+}
+
+/* Footer alineado al fondo de la card */
+.catalog-card__footer {
+  margin-top: auto; /* Empuja el footer abajo si hay tarjetas con menos texto */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.catalog-card__price {
+  display: flex;
+  flex-direction: column;
+}
+
+.catalog-card__price-label {
+  font-size: 0.65rem;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.catalog-card__price-val {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1;
+}
+
+/* Botón más pequeño y directo */
+.catalog-card__btn {
+  background: var(--brand-color);
+  color: #ffffff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.catalog-card__btn:hover {
+  background: var(--brand-hover);
+}

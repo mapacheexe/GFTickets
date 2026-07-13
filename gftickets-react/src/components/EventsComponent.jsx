@@ -1,4 +1,4 @@
-function EventComponent() {
+export function EventComponent() {
 
     const [events, setEvents] = useState([]);
 
@@ -47,3 +47,4 @@ function EventComponent() {
         </>
     );
 }
+

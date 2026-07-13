@@ -2,16 +2,11 @@ module.exports = {
   extends: ['@commitlint/config-conventional'],
 
   rules: {
-    'header-pattern': [
+    'type-enum': [
       2,
       'always',
-      /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([A-Z]+-\d+\))?!?: .+$/
+      ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'build', 'ci', 'chore', 'revert']
     ],
-
-    'header-pattern-error': [
-      2,
-      'always',
-      'Commit must follow: feat(PROJ-123): description'
-    ]
+    'scope-empty': [2, 'always']
   }
 };

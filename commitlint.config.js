@@ -1,7 +1,12 @@
 module.exports = {
   extends: ['@commitlint/config-conventional'],
-  ignores: [(commit) => /^Merge branch/.test(commit)],
+
   rules: {
-    'subject-case': [0],
-  },
+    'type-enum': [
+      2,
+      'always',
+      ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'build', 'ci', 'chore', 'revert']
+    ],
+    'scope-empty': [2, 'always']
+  }
 };

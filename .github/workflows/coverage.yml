@@ -1,0 +1,51 @@
+name: Coverage
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  coverage-react:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gfticket-react
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check project is set up
+        id: check
+        run: echo "exists=$( [ -f package.json ] && echo true || echo false )" >> "$GITHUB_OUTPUT"
+
+      - if: steps.check.outputs.exists == 'true'
+        run: npm ci
+
+      - if: steps.check.outputs.exists == 'true'
+        run: npm test -- --coverage
+
+  coverage-angular:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gfticket-angular
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check project is set up
+        id: check
+        run: echo "exists=$( [ -f package.json ] && echo true || echo false )" >> "$GITHUB_OUTPUT"
+
+      - if: steps.check.outputs.exists == 'true'
+        run: npm ci
+
+      - if: steps.check.outputs.exists == 'true'
+        run: npm test -- --coverage

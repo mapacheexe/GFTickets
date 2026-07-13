@@ -13,6 +13,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { Evento } from '../../models/evento.model';
+import { HoraEvento } from '../../models/hora-evento.model';
 import { EventService } from '../../services/event.service';
 
 @Component({
@@ -57,8 +58,8 @@ export class EventDetail implements OnInit {
     }
   }
 
-  protected horaCorta(hora: string): string {
-    return hora.slice(0, 5);
+  protected horaCorta(hora: HoraEvento): string {
+    return `${hora.hour.toString().padStart(2, '0')}:${hora.minute.toString().padStart(2, '0')}`;
   }
 
   private cargarEvento(id: number): void {

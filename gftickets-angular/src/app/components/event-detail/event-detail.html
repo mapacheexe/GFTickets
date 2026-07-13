@@ -1,0 +1,83 @@
+<main class="detail-page">
+  <a class="back-link" routerLink="/eventos" aria-label="Volver al listado de eventos">
+    <span aria-hidden="true">←</span>
+    Volver a eventos
+  </a>
+
+  @if (cargando()) {
+    <section class="state-card loading" role="status" aria-live="polite">
+      <span class="spinner" aria-hidden="true"></span>
+      <h1>Cargando evento</h1>
+      <p>Estamos preparando todos los detalles.</p>
+    </section>
+  } @else if (error(); as mensajeError) {
+    <section class="state-card error" role="alert">
+      <span class="state-icon" aria-hidden="true">!</span>
+      <h1>No se pudo mostrar el evento</h1>
+      <p>{{ mensajeError }}</p>
+      <div class="state-actions">
+        <button type="button" (click)="reintentar()">Reintentar</button>
+        <a routerLink="/eventos">Ver todos los eventos</a>
+      </div>
+    </section>
+  } @else if (evento(); as eventoActual) {
+    <article class="event-card">
+      <div class="event-image">
+        @if (eventoActual.imagenUrl && !imagenNoDisponible()) {
+          <img
+            [src]="eventoActual.imagenUrl"
+            [alt]="'Imagen de ' + eventoActual.nombre"
+            (error)="imagenNoDisponible.set(true)"
+          />
+        } @else {
+          <div class="image-placeholder" role="img" aria-label="Imagen no disponible">
+            <span aria-hidden="true">♪</span>
+            Imagen no disponible
+          </div>
+        }
+        <span class="genre">{{ eventoActual.genero }}</span>
+      </div>
+
+      <div class="event-content">
+        <p class="eyebrow">Evento destacado</p>
+        <h1>{{ eventoActual.nombre }}</h1>
+        <p class="description">{{ eventoActual.descripcion }}</p>
+
+        <dl class="event-data">
+          <div>
+            <dt>Fecha</dt>
+            <dd>{{ eventoActual.fechaEvento | date: 'd MMMM y' }}</dd>
+          </div>
+          <div>
+            <dt>Hora</dt>
+            <dd>{{ horaCorta(eventoActual.horaEvento) }}</dd>
+          </div>
+          <div>
+            <dt>Recinto</dt>
+            <dd>{{ eventoActual.nombreRecinto }}</dd>
+          </div>
+          <div>
+            <dt>Localidad</dt>
+            <dd>{{ eventoActual.localidad }}</dd>
+          </div>
+        </dl>
+
+        <div class="price-panel">
+          <div>
+            <span class="price-label">Precio de las entradas</span>
+            @if (eventoActual.precioMaximo === 0) {
+              <strong>Entrada gratuita</strong>
+            } @else {
+              <strong>
+                {{ eventoActual.precioMinimo | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                –
+                {{ eventoActual.precioMaximo | currency: 'EUR' : 'symbol' : '1.2-2' }}
+              </strong>
+            }
+          </div>
+          <span class="availability">Disponible</span>
+        </div>
+      </div>
+    </article>
+  }
+</main>

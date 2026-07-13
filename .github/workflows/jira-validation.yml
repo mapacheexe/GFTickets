@@ -31,8 +31,8 @@ jobs:
         with:
           node-version: 20
 
-      - run: npm install --save-dev @commitlint/cli @commitlint/config-conventional
+      - name: Install dependencies
+        run: npm install --save-dev @commitlint/cli @commitlint/config-conventional
 
-      - run: npx commitlint \
-          --from ${{ github.event.pull_request.base.sha }} \
-          --to ${{ github.event.pull_request.head.sha }}
+      - name: Run commitlint
+        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose

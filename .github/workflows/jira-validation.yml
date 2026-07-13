@@ -1,4 +1,4 @@
-name: Jira Validation
+name: Branch and Commit Validation
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  validate-jira:
+  validate-pr:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,9 +20,10 @@ jobs:
 
           echo "Branch: $BRANCH"
 
-          if [[ ! "$BRANCH" =~ ^(feature|bugfix|hotfix|release|chore)/[A-Z]+-[0-9]+(-.*)?$ ]]; then
-            echo "❌ Branch name must follow:"
-            echo "feature/PROJ-123-description"
+          # Expresión regular que solo exige el prefijo y cualquier descripción posterior
+          if [[ ! "$BRANCH" =~ ^(feature|bugfix|hotfix|release|chore)/.+$ ]]; then
+            echo "❌ Branch name must start with a valid prefix followed by a description."
+            echo "Example: feature/add-event-catalog-card"
             exit 1
           fi
 

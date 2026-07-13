@@ -1,0 +1,37 @@
+name: Jira Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-jira:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate branch name
+        run: |
+          BRANCH="${{ github.head_ref }}"
+
+          echo "Branch: $BRANCH"
+
+          if [[ ! "$BRANCH" =~ ^(feature|bugfix|hotfix|release|chore)/[A-Z]+-[0-9]+(-.*)?$ ]]; then
+            echo "❌ Branch name must follow:"
+            echo "feature/PROJ-123-description"
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install --save-dev @commitlint/cli @commitlint/config-conventional
+
+      - run: npx commitlint \
+          --from ${{ github.event.pull_request.base.sha }} \
+          --to ${{ github.event.pull_request.head.sha }}

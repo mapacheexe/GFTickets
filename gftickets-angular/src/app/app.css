@@ -1,0 +1,40 @@
+:host {
+  min-height: 100dvh;
+  display: block;
+  background: #f8fafc;
+}
+
+.site-header {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 max(1rem, calc((100% - 1180px) / 2));
+  border-bottom: 1px solid #e2e8f0;
+  background: rgb(255 255 255 / 94%);
+  backdrop-filter: blur(12px);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  color: #0f172a;
+  font-size: 1.35rem;
+  font-weight: 850;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+}
+
+.brand-mark {
+  color: #e11d48;
+}
+
+nav a {
+  color: #334155;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: #e11d48;
+}

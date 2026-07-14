@@ -55,4 +55,33 @@ describe('EventCardComponent', () => {
   it('should show minimum price', () => {
     expect(fixture.nativeElement.textContent).toContain('15');
   });
+
+  it('should show placeholder when image url is missing', () => {
+    fixture.componentRef.setInput('evento', {
+      ...evento,
+      imagenUrl: '',
+    });
+
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.textContent,
+    ).toContain('Imagen no disponible');
+  });
+
+
+  it('should show placeholder when image loading fails', () => {
+    fixture.detectChanges();
+
+    const image =
+      fixture.nativeElement.querySelector('img') as HTMLImageElement;
+
+    image.dispatchEvent(new Event('error'));
+
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.textContent,
+    ).toContain('Imagen no disponible');
+  });
 });

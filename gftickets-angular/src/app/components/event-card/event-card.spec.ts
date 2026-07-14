@@ -65,7 +65,6 @@ describe('EventCardComponent', () => {
   });
 
 
-
   it('should create',()=>{
 
     expect(component)
@@ -74,12 +73,10 @@ describe('EventCardComponent', () => {
   });
 
 
-
   it('should display event information',()=>{
 
     const element =
       fixture.nativeElement;
-
 
     expect(
       element.textContent
@@ -96,7 +93,6 @@ describe('EventCardComponent', () => {
       'Clásica'
     );
 
-
     expect(
       element.textContent
     )
@@ -105,7 +101,6 @@ describe('EventCardComponent', () => {
     );
 
   });
-
 
 
   it('should show minimum price',()=>{

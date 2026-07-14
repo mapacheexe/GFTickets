@@ -20,73 +20,45 @@
           ♪
         </span>
       </div>
-
     }
-
 
     <span class="genre">
       {{ evento().genero }}
     </span>
-
   </div>
 
 
-
   <div class="event-content">
-
     <h2>
       {{ evento().nombre }}
     </h2>
 
-
     <div class="event-info">
-
       <p>
-        <span aria-hidden="true">
-          📅
-        </span>
-
+        <span aria-hidden="true">📅</span>
         {{ evento().fechaEvento | date:'d MMMM y' }}
       </p>
 
-
       <p>
-        <span aria-hidden="true">
-          📍
-        </span>
-
+        <span aria-hidden="true">📍</span>
         {{ evento().localidad }}
       </p>
-
     </div>
 
-
-
     <footer>
-
       <strong>
         @if (evento().precioMaximo === 0) {
-
           Entrada gratuita
-
         } @else {
-
           Desde
           {{ evento().precioMinimo | currency:'EUR':'symbol':'1.0-0' }}
-
         }
       </strong>
 
-
-
-      <a
-        [routerLink]="['/eventos', evento().id]"
-      >
+      <a [routerLink]="['/eventos', evento().id]">
         Ver detalle
       </a>
-
     </footer>
-
   </div>
 
 </article>

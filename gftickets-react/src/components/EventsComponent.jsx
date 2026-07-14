@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './EventsComponent.css';
 import { findAllEvents } from '../services/EventsService';
+import { useNavigate } from 'react-router-dom';
 
 export const EventsComponent = () => {
   const [eventos, setEventos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const cargarEventos = async () => {
@@ -15,7 +17,7 @@ export const EventsComponent = () => {
         const data = await findAllEvents();
         setEventos(data);
       } catch (err) {
-        setError('No se pudieron cargar los eventos.');
+        setError('No se pudieron cargar los eventos.' + (err.message || ''));
       } finally {
         setCargando(false);
       }
@@ -69,7 +71,12 @@ export const EventsComponent = () => {
       ) : (
         <div className="catalog-grid">
           {eventos.map((evento) => (
-            <article className="catalog-card" key={evento.id}>
+
+            <article className="catalog-card"
+              key={evento.id}
+              onClick={() => navigate(`/eventos/${evento.id}`)}
+              style={{ cursor: 'pointer' }}
+              >
               <div className="catalog-card__media">
                 <img
                   src={evento.imagenUrl}

@@ -1,0 +1,95 @@
+name: Frontend Quality
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-quality-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  angular-quality:
+    name: Angular tests and build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gftickets-angular
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Angular dependencies
+        run: npm install
+
+      - name: Run Angular tests
+        run: npm test -- --watch=false
+
+      - name: Build Angular application
+        run: npm run build
+
+  react-quality:
+    name: React lint, tests and build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gftickets-react
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install React dependencies
+        run: npm install
+
+      - name: Run React lint on changed files
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          mapfile -t changed_files < <(
+            git -C .. diff --name-only --diff-filter=ACMRT \
+              "${{ github.event.pull_request.base.sha }}" \
+              "${{ github.event.pull_request.head.sha }}" -- \
+              'gftickets-react/src/**/*.js' \
+              'gftickets-react/src/**/*.jsx'
+          )
+
+          if [ "${#changed_files[@]}" -eq 0 ]; then
+            echo "No React JavaScript files changed in this pull request."
+            exit 0
+          fi
+
+          relative_files=()
+          for file in "${changed_files[@]}"; do
+            relative_files+=("${file#gftickets-react/}")
+          done
+
+          npx eslint "${relative_files[@]}"
+
+      - name: Run full React lint manually
+        if: github.event_name == 'workflow_dispatch'
+        run: npm run lint
+
+      - name: Run React tests
+        run: npm test -- --run
+
+      - name: Build React application
+        run: npm run build

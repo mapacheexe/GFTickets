@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './EventsComponent.css';
 import { findAllEvents } from '../services/EventsService';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +17,7 @@ export const EventsComponent = () => {
         const data = await findAllEvents();
         setEventos(data);
       } catch (err) {
-        setError('No se pudieron cargar los eventos.');
+        setError('No se pudieron cargar los eventos.' + (err.message || ''));
       } finally {
         setCargando(false);
       }

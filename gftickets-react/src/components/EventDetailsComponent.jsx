@@ -5,8 +5,6 @@ export function EventDetailsComponent (){
     
     const {id} = useParams();
     
-    const navigate = useNavigate();
-
     const [event, setEvent] = useState(null);
 
     useEffect(() => {
@@ -20,10 +18,12 @@ export function EventDetailsComponent (){
         };
 
         fetchEvent();
+        console.log(event);
     }, []);
 
     return (
         <>
+            
         </>
     )
 }

@@ -1,5 +1,4 @@
 import { describe, test, expect, vi, afterEach } from 'vitest';
-import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { EventsComponent } from './EventsComponent';

@@ -56,7 +56,7 @@ describe('EventService', () => {
 
   it('debe propagar el error cuando el evento no existe', () => {
     service.findEventById(99).subscribe({
-      next: () => fail('debería haber fallado la petición'),
+      next: () => expect.unreachable('debería haber fallado la petición'),
       error: (error) => {
         expect(error.status).toBe(404);
       },
@@ -72,5 +72,24 @@ describe('EventService', () => {
       status: 404,
       statusText: 'Not Found',
     });
+  });
+
+  it('debe obtener todos los eventos y normalizar sus horas', () => {
+    service.findAllEvents().subscribe((resultado) => {
+      expect(resultado).toEqual([evento]);
+    });
+
+    const request = httpTesting.expectOne(
+      'http://teacherbanking.us-east-1.elasticbeanstalk.com/eventos',
+    );
+
+    expect(request.request.method).toBe('GET');
+
+    request.flush([
+      {
+        ...evento,
+        horaEvento: '21:30:00',
+      },
+    ]);
   });
 });

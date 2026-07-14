@@ -1,0 +1,92 @@
+<article class="event-card">
+
+  <div class="event-image">
+
+    @if (evento().imagenUrl) {
+
+      <img
+        [src]="evento().imagenUrl"
+        [alt]="'Imagen de ' + evento().nombre"
+      />
+
+    } @else {
+
+      <div
+        class="image-placeholder"
+        role="img"
+        aria-label="Imagen no disponible"
+      >
+        <span aria-hidden="true">
+          ♪
+        </span>
+      </div>
+
+    }
+
+
+    <span class="genre">
+      {{ evento().genero }}
+    </span>
+
+  </div>
+
+
+
+  <div class="event-content">
+
+    <h2>
+      {{ evento().nombre }}
+    </h2>
+
+
+    <div class="event-info">
+
+      <p>
+        <span aria-hidden="true">
+          📅
+        </span>
+
+        {{ evento().fechaEvento | date:'d MMMM y' }}
+      </p>
+
+
+      <p>
+        <span aria-hidden="true">
+          📍
+        </span>
+
+        {{ evento().localidad }}
+      </p>
+
+    </div>
+
+
+
+    <footer>
+
+      <strong>
+        @if (evento().precioMaximo === 0) {
+
+          Entrada gratuita
+
+        } @else {
+
+          Desde
+          {{ evento().precioMinimo | currency:'EUR':'symbol':'1.0-0' }}
+
+        }
+      </strong>
+
+
+
+      <a
+        [routerLink]="['/eventos', evento().id]"
+      >
+        Ver detalle
+      </a>
+
+    </footer>
+
+  </div>
+
+</article>

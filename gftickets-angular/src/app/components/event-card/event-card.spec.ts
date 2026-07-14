@@ -1,0 +1,122 @@
+import {
+  ComponentFixture,
+  TestBed,
+} from '@angular/core/testing';
+
+import { EventCardComponent } from './event-card';
+
+import { Evento } from '../../models/evento.model';
+
+
+describe('EventCardComponent', () => {
+
+  let fixture: ComponentFixture<EventCardComponent>;
+  let component: EventCardComponent;
+
+
+  const evento: Evento = {
+    id: 7,
+    nombre: 'Anochecer Sinfónico',
+    descripcion: 'Concierto al aire libre.',
+    fechaEvento: '2026-07-20',
+    horaEvento: {
+      hour:21,
+      minute:30,
+      second:0,
+      nano:0,
+    },
+    precioMinimo:15,
+    precioMaximo:45,
+    localidad:'Barcelona',
+    genero:'Clásica',
+    nombreRecinto:'Parc del Fòrum',
+    imagenUrl:'https://example.com/evento.jpg',
+  };
+
+
+  beforeEach(async()=>{
+
+    await TestBed.configureTestingModule({
+
+      imports:[
+        EventCardComponent,
+      ],
+
+    }).compileComponents();
+
+
+    fixture =
+      TestBed.createComponent(EventCardComponent);
+
+
+    component =
+      fixture.componentInstance;
+
+
+    fixture.componentRef
+      .setInput(
+        'evento',
+        evento,
+      );
+
+
+    fixture.detectChanges();
+
+  });
+
+
+
+  it('should create',()=>{
+
+    expect(component)
+      .toBeTruthy();
+
+  });
+
+
+
+  it('should display event information',()=>{
+
+    const element =
+      fixture.nativeElement;
+
+
+    expect(
+      element.textContent
+    )
+    .toContain(
+      'Anochecer Sinfónico'
+    );
+
+
+    expect(
+      element.textContent
+    )
+    .toContain(
+      'Clásica'
+    );
+
+
+    expect(
+      element.textContent
+    )
+    .toContain(
+      'Barcelona'
+    );
+
+  });
+
+
+
+  it('should show minimum price',()=>{
+
+    expect(
+      fixture.nativeElement.textContent
+    )
+    .toContain(
+      '15'
+    );
+
+  });
+
+});

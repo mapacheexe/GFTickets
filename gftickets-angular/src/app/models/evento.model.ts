@@ -1,7 +1,7 @@
 import { HoraEvento } from './hora-evento.model';
 
 export interface Evento {
-  id?: number;
+  id: number;
   nombre: string;
   descripcion: string;
   fechaEvento: string;

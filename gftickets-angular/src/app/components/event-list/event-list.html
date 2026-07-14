@@ -1,0 +1,171 @@
+<main class="list-page">
+
+  <header class="page-header">
+    <p class="eyebrow">
+      Eventos
+    </p>
+
+    <h1>
+      Descubre próximos eventos
+    </h1>
+
+    <p class="subtitle">
+      Encuentra conciertos y experiencias disponibles.
+    </p>
+  </header>
+
+
+  @if (cargando()) {
+
+    <section
+      class="state-card"
+      role="status"
+      aria-live="polite"
+    >
+      <span class="spinner"></span>
+
+      <h2>
+        Cargando eventos
+      </h2>
+
+      <p>
+        Estamos preparando la lista.
+      </p>
+    </section>
+
+  }
+
+
+  @else if (error(); as mensajeError) {
+
+    <section
+      class="state-card"
+      role="alert"
+    >
+
+      <span class="state-icon">
+        !
+      </span>
+
+      <h2>
+        Error al cargar eventos
+      </h2>
+
+      <p>
+        {{ mensajeError }}
+      </p>
+
+
+      <button
+        type="button"
+        (click)="reintentar()"
+      >
+        Reintentar
+      </button>
+
+    </section>
+
+  }
+
+
+  @else if (eventos().length === 0) {
+
+    <section class="state-card">
+
+      <span class="state-icon">
+        ♪
+      </span>
+
+      <h2>
+        No hay eventos disponibles
+      </h2>
+
+      <p>
+        Actualmente no existen eventos.
+      </p>
+
+    </section>
+
+  }
+
+
+  @else {
+
+    <section
+      class="events-grid"
+      aria-label="Listado de eventos"
+    >
+
+      @for (evento of eventos(); track evento.id) {
+
+        <article class="event-card">
+
+
+          <div class="event-image">
+
+            <img
+              [src]="evento.imagenUrl"
+              [alt]="'Imagen de ' + evento.nombre"
+            />
+
+
+            <span class="genre">
+              {{ evento.genero }}
+            </span>
+
+          </div>
+
+
+
+          <div class="event-content">
+
+            <h2>
+              {{ evento.nombre }}
+            </h2>
+
+
+            <div class="event-info">
+
+              <p>
+                📅
+                {{ evento.fechaEvento | date:'d MMMM y' }}
+              </p>
+
+
+              <p>
+                📍
+                {{ evento.localidad }}
+              </p>
+
+            </div>
+
+
+
+            <footer>
+
+              <strong>
+                Desde
+                {{ evento.precioMinimo | currency:'EUR':'symbol':'1.0-0' }}
+              </strong>
+
+
+              <a
+                [routerLink]="['/eventos', evento.id]"
+              >
+                Ver detalle
+              </a>
+
+            </footer>
+
+          </div>
+
+
+        </article>
+
+      }
+
+    </section>
+
+  }
+
+</main>

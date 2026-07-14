@@ -16,7 +16,7 @@ describe('EventsService', () => {
       await findAllEvents();
 
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://teacherbanking.us-east-1.elasticbeanstalk.com/eventos/'
+        'http://teacherbanking.us-east-1.elasticbeanstalk.com/eventos'
       );
     });
 

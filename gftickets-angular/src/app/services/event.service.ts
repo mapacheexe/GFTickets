@@ -15,12 +15,16 @@ export class EventService {
   private readonly apiUrl = 'http://teacherbanking.us-east-1.elasticbeanstalk.com/eventos';
 
   /** Obtiene la información completa de un evento a partir de su identificador. */
-  getEventoById(id: number): Observable<Evento> {
-    return this.http.get<EventoApi>(`${this.apiUrl}/${id}`).pipe(
-      map((evento) => ({
-        ...evento,
-        horaEvento: this.normalizarHora(evento.horaEvento),
-      })),
+  findEventById(id: number): Observable<Evento | null> {
+    return this.http.get<EventoApi | null>(`${this.apiUrl}/${id}`).pipe(
+      map((evento) =>
+        evento
+          ? {
+              ...evento,
+              horaEvento: this.normalizarHora(evento.horaEvento),
+            }
+          : null,
+      ),
     );
   }
 

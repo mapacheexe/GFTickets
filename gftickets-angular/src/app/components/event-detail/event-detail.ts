@@ -23,7 +23,7 @@ import { EventService } from '../../services/event.service';
   styleUrl: './event-detail.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EventDetail implements OnInit {
+export class EventDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly eventService = inject(EventService);
   private readonly destroyRef = inject(DestroyRef);
@@ -69,13 +69,20 @@ export class EventDetail implements OnInit {
     this.imagenNoDisponible.set(false);
 
     this.eventService
-      .getEventoById(id)
+      .findEventById(id)
       .pipe(
         finalize(() => this.cargando.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: (evento) => this.evento.set(evento),
+        next: (evento) => {
+          if (evento === null) {
+            this.error.set('No se pudo cargar el evento.');
+            return;
+          }
+
+          this.evento.set(evento);
+        },
         error: (error: HttpErrorResponse) => {
           this.error.set(
             error.status === 404

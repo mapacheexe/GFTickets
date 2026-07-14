@@ -34,8 +34,8 @@ describe('EventService', () => {
 
   afterEach(() => httpTesting.verify());
 
-  it('debe obtener un evento por su id', () => {
-    service.getEventoById(7).subscribe((resultado) => {
+  it('debe obtener un evento por su id y normalizar la hora', () => {
+    service.findEventById(7).subscribe((resultado) => {
       expect(resultado).toEqual(evento);
     });
 
@@ -44,5 +44,16 @@ describe('EventService', () => {
     );
     expect(request.request.method).toBe('GET');
     request.flush({ ...evento, horaEvento: '21:30:00' });
+  });
+
+  it('debe conservar una respuesta nula del backend', () => {
+    service.findEventById(99).subscribe((resultado) => {
+      expect(resultado).toBeNull();
+    });
+
+    const request = httpTesting.expectOne(
+      'http://teacherbanking.us-east-1.elasticbeanstalk.com/eventos/99',
+    );
+    request.flush(null);
   });
 });

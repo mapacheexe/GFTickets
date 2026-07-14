@@ -1,15 +1,23 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+import { Component, LOCALE_ID } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
 
 import { Evento } from '../../models/evento.model';
 import { EventService } from '../../services/event.service';
-import { EventDetail } from './event-detail';
+import { EventDetailComponent } from './event-detail';
 
-describe('EventDetail', () => {
-  let fixture: ComponentFixture<EventDetail>;
-  let getEventoById: ReturnType<typeof vi.fn>;
+registerLocaleData(localeEs);
+
+@Component({ template: '' })
+class EventListStubComponent {}
+
+describe('EventDetailComponent', () => {
+  let fixture: ComponentFixture<EventDetailComponent>;
+  let findEventById: ReturnType<typeof vi.fn>;
 
   const evento: Evento = {
     id: 7,
@@ -25,37 +33,51 @@ describe('EventDetail', () => {
     imagenUrl: 'https://example.com/evento.jpg',
   };
 
-  async function configurarTest(respuesta: Observable<Evento>): Promise<void> {
-    getEventoById = vi.fn().mockReturnValue(respuesta);
+  async function configurarTest(respuesta: Observable<Evento | null>): Promise<void> {
+    findEventById = vi.fn().mockReturnValue(respuesta);
 
     await TestBed.configureTestingModule({
-      imports: [EventDetail],
+      imports: [EventDetailComponent],
       providers: [
-        provideRouter([]),
+        provideRouter([{ path: 'eventos', component: EventListStubComponent }]),
+        { provide: LOCALE_ID, useValue: 'es-ES' },
         {
           provide: ActivatedRoute,
           useValue: { paramMap: of(convertToParamMap({ id: '7' })) },
         },
         {
           provide: EventService,
-          useValue: { getEventoById },
+          useValue: { findEventById },
         },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EventDetail);
+    fixture = TestBed.createComponent(EventDetailComponent);
   }
 
-  it('debe solicitar y mostrar el evento indicado en la ruta', async () => {
+  it('debe solicitar y mostrar un evento válido', async () => {
     await configurarTest(of(evento));
     fixture.detectChanges();
 
-    expect(getEventoById).toHaveBeenCalledWith(7);
-    expect(fixture.nativeElement.textContent).toContain('Anochecer Sinfónico');
-    expect(fixture.nativeElement.textContent).toContain('Parc del Fòrum');
+    expect(findEventById).toHaveBeenCalledWith(7);
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('Anochecer Sinfónico');
   });
 
-  it('debe mostrar un mensaje cuando el evento no existe', async () => {
+  it('debe visualizar los campos principales del evento', async () => {
+    await configurarTest(of(evento));
+    fixture.detectChanges();
+
+    const contenido = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(contenido).toContain(evento.descripcion);
+    expect(contenido).toContain(evento.genero);
+    expect(contenido).toContain(evento.localidad);
+    expect(contenido).toContain(evento.nombreRecinto);
+    expect(contenido).toContain('21:30');
+    expect(contenido).toContain('15,00');
+    expect(contenido).toContain('45,00');
+  });
+
+  it('debe mostrar un mensaje cuando el identificador no existe', async () => {
     const respuesta = throwError(() => new HttpErrorResponse({ status: 404 }));
     await configurarTest(respuesta);
     fixture.detectChanges();
@@ -63,5 +85,33 @@ describe('EventDetail', () => {
     expect(fixture.nativeElement.textContent).toContain(
       'No hemos encontrado el evento solicitado.',
     );
+  });
+
+  it('debe mostrar un mensaje cuando el servicio devuelve null', async () => {
+    await configurarTest(of(null));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('No se pudo cargar el evento.');
+  });
+
+  it('debe mostrar un mensaje cuando el servicio falla', async () => {
+    const respuesta = throwError(() => new HttpErrorResponse({ status: 500 }));
+    await configurarTest(respuesta);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain(
+      'No se ha podido cargar el evento. Inténtalo de nuevo.',
+    );
+  });
+
+  it('debe volver al listado de eventos', async () => {
+    await configurarTest(of(evento));
+    fixture.detectChanges();
+
+    const volver = fixture.nativeElement.querySelector('.back-link') as HTMLAnchorElement;
+    volver.click();
+    await fixture.whenStable();
+
+    expect(TestBed.inject(Router).url).toBe('/eventos');
   });
 });

@@ -9,6 +9,15 @@ vi.mock('../services/EventsService', () => ({
   findAllEvents: vi.fn(),
 }));
 
+// Mockear react-router-dom de forma global para este archivo de pruebas
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => vi.fn(), // Le da una función vacía simulada a tu componente
+  };
+});
+
 const eventosMock = [
   {
     id: 1,

@@ -1,5 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
 import { Evento } from '../models/evento.model';
@@ -42,18 +45,51 @@ describe('EventService', () => {
     const request = httpTesting.expectOne(
       'http://teacherbanking.us-east-1.elasticbeanstalk.com/eventos/7',
     );
+
     expect(request.request.method).toBe('GET');
-    request.flush({ ...evento, horaEvento: '21:30:00' });
+
+    request.flush({
+      ...evento,
+      horaEvento: '21:30:00',
+    });
   });
 
-  it('debe conservar una respuesta nula del backend', () => {
-    service.findEventById(99).subscribe((resultado) => {
-      expect(resultado).toBeNull();
+  it('debe propagar el error cuando el evento no existe', () => {
+    service.findEventById(99).subscribe({
+      next: () => expect.unreachable('debería haber fallado la petición'),
+      error: (error) => {
+        expect(error.status).toBe(404);
+      },
     });
 
     const request = httpTesting.expectOne(
       'http://teacherbanking.us-east-1.elasticbeanstalk.com/eventos/99',
     );
-    request.flush(null);
+
+    expect(request.request.method).toBe('GET');
+
+    request.flush('Evento no encontrado', {
+      status: 404,
+      statusText: 'Not Found',
+    });
+  });
+
+  it('debe obtener todos los eventos y normalizar sus horas', () => {
+    service.findAllEvents().subscribe((resultado) => {
+      expect(resultado).toEqual([evento]);
+    });
+
+    const request = httpTesting.expectOne(
+      'http://teacherbanking.us-east-1.elasticbeanstalk.com/eventos',
+    );
+
+    expect(request.request.method).toBe('GET');
+
+    request.flush([
+      {
+        ...evento,
+        horaEvento: '21:30:00',
+      },
+    ]);
   });
 });

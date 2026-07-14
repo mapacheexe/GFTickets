@@ -2,24 +2,21 @@
 
   <div class="event-image">
 
-    @if (evento().imagenUrl) {
-
-      <img
-        [src]="evento().imagenUrl"
-        [alt]="'Imagen de ' + evento().nombre"
-      />
-
+    @if (evento().imagenUrl && !imagenNoDisponible()) {
+        <img
+            [src]="evento().imagenUrl"
+            [alt]="'Imagen de ' + evento().nombre"
+            (error)="imagenNoDisponible.set(true)"
+        />
     } @else {
-
-      <div
-        class="image-placeholder"
-        role="img"
-        aria-label="Imagen no disponible"
-      >
-        <span aria-hidden="true">
-          ♪
-        </span>
-      </div>
+        <div
+            class="image-placeholder"
+            role="img"
+            [attr.aria-label]="'Imagen no disponible de ' + evento().nombre"
+        >
+            <span aria-hidden="true">♪</span>
+            <p>Imagen no disponible</p>
+        </div>
     }
 
     <span class="genre">

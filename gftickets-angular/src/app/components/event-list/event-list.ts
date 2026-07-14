@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,21 +6,16 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { CurrencyPipe, DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 
 import { Evento } from '../../models/evento.model';
 import { EventService } from '../../services/event.service';
+import { EventCardComponent } from '../event-card/event-card';
 
 @Component({
   selector: 'app-event-list',
-  imports: [
-    CurrencyPipe,
-    DatePipe,
-    RouterLink,
-  ],
+  imports: [EventCardComponent],
   templateUrl: './event-list.html',
   styleUrl: './event-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,19 +47,8 @@ export class EventListComponent implements OnInit {
         finalize(() => this.cargando.set(false)),
       )
       .subscribe({
-        next: (eventos) => {
-          this.eventos.set(eventos);
-        },
-
-        error: (error: HttpErrorResponse) => {
-          this.error.set(this.obtenerMensajeError(error));
-        },
+        next: (eventos) => this.eventos.set(eventos),
+        error: () => this.error.set('No se han podido cargar los eventos.'),
       });
-  }
-
-  private obtenerMensajeError(error: HttpErrorResponse): string {
-    return error.status === 404
-      ? 'No hay eventos disponibles.'
-      : 'No se han podido cargar los eventos. Inténtalo de nuevo.';
   }
 }

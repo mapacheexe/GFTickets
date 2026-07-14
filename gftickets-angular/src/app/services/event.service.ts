@@ -14,15 +14,22 @@ export class EventService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = 'http://teacherbanking.us-east-1.elasticbeanstalk.com/eventos';
 
-  /** Obtiene la información completa de un evento a partir de su identificador. */
-  getEventoById(id: number): Observable<Evento> {
-    return this.http.get<EventoApi>(`${this.apiUrl}/${id}`).pipe(
-      map((evento) => ({
-        ...evento,
-        horaEvento: this.normalizarHora(evento.horaEvento),
-      })),
+  getAllEventos(): Observable<Evento[]> {
+    return this.http.get<EventoApi[]>(this.apiUrl).pipe(
+      map((eventos) => eventos.map(this.mapEvento))
     );
   }
+
+  getEventoById(id: number): Observable<Evento> {
+    return this.http.get<EventoApi>(`${this.apiUrl}/${id}`).pipe(
+      map(this.mapEvento)
+    );
+  }
+
+  private mapEvento = (evento: EventoApi): Evento => ({
+    ...evento,
+    horaEvento: this.normalizarHora(evento.horaEvento),
+  });
 
   private normalizarHora(hora: HoraEvento | string): HoraEvento {
     if (typeof hora !== 'string') {
@@ -30,6 +37,12 @@ export class EventService {
     }
 
     const [hour = 0, minute = 0, second = 0] = hora.split(':').map(Number);
-    return { hour, minute, second, nano: 0 };
+
+    return {
+      hour,
+      minute,
+      second,
+      nano: 0,
+    };
   }
 }

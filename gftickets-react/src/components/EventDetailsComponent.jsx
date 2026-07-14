@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { findEventById } from "../services/EventsService";
 import { useEffect, useState } from "react";
-import { formatearFecha } from "./EventsComponent.jsx";
+import { formatearFecha } from "./../utils/dateUtils.js";
 
 export function EventDetailsComponent() {
     const { id } = useParams();

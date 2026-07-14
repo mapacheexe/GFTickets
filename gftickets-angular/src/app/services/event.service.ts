@@ -1,8 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 import { Evento } from '../models/evento.model';
+import { HoraEvento } from '../models/hora-evento.model';
+
+interface EventoApi extends Omit<Evento, 'horaEvento'> {
+  horaEvento: HoraEvento | string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
@@ -11,6 +16,20 @@ export class EventService {
 
   /** Obtiene la información completa de un evento a partir de su identificador. */
   getEventoById(id: number): Observable<Evento> {
-    return this.http.get<Evento>(`${this.apiUrl}/${id}`);
+    return this.http.get<EventoApi>(`${this.apiUrl}/${id}`).pipe(
+      map((evento) => ({
+        ...evento,
+        horaEvento: this.normalizarHora(evento.horaEvento),
+      })),
+    );
+  }
+
+  private normalizarHora(hora: HoraEvento | string): HoraEvento {
+    if (typeof hora !== 'string') {
+      return hora;
+    }
+
+    const [hour = 0, minute = 0, second = 0] = hora.split(':').map(Number);
+    return { hour, minute, second, nano: 0 };
   }
 }

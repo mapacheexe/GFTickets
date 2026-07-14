@@ -16,7 +16,7 @@ describe('EventDetail', () => {
     nombre: 'Anochecer Sinfónico',
     descripcion: 'Concierto al aire libre.',
     fechaEvento: '2026-07-20',
-    horaEvento: '21:30:00',
+    horaEvento: { hour: 21, minute: 30, second: 0, nano: 0 },
     precioMinimo: 15,
     precioMaximo: 45,
     localidad: 'Barcelona',

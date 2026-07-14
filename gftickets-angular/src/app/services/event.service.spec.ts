@@ -14,7 +14,7 @@ describe('EventService', () => {
     nombre: 'Anochecer Sinfónico',
     descripcion: 'Concierto al aire libre.',
     fechaEvento: '2026-07-20',
-    horaEvento: '21:30:00',
+    horaEvento: { hour: 21, minute: 30, second: 0, nano: 0 },
     precioMinimo: 15,
     precioMaximo: 45,
     localidad: 'Barcelona',
@@ -43,6 +43,6 @@ describe('EventService', () => {
       'http://teacherbanking.us-east-1.elasticbeanstalk.com/eventos/7',
     );
     expect(request.request.method).toBe('GET');
-    request.flush(evento);
+    request.flush({ ...evento, horaEvento: '21:30:00' });
   });
 });

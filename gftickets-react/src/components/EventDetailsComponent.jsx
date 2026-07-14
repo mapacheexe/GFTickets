@@ -1,4 +1,4 @@
-import {useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import { findEventById } from "../services/EventsService";
 import { useEffect, useState } from "react";
 export function EventDetailsComponent (){

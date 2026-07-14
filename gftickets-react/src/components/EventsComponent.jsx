@@ -2,14 +2,7 @@ import { useEffect, useState } from 'react';
 import './EventsComponent.css';
 import { findAllEvents } from '../services/EventsService';
 import { useNavigate } from 'react-router-dom';
-
-  export const formatearFecha = (fechaStr) => {
-    return new Date(fechaStr).toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
-  };
+import { formatearFecha } from '../utils/dateUtils.js'; // Importamos la función desde el archivo de utilidades
 
 export const EventsComponent = () => {
   const [eventos, setEventos] = useState([]);

@@ -9,3 +9,13 @@ export const findAllEvents = async () => {
 
   return await response.json();
 };
+
+export const findEventById = async (id) => {
+  const response = await fetch(BASE_URL + id);
+
+  if (!response.ok){
+    throw new Error('No se pudo cargar el evento');
+  }
+
+  return await response.json();
+}

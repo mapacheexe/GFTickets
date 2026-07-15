@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import './EventsComponent.css';
 import { findAllEvents } from '../services/EventsService';
 import { useNavigate } from 'react-router-dom';
-import { formatearFecha } from '../utils/dateUtils.js'; // Importamos la función desde el archivo de utilidades
+import { formatearFecha } from '../utils/dateUtils.js';
+import { EventImage } from './EventImage.jsx';
 
 export const EventsComponent = () => {
   const [eventos, setEventos] = useState([]);
@@ -27,14 +28,18 @@ export const EventsComponent = () => {
     cargarEventos();
   }, []);
 
-
-
   if (cargando) {
     return (
       <div className="catalog-container">
-        <p data-testid="cargando-eventos" className="catalog-empty__text">
-          Cargando eventos...
-        </p>
+        <header className="catalog-header">
+          <h1 className="catalog-header__title">GFTickets Back Office</h1>
+        </header>
+        <div className="catalog-loading">
+          <span className="catalog-spinner" aria-hidden="true"></span>
+          <p data-testid="cargando-eventos" className="catalog-empty__text">
+            Cargando eventos...
+          </p>
+        </div>
       </div>
     );
   }
@@ -42,6 +47,9 @@ export const EventsComponent = () => {
   if (error) {
     return (
       <div className="catalog-container">
+        <header className="catalog-header">
+          <h1 className="catalog-header__title">GFTickets Back Office</h1>
+        </header>
         <div className="catalog-empty">
           <span className="catalog-empty__icon">⚠️</span>
           <h3 className="catalog-empty__title">Error al cargar eventos</h3>
@@ -55,29 +63,29 @@ export const EventsComponent = () => {
 
   return (
     <div className="catalog-container">
+      <header className="catalog-header">
+        <h1 className="catalog-header__title">GFTickets Back Office</h1>
+      </header>
+
       {eventos.length === 0 ? (
         <div className="catalog-empty">
           <span className="catalog-empty__icon">📅</span>
           <h3 className="catalog-empty__title">No se encontraron eventos</h3>
           <p data-testid="no-eventos" className="catalog-empty__text">
-            Lo sentimos, en este momento no hay conciertos ni espectáculos disponibles en esta categoría.
+            En este momento no hay conciertos ni espectáculos disponibles en esta categoría.
           </p>
         </div>
       ) : (
         <div className="catalog-grid">
           {eventos.map((evento) => (
-
-            <article className="catalog-card"
+            <article
+              className="catalog-card"
               key={evento.id}
               onClick={() => navigate(`/eventos/${evento.id}`)}
               style={{ cursor: 'pointer' }}
-              >
+            >
               <div className="catalog-card__media">
-                <img
-                  src={evento.imagenUrl}
-                  alt={evento.nombre}
-                  className="catalog-card__img"
-                />
+                <EventImage src={evento.imagenUrl} alt={evento.nombre} />
                 <span className="catalog-card__tag">{evento.genero}</span>
               </div>
 
@@ -100,9 +108,6 @@ export const EventsComponent = () => {
                     <span className="catalog-card__price-label">Desde</span>
                     <span className="catalog-card__price-val">{evento.precioMinimo}€</span>
                   </div>
-                  <button className="catalog-card__btn" type="button">
-                    Tickets
-                  </button>
                 </div>
               </div>
             </article>

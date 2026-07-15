@@ -1,11 +1,13 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { findEventById } from "../services/EventsService";
 import { useEffect, useState } from "react";
 import { formatearFecha } from "./../utils/dateUtils.js";
-import './EventDetailsComponent.css'; 
+import { EventImage } from "./EventImage";
+import './EventDetailsComponent.css';
 
 export function EventDetailsComponent() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [event, setEvent] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
@@ -31,37 +33,82 @@ export function EventDetailsComponent() {
     }, [id]);
 
     if (cargando) {
-        return <div className="details-loading" data-testid="cargando-detalle">Cargando detalle...</div>;
+        return (
+            <div className="details-container">
+                <header className="details-page-header">
+                    <button
+                        type="button"
+                        className="details-back-btn"
+                        onClick={() => navigate('/')}
+                    >
+                        ← Volver al catálogo
+                    </button>
+                </header>
+                <div className="details-loading" data-testid="cargando-detalle">
+                    <span className="details-spinner" aria-hidden="true"></span>
+                    <p>Cargando detalle...</p>
+                </div>
+            </div>
+        );
     }
 
     if (error) {
         return (
-            <div data-testid="error-detalle" className="error-container">
-                <span role="img" aria-label="warning" style={{ fontSize: '2rem' }}>⚠️</span>
-                <p>{error}</p>
+            <div className="details-container">
+                <header className="details-page-header">
+                    <button
+                        type="button"
+                        className="details-back-btn"
+                        onClick={() => navigate('/')}
+                    >
+                        ← Volver al catálogo
+                    </button>
+                </header>
+                <div data-testid="error-detalle" className="error-container">
+                    <span role="img" aria-label="warning" style={{ fontSize: '2rem' }}>⚠️</span>
+                    <p>{error}</p>
+                </div>
             </div>
         );
     }
 
     return (
         <div className="details-container">
+            <header className="details-page-header">
+                <button
+                    type="button"
+                    className="details-back-btn"
+                    onClick={() => navigate('/')}
+                >
+                    ← Volver al catálogo
+                </button>
+                {event && <h2 className="details-page-title">{event.nombre}</h2>}
+            </header>
+
             {event && (
                 <article className="details-layout">
-                    {/* Columna Izquierda: Imagen limpia sin etiquetas flotantes */}
+                    {/* Columna Izquierda */}
                     <div className="details-media">
-                        <img className="details-img" src={event.imagenUrl} alt={event.nombre} />
+                        <EventImage
+                            src={event.imagenUrl}
+                            alt={event.nombre}
+                            className="details-img"
+                            fallbackClassName="details-img-fallback"
+                        />
                     </div>
 
-                    {/* Columna Derecha: Información */}
+                    {/* Columna Derecha */}
                     <div className="details-info">
                         <div className="details-header">
                             <h1 className="details-title">{event.nombre}</h1>
-                            
-                            {/* Cuadrícula de metadatos actualizada con la Localidad integrada */}
+
                             <div className="details-meta-grid">
                                 <div className="details-meta-item">
-                                    <span className="details-meta-label">Localidad</span>
-                                    <span className="details-meta-val">{event.localidad}</span>
+                                    <span className="details-meta-label">Ubicación</span>
+                                    <span className="details-meta-val">
+                                        {event.localidad}
+                                        {event.nombreRecinto ? ` · ${event.nombreRecinto}` : ''}
+                                    </span>
                                 </div>
                                 <div className="details-meta-item">
                                     <span className="details-meta-label">Fecha</span>
@@ -81,7 +128,7 @@ export function EventDetailsComponent() {
                             </div>
                         </div>
 
-                        {/* Footer solo con el rango de precios */}
+                        {/* Footer del detalle */}
                         <div className="details-footer">
                             <div className="details-price">
                                 <span className="details-price-label">Rango de Precios</span>

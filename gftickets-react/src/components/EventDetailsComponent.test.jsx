@@ -10,6 +10,7 @@ vi.mock('../services/EventsService', () => ({
 const mockParams = { id: '42' };
 vi.mock('react-router-dom', () => ({
   useParams: () => mockParams,
+  useNavigate: () => vi.fn(),
 }));
 
 describe('EventDetailsComponent', () => {

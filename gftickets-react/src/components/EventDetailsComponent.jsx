@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { findEventById } from "../services/EventsService";
 import { useEffect, useState } from "react";
 import { formatearFecha } from "./../utils/dateUtils.js";
+import './EventDetailsComponent.css'; 
 
 export function EventDetailsComponent() {
     const { id } = useParams();
@@ -30,31 +31,68 @@ export function EventDetailsComponent() {
     }, [id]);
 
     if (cargando) {
-        return <p data-testid="cargando-detalle">Cargando detalle...</p>;
+        return <div className="details-loading" data-testid="cargando-detalle">Cargando detalle...</div>;
     }
 
     if (error) {
         return (
             <div data-testid="error-detalle" className="error-container">
+                <span role="img" aria-label="warning" style={{ fontSize: '2rem' }}>⚠️</span>
                 <p>{error}</p>
-                <span role="img" aria-label="warning">⚠️</span>
             </div>
         );
     }
 
     return (
-        <>
+        <div className="details-container">
             {event && (
-                <div className="event-details">
-                    <h1>{event.nombre}</h1>
-                    <img src={event.imagenUrl} alt={event.nombre} />
-                    <p>{event.descripcion}</p>
-                    <p>Localidad: {event.localidad}</p>
-                    <p>Fecha: {formatearFecha(event.fechaEvento)}</p>
-                    <p>Hora: {event.horaEvento ? `${event.horaEvento.substring(0, 5)}h` : ''}</p>
-                    <p>Precio: {event.precioMinimo}€ - {event.precioMaximo}€</p>
-                </div>
+                <article className="details-layout">
+                    {/* Columna Izquierda: Imagen limpia sin etiquetas flotantes */}
+                    <div className="details-media">
+                        <img className="details-img" src={event.imagenUrl} alt={event.nombre} />
+                    </div>
+
+                    {/* Columna Derecha: Información */}
+                    <div className="details-info">
+                        <div className="details-header">
+                            <h1 className="details-title">{event.nombre}</h1>
+                            
+                            {/* Cuadrícula de metadatos actualizada con la Localidad integrada */}
+                            <div className="details-meta-grid">
+                                <div className="details-meta-item">
+                                    <span className="details-meta-label">Localidad</span>
+                                    <span className="details-meta-val">{event.localidad}</span>
+                                </div>
+                                <div className="details-meta-item">
+                                    <span className="details-meta-label">Fecha</span>
+                                    <span className="details-meta-val">{formatearFecha(event.fechaEvento)}</span>
+                                </div>
+                                <div className="details-meta-item">
+                                    <span className="details-meta-label">Hora</span>
+                                    <span className="details-meta-val">
+                                        {event.horaEvento ? `${event.horaEvento.substring(0, 5)}h` : 'Por confirmar'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="details-desc">
+                                <h3 className="details-desc-title">Sobre el evento</h3>
+                                <p className="details-desc-text">{event.descripcion}</p>
+                            </div>
+                        </div>
+
+                        {/* Footer solo con el rango de precios */}
+                        <div className="details-footer">
+                            <div className="details-price">
+                                <span className="details-price-label">Rango de Precios</span>
+                                <span className="details-price-val">
+                                    {event.precioMinimo}€ - {event.precioMaximo}€
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
             )}
-        </>
+        </div>
     );
 }

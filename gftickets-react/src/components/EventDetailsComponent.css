@@ -1,0 +1,206 @@
+/* ==========================================================================
+   EventDetailsComponent — Detalle de concierto/festival (Vista Admin)
+   ========================================================================== */
+
+.details-container {
+  --bg: #0d0d12;
+  --surface: #17171f;
+  --surface-hover: #1e1e29;
+  --border: rgba(255, 255, 255, 0.08);
+  --text-primary: #f5f5f7;
+  --text-secondary: #9a9aa5;
+  --accent: #f5a623;
+  --accent-soft: rgba(245, 166, 35, 0.14);
+
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 80vh;
+}
+
+/* ---------- Layout de Detalle ---------- */
+
+.details-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 2.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 2.5rem;
+}
+
+/* ---------- Columna Izquierda: Media ---------- */
+
+.details-media {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 16 / 11;
+  border: 1px solid var(--border);
+}
+
+.details-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- Columna Derecha: Contenido ---------- */
+
+.details-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.details-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.details-title {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+/* ---------- Meta Grid (3 Columnas para Localidad, Fecha, Hora) ---------- */
+
+.details-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Divide el espacio equitativamente en 3 columnas */
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.details-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.details-meta-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.details-meta-val {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ---------- Descripción ---------- */
+
+.details-desc-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem 0;
+}
+
+.details-desc-text {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* ---------- Footer & Precio ---------- */
+
+.details-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+.details-price {
+  display: flex;
+  flex-direction: column;
+}
+
+.details-price-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.details-price-val {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+/* ---------- Estados (Cargando, Error) ---------- */
+
+.details-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 1.5rem;
+  margin: 2rem auto;
+  max-width: 500px;
+  border: 1px dashed #ff4a4a;
+  border-radius: 16px;
+  background: rgba(255, 74, 74, 0.05);
+}
+
+.error-container p {
+  color: #ff4a4a;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 868px) {
+  .details-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .details-container {
+    padding: 1rem;
+  }
+
+  .details-title {
+    font-size: 1.75rem;
+  }
+
+  .details-meta-grid {
+    grid-template-columns: 1fr; /* Pasa a formato lista vertical en móviles */
+    gap: 1rem;
+  }
+}

@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   angular-quality:
-    name: Angular tests and build
+    name: Angular lint, tests and build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -31,7 +31,10 @@ jobs:
           node-version: 22
 
       - name: Install Angular dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Run Angular static analysis
+        run: npm run lint
 
       - name: Run Angular tests
         run: npm test -- --watch=false
@@ -58,34 +61,9 @@ jobs:
           node-version: 22
 
       - name: Install React dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Run React lint on changed files
-        if: github.event_name == 'pull_request'
-        shell: bash
-        run: |
-          mapfile -t changed_files < <(
-            git -C .. diff --name-only --diff-filter=ACMRT \
-              "${{ github.event.pull_request.base.sha }}" \
-              "${{ github.event.pull_request.head.sha }}" -- \
-              'gftickets-react/src/**/*.js' \
-              'gftickets-react/src/**/*.jsx'
-          )
-
-          if [ "${#changed_files[@]}" -eq 0 ]; then
-            echo "No React JavaScript files changed in this pull request."
-            exit 0
-          fi
-
-          relative_files=()
-          for file in "${changed_files[@]}"; do
-            relative_files+=("${file#gftickets-react/}")
-          done
-
-          npx eslint "${relative_files[@]}"
-
-      - name: Run full React lint manually
-        if: github.event_name == 'workflow_dispatch'
+      - name: Run React static analysis
         run: npm run lint
 
       - name: Run React tests

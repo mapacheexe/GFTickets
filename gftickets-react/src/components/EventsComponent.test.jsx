@@ -112,4 +112,18 @@ describe('EventsComponent', () => {
     expect(screen.getByText(new RegExp(fechaEsperada))).toBeInTheDocument();
     expect(screen.getByText(new RegExp(`${horaEsperada}h`))).toBeInTheDocument();
   });
+
+  test('6. muestra entrada gratuita cuando el precio mínimo es 0', async () => {
+    const eventoGratis = { ...eventosMock[0], precioMinimo: 0 };
+    findAllEvents.mockResolvedValue([eventoGratis]);
+    render(<EventsComponent />);
+    expect(await screen.findByTestId('entrada-gratuita')).toBeInTheDocument();
+  });
+
+  test('7. muestra "Precios no disponibles" cuando el precio mínimo es negativo', async () => {
+    const eventoSinPrecio = { ...eventosMock[0], precioMinimo: -1 };
+    findAllEvents.mockResolvedValue([eventoSinPrecio]);
+    render(<EventsComponent />);
+    expect(await screen.findByTestId('precios-no-disponibles')).toBeInTheDocument();
+  });
 });

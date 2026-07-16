@@ -14,7 +14,6 @@ export function EventDetailsComponent() {
     
     const [leerMas, setLeerMas] = useState(false);
 
-    const LIMITE_CARACTERES = 150;
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -79,13 +78,13 @@ export function EventDetailsComponent() {
     const renderDescripcion = () => {
         const descripcion = event?.descripcion || "";
         
-        if (descripcion.length <= LIMITE_CARACTERES) {
+        if (descripcion.length <= import.meta.env.VITE_LIMITE_CARACTERES) {
             return <p className="details-desc-text">{descripcion}</p>;
         }
 
         const textoMostrado = leerMas 
             ? descripcion 
-            : `${descripcion.substring(0, LIMITE_CARACTERES)}... `;
+            : `${descripcion.substring(0, import.meta.env.VITE_LIMITE_CARACTERES)}... `;
 
         return (
             <p className="details-desc-text">

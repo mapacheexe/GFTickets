@@ -50,6 +50,27 @@ describe('EventCardComponent', () => {
     expect(textContent).toContain('Anochecer Sinfónico');
     expect(textContent).toContain('Clásica');
     expect(textContent).toContain('Barcelona');
+    expect(textContent).toContain('Parc del Fòrum');
+  });
+
+  it('should display venue and city as the exact location', () => {
+    const location = fixture.nativeElement.querySelectorAll('.event-info p')[1]
+      .textContent as string;
+
+    expect(location).toContain('Parc del Fòrum, Barcelona');
+  });
+
+  it('should display only the city when the venue is unavailable', () => {
+    fixture.componentRef.setInput('evento', {
+      ...evento,
+      nombreRecinto: '',
+    });
+    fixture.detectChanges();
+
+    const location = fixture.nativeElement.querySelectorAll('.event-info p')[1]
+      .textContent as string;
+    expect(location).toContain('Barcelona');
+    expect(location).not.toContain('Parc del Fòrum');
   });
 
   it('should show minimum price', () => {

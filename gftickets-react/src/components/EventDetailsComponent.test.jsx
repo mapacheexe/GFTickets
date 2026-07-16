@@ -96,4 +96,20 @@ describe('EventDetailsComponent', () => {
 
     expect(screen.getByText(/21:00h/i)).toBeInTheDocument();
   });
+
+  test('6. Si el precio mínimo es 0, se muestra "Gratis"', async () => {
+    const eventoGratis = { ...mockEvento, precioMinimo: 0 };
+    vi.mocked(findEventById).mockResolvedValue(eventoGratis);
+
+    render(<EventDetailsComponent />);
+    expect(await screen.findByTestId('entrada-gratuita')).toBeInTheDocument();
+  });
+
+  test('7. Si el precio mínimo es negativo, se muestra "Precios no disponibles"', async () => {
+    const eventoSinPrecio = { ...mockEvento, precioMinimo: -1 };
+    vi.mocked(findEventById).mockResolvedValue(eventoSinPrecio);
+
+    render(<EventDetailsComponent />);
+    expect(await screen.findByTestId('precios-no-disponibles')).toBeInTheDocument();
+  });
 });

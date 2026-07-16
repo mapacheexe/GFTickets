@@ -112,7 +112,7 @@ export const EventsComponent = () => {
                     ) :
                       evento.precioMinimo === 0 ? (
                         <span className="catalog-card__price-val" data-testid="entrada-gratuita">
-                          Entrada GRATUITA!
+                          Entrada GRATUITA
                         </span>
                       ) : (
                         <>

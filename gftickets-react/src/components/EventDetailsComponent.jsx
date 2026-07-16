@@ -131,10 +131,30 @@ export function EventDetailsComponent() {
                         {/* Footer del detalle */}
                         <div className="details-footer">
                             <div className="details-price">
-                                <span className="details-price-label">Rango de Precios</span>
-                                <span className="details-price-val">
-                                    {event.precioMinimo}€ - {event.precioMaximo}€
-                                </span>
+                                {event.precioMinimo < 0 ? (
+                                    <span className="details-price-val" data-testid="precios-no-disponibles">
+                                        Precios no disponibles
+                                    </span>
+                                ) : event.precioMinimo === 0 ? (
+                                    <div className="details-price-range-container" data-testid="entrada-gratuita">
+                                        {event.precioMaximo === 0 ? (
+                                            <span className="details-price-val">
+                                                Entrada gratuita
+                                            </span>
+                                        ) : (
+                                            <span className="details-price-val">
+                                                Sillas básicas sin coste <span className="details-price-separator">•</span> VIP hasta <strong>{event.precioMaximo}€</strong>
+                                            </span>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <>
+                                        <span className="details-price-label">Rango de Precios</span>
+                                        <span className="details-price-val">
+                                            {event.precioMinimo}€ - {event.precioMaximo}€
+                                        </span>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>

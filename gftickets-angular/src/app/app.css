@@ -35,6 +35,27 @@ nav a {
   text-decoration: none;
 }
 
+nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 nav a:hover {
   color: #e11d48;
+}
+
+@media (max-width: 600px) {
+  .site-header {
+    height: auto;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-block: 1rem;
+  }
+
+  nav {
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
 }

@@ -25,7 +25,7 @@ describe('PurchaseComponent', () => {
   };
 
   let fixture: ComponentFixture<PurchaseComponent>;
-  let registerPurchase: ReturnType<typeof vi.fn>;
+  let createPurchase: ReturnType<typeof vi.fn>;
 
   it('carga y muestra el evento indicado en la ruta', async () => {
     await createComponent(of(event));
@@ -40,7 +40,7 @@ describe('PurchaseComponent', () => {
     fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
     fixture.detectChanges();
 
-    expect(registerPurchase).not.toHaveBeenCalled();
+    expect(createPurchase).not.toHaveBeenCalled();
     expect(fixture.nativeElement.textContent).toContain('Introduce el nombre del titular.');
   });
 
@@ -50,7 +50,7 @@ describe('PurchaseComponent', () => {
     fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
     fixture.detectChanges();
 
-    expect(registerPurchase).toHaveBeenCalledWith({
+    expect(createPurchase).toHaveBeenCalledWith({
       nombreTitular: 'Julia Adell',
       numeroTarjeta: '4111111111111111',
       mesCaducidad: '09',
@@ -95,7 +95,7 @@ describe('PurchaseComponent', () => {
     routeId = '7',
   ): Promise<void> {
     TestBed.resetTestingModule();
-    registerPurchase = vi.fn().mockReturnValue(purchaseResponse);
+    createPurchase = vi.fn().mockReturnValue(purchaseResponse);
     await TestBed.configureTestingModule({
       imports: [PurchaseComponent],
       providers: [
@@ -110,7 +110,7 @@ describe('PurchaseComponent', () => {
         },
         {
           provide: PurchaseService,
-          useValue: { registerPurchase },
+          useValue: { createPurchase },
         },
       ],
     }).compileComponents();

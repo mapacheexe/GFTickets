@@ -41,6 +41,7 @@ feature/<descripción>
 bugfix/<descripción>
 hotfix/<descripción>
 release/<descripción>
+docs/<descripción>
 chore/<descripción>
 ```
 
@@ -49,6 +50,9 @@ Ejemplos:
 ```text
 feature/add-event-catalog-card
 bugfix/fix-login-validation
+hotfix/security-patch
+release/v1.0.0
+docs/update-readme
 chore/update-dependencies
 ```
 

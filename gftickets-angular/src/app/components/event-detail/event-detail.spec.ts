@@ -131,4 +131,23 @@ describe('EventDetailComponent', () => {
 
     expect(TestBed.inject(Router).url).toBe('/compra/7');
   });
+
+  it('debe mostrar "Precio no disponible" cuando el precio mínimo es negativo', async () => {
+    const eventoSinPrecio: Evento = {
+      ...evento,
+      precioMinimo: -1,
+      precioMaximo: 45,
+    };
+
+    await configurarTest(of(eventoSinPrecio));
+    fixture.detectChanges();
+
+    const contenido = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(contenido).toContain('Precio no disponible');
+    expect(contenido).not.toContain('15,00');
+
+    const comprar = fixture.nativeElement.querySelector('.purchase-link');
+    expect(comprar).toBeNull();
+  });
 });

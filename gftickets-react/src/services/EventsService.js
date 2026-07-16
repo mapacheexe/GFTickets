@@ -1,7 +1,6 @@
-const BASE_URL = "http://teacherbanking.us-east-1.elasticbeanstalk.com/eventos";
 
 export const findAllEvents = async () => {
-  const response = await fetch(BASE_URL);
+  const response = await fetch(import.meta.env.VITE_API_URL);
 
   if (!response.ok) {
     throw new Error('No se pudieron cargar los eventos');
@@ -11,7 +10,7 @@ export const findAllEvents = async () => {
 };
 
 export const findEventById = async (id) => {
-  const response = await fetch(BASE_URL + '/' + id);
+  const response = await fetch(import.meta.env.VITE_API_URL + '/' + id);
 
   if (!response.ok){
     throw new Error('No se pudo cargar el evento');

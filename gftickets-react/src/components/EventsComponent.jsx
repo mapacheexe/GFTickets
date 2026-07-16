@@ -105,8 +105,21 @@ export const EventsComponent = () => {
 
                 <div className="catalog-card__footer">
                   <div className="catalog-card__price">
-                    <span className="catalog-card__price-label">Desde</span>
-                    <span className="catalog-card__price-val">{evento.precioMinimo}€</span>
+                    {evento.precioMinimo < 0 ? (
+                      <span className="catalog-card__price-val" data-testid="precios-no-disponibles">
+                        Precios no disponibles
+                      </span>
+                    ) :
+                      evento.precioMinimo === 0 ? (
+                        <span className="catalog-card__price-val" data-testid="entrada-gratuita">
+                          Entrada GRATUITA
+                        </span>
+                      ) : (
+                        <>
+                          <span className="catalog-card__price-label">Desde</span>
+                          <span className="catalog-card__price-val">{evento.precioMinimo}€</span>
+                        </>
+                      )}
                   </div>
                 </div>
               </div>

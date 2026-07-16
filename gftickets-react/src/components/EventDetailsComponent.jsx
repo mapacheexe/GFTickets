@@ -11,6 +11,9 @@ export function EventDetailsComponent() {
     const [event, setEvent] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
+    
+    const [leerMas, setLeerMas] = useState(false);
+
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -72,6 +75,32 @@ export function EventDetailsComponent() {
         );
     }
 
+    const renderDescripcion = () => {
+        const descripcion = event?.descripcion || "";
+        
+        if (descripcion.length <= import.meta.env.VITE_LIMITE_CARACTERES) {
+            return <p className="details-desc-text">{descripcion}</p>;
+        }
+
+        const textoMostrado = leerMas 
+            ? descripcion 
+            : `${descripcion.substring(0, import.meta.env.VITE_LIMITE_CARACTERES)}... `;
+
+        return (
+            <p className="details-desc-text">
+                {textoMostrado}
+                <button 
+                    type="button" 
+                    className="details-toggle-btn" 
+                    data-testid="toggle-descripcion-btn"
+                    onClick={() => setLeerMas(!leerMas)}
+                >
+                    {leerMas ? "Ver menos" : "Ver más"}
+                </button>
+            </p>
+        );
+    };
+
     return (
         <div className="details-container">
             <header className="details-page-header">
@@ -124,17 +153,37 @@ export function EventDetailsComponent() {
 
                             <div className="details-desc">
                                 <h3 className="details-desc-title">Sobre el evento</h3>
-                                <p className="details-desc-text">{event.descripcion}</p>
+                                {renderDescripcion()}
                             </div>
                         </div>
 
                         {/* Footer del detalle */}
                         <div className="details-footer">
                             <div className="details-price">
-                                <span className="details-price-label">Rango de Precios</span>
-                                <span className="details-price-val">
-                                    {event.precioMinimo}€ - {event.precioMaximo}€
-                                </span>
+                                {event.precioMinimo < 0 ? (
+                                    <span className="details-price-val" data-testid="precios-no-disponibles">
+                                        Precios no disponibles
+                                    </span>
+                                ) : event.precioMinimo === 0 ? (
+                                    <div className="details-price-range-container" data-testid="entrada-gratuita">
+                                        {event.precioMaximo === 0 ? (
+                                            <span className="details-price-val">
+                                                Entrada gratuita
+                                            </span>
+                                        ) : (
+                                            <span className="details-price-val">
+                                                Sillas básicas sin coste <span className="details-price-separator">•</span> VIP hasta <strong>{event.precioMaximo}€</strong>
+                                            </span>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <>
+                                        <span className="details-price-label">Rango de Precios</span>
+                                        <span className="details-price-val">
+                                            {event.precioMinimo}€ - {event.precioMaximo}€
+                                        </span>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -96,4 +96,50 @@ describe('EventDetailsComponent', () => {
 
     expect(screen.getByText(/21:00h/i)).toBeInTheDocument();
   });
+
+  test('6. Si el precio mínimo es 0, se muestra "Gratis"', async () => {
+    const eventoGratis = { ...mockEvento, precioMinimo: 0 };
+    vi.mocked(findEventById).mockResolvedValue(eventoGratis);
+
+    render(<EventDetailsComponent />);
+    expect(await screen.findByTestId('entrada-gratuita')).toBeInTheDocument();
+  });
+
+  test('7. Si el precio mínimo es negativo, se muestra "Precios no disponibles"', async () => {
+    const eventoSinPrecio = { ...mockEvento, precioMinimo: -1 };
+    vi.mocked(findEventById).mockResolvedValue(eventoSinPrecio);
+
+    render(<EventDetailsComponent />);
+    expect(await screen.findByTestId('precios-no-disponibles')).toBeInTheDocument();
+  });
+
+  test('8. Desplegable de descripción si el texto es de longitud superior al límite', async () => {
+    const descripcionLarga = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(10);
+    const eventoConDescripcionLarga = { ...mockEvento, descripcion: descripcionLarga };
+    vi.mocked(findEventById).mockResolvedValue(eventoConDescripcionLarga);
+
+    render(<EventDetailsComponent />);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('cargando-detalle')).not.toBeInTheDocument();
+    });
+
+    const botonLeerMas = screen.getByTestId('toggle-descripcion-btn');
+    expect(botonLeerMas).toBeInTheDocument();
+  });
+
+  test('9. No se muestra el botón de desplegable si la descripción es corta', async () => {
+    const descripcionCorta = 'Descripción corta';
+    const eventoConDescripcionCorta = { ...mockEvento, descripcion: descripcionCorta };
+    vi.mocked(findEventById).mockResolvedValue(eventoConDescripcionCorta);
+
+    render(<EventDetailsComponent />);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('cargando-detalle')).not.toBeInTheDocument();
+    });
+
+    const botonLeerMas = screen.queryByTestId('toggle-descripcion-btn');
+    expect(botonLeerMas).not.toBeInTheDocument();
+  });
 });

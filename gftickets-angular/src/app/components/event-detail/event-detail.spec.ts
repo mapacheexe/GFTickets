@@ -15,6 +15,9 @@ registerLocaleData(localeEs);
 @Component({ template: '' })
 class EventListStubComponent {}
 
+@Component({ template: '' })
+class PurchaseStubComponent {}
+
 describe('EventDetailComponent', () => {
   let fixture: ComponentFixture<EventDetailComponent>;
   let findEventById: ReturnType<typeof vi.fn>;
@@ -39,7 +42,10 @@ describe('EventDetailComponent', () => {
     await TestBed.configureTestingModule({
       imports: [EventDetailComponent],
       providers: [
-        provideRouter([{ path: 'eventos', component: EventListStubComponent }]),
+        provideRouter([
+          { path: 'eventos', component: EventListStubComponent },
+          { path: 'compra/:eventoId', component: PurchaseStubComponent },
+        ]),
         { provide: LOCALE_ID, useValue: 'es-ES' },
         {
           provide: ActivatedRoute,
@@ -113,5 +119,16 @@ describe('EventDetailComponent', () => {
     await fixture.whenStable();
 
     expect(TestBed.inject(Router).url).toBe('/eventos');
+  });
+
+  it('debe permitir iniciar la compra del evento mostrado', async () => {
+    await configurarTest(of(evento));
+    fixture.detectChanges();
+
+    const comprar = fixture.nativeElement.querySelector('.purchase-link') as HTMLAnchorElement;
+    comprar.click();
+    await fixture.whenStable();
+
+    expect(TestBed.inject(Router).url).toBe('/compra/7');
   });
 });

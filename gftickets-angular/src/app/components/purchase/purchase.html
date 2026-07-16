@@ -1,0 +1,138 @@
+<main class="purchase-page">
+  <a class="back-link" routerLink="/eventos">← Volver a eventos</a>
+
+  @if (loading()) {
+    <section class="state-card" role="status" aria-live="polite">
+      <span class="spinner" aria-hidden="true"></span>
+      <h1>Preparando la compra</h1>
+    </section>
+  } @else if (!event()) {
+    <section class="state-card error" role="alert">
+      <h1>No se puede iniciar la compra</h1>
+      <p>{{ error() }}</p>
+      <a routerLink="/eventos">Ver eventos disponibles</a>
+    </section>
+  } @else if (event(); as currentEvent) {
+    <div class="purchase-layout">
+      <aside class="summary" aria-labelledby="purchase-summary-title">
+        <p class="eyebrow">Resumen</p>
+        <h1 id="purchase-summary-title">{{ currentEvent.nombre }}</h1>
+        <dl>
+          <div>
+            <dt>Recinto</dt>
+            <dd>{{ currentEvent.nombreRecinto }}</dd>
+          </div>
+          <div>
+            <dt>Localidad</dt>
+            <dd>{{ currentEvent.localidad }}</dd>
+          </div>
+          <div>
+            <dt>Precio desde</dt>
+            <dd>{{ currentEvent.precioMinimo | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+          </div>
+        </dl>
+      </aside>
+
+      <section class="payment-card" aria-labelledby="payment-title">
+        <h2 id="payment-title">Datos de pago</h2>
+        <p class="privacy-note">
+          Los datos de la tarjeta se envían a la pasarela y no se almacenan.
+        </p>
+
+        @if (success(); as successMessage) {
+          <div class="message success" role="status">{{ successMessage }}</div>
+        }
+        @if (error(); as errorMessage) {
+          <div class="message error" role="alert">{{ errorMessage }}</div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <div class="field full-width">
+            <label for="nombreTitular">Titular de la tarjeta</label>
+            <input
+              id="nombreTitular"
+              type="text"
+              formControlName="nombreTitular"
+              autocomplete="cc-name"
+            />
+            @if (form.controls.nombreTitular.touched && form.controls.nombreTitular.invalid) {
+              <small>Introduce el nombre del titular.</small>
+            }
+          </div>
+
+          <div class="field full-width">
+            <label for="numeroTarjeta">Número de tarjeta</label>
+            <input
+              id="numeroTarjeta"
+              type="text"
+              formControlName="numeroTarjeta"
+              inputmode="numeric"
+              autocomplete="cc-number"
+              placeholder="1234 5678 9012 3456"
+            />
+            @if (form.controls.numeroTarjeta.touched && form.controls.numeroTarjeta.invalid) {
+              <small>Introduce entre 13 y 19 dígitos.</small>
+            }
+          </div>
+
+          <div class="field">
+            <label for="mesCaducidad">Mes</label>
+            <input
+              id="mesCaducidad"
+              type="text"
+              formControlName="mesCaducidad"
+              inputmode="numeric"
+              autocomplete="cc-exp-month"
+              placeholder="MM"
+            />
+          </div>
+
+          <div class="field">
+            <label for="yearCaducidad">Año</label>
+            <input
+              id="yearCaducidad"
+              type="text"
+              formControlName="yearCaducidad"
+              inputmode="numeric"
+              autocomplete="cc-exp-year"
+              placeholder="AAAA"
+            />
+          </div>
+
+          <div class="field">
+            <label for="cvv">CVV</label>
+            <input
+              id="cvv"
+              type="password"
+              formControlName="cvv"
+              inputmode="numeric"
+              autocomplete="cc-csc"
+            />
+          </div>
+
+          <div class="field">
+            <label for="emisor">Emisor</label>
+            <select id="emisor" formControlName="emisor">
+              <option value="">Selecciona</option>
+              <option value="VISA">Visa</option>
+              <option value="MASTERCARD">Mastercard</option>
+              <option value="AMEX">American Express</option>
+            </select>
+          </div>
+
+          @if (form.touched && form.hasError('expiredCard')) {
+            <small class="full-width">La tarjeta está caducada.</small>
+          }
+
+          <button
+            class="full-width"
+            type="submit"
+            [disabled]="submitting() || currentEvent.precioMinimo < 0"
+          >
+            {{ submitting() ? 'Registrando compra…' : 'Confirmar compra' }}
+          </button>
+        </form>
+      </section>
+    </div>
+  }
+</main>

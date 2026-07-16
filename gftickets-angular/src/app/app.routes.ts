@@ -15,6 +15,12 @@ export const routes: Routes = [
     title: 'Detalle del evento | GFTickets',
   },
   {
+    path: 'compra/:eventoId',
+    loadComponent: () =>
+      import('./components/purchase/purchase').then((module) => module.PurchaseComponent),
+    title: 'Comprar entrada | GFTickets',
+  },
+  {
     path: '',
     redirectTo: 'eventos',
     pathMatch: 'full',

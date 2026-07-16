@@ -23,6 +23,14 @@ export const routes: Routes = [
     title: 'Crear una cuenta | GFTickets',
   },
   {
+    path: 'mi-perfil',
+    loadComponent: () =>
+      import('./components/user-profile/user-profile').then(
+        (module) => module.UserProfileComponent,
+      ),
+    title: 'Mis datos | GFTickets',
+  },
+  {
     path: '',
     redirectTo: 'eventos',
     pathMatch: 'full',

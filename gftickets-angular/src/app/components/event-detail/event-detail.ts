@@ -32,6 +32,9 @@ export class EventDetailComponent implements OnInit {
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly imagenNoDisponible = signal(false);
+  protected readonly descripcionExpandida = signal(false);
+
+  private readonly limiteDescripcion = 150;
 
   private eventoId: number | null = null;
 
@@ -62,11 +65,28 @@ export class EventDetailComponent implements OnInit {
     return `${hora.hour.toString().padStart(2, '0')}:${hora.minute.toString().padStart(2, '0')}`;
   }
 
+  protected esDescripcionLarga(descripcion: string): boolean {
+    return descripcion.length > this.limiteDescripcion;
+  }
+
+  protected descripcionMostrada(descripcion: string): string {
+    if (this.descripcionExpandida() || !this.esDescripcionLarga(descripcion)) {
+      return descripcion;
+    }
+
+    return `${descripcion.slice(0, this.limiteDescripcion).trimEnd()}…`;
+  }
+
+  protected alternarDescripcion(): void {
+    this.descripcionExpandida.update((expandida) => !expandida);
+  }
+
   private cargarEvento(id: number): void {
     this.cargando.set(true);
     this.error.set(null);
     this.evento.set(null);
     this.imagenNoDisponible.set(false);
+    this.descripcionExpandida.set(false);
 
     this.eventService
       .findEventById(id)

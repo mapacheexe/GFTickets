@@ -27,6 +27,7 @@
           <img
             [src]="eventoActual.imagenUrl"
             [alt]="'Imagen de ' + eventoActual.nombre"
+            loading="lazy"
             (error)="imagenNoDisponible.set(true)"
           />
         } @else {
@@ -77,6 +78,12 @@
           </div>
           <span class="availability">Disponible</span>
         </div>
+
+        @if (eventoActual.precioMinimo >= 0) {
+          <a class="purchase-link" [routerLink]="['/compra', eventoActual.id]">
+            Comprar entrada
+          </a>
+        }
       </div>
     </article>
   }

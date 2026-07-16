@@ -112,7 +112,7 @@ export class PurchaseComponent implements OnInit {
     });
   }
 
-  protected submit(): void {
+  protected createPurchase(): void {
     this.error.set(null);
     this.success.set(null);
 
@@ -139,7 +139,7 @@ export class PurchaseComponent implements OnInit {
 
     this.submitting.set(true);
     this.purchaseService
-      .registerPurchase(purchase)
+      .createPurchase(purchase)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.submitting.set(false)),

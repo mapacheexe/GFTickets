@@ -24,7 +24,7 @@ describe('PurchaseService', () => {
     const service = TestBed.inject(PurchaseService);
     const http = TestBed.inject(HttpTestingController);
 
-    service.registerPurchase(purchase).subscribe((response) => {
+    service.createPurchase(purchase).subscribe((response) => {
       expect(response.status).toBe('OK');
     });
 

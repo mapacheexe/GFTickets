@@ -46,7 +46,7 @@
           <div class="message error" role="alert">{{ errorMessage }}</div>
         }
 
-        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <form [formGroup]="form" (ngSubmit)="createPurchase()" novalidate>
           <div class="field full-width">
             <label for="nombreTitular">Titular de la tarjeta</label>
             <input

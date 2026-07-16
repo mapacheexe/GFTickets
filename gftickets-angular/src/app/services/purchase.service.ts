@@ -9,7 +9,7 @@ export class PurchaseService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = 'http://teacherbanking.us-east-1.elasticbeanstalk.com/pasarela/compra';
 
-  registerPurchase(compra: CompraEntrada): Observable<RespuestaCompra> {
+  createPurchase(compra: CompraEntrada): Observable<RespuestaCompra> {
     return this.http.post<RespuestaCompra>(this.apiUrl, compra);
   }
 }

@@ -84,4 +84,17 @@ describe('EventCardComponent', () => {
       fixture.nativeElement.textContent,
     ).toContain('Imagen no disponible');
   });
+
+  it('should show price unavailable when minimum price is negative', () => {
+  fixture.componentRef.setInput('evento', {
+    ...evento,
+    precioMinimo: -1,
+  });
+
+  fixture.detectChanges();
+
+  expect(
+    fixture.nativeElement.textContent,
+  ).toContain('Precio no disponible');
+});
 });

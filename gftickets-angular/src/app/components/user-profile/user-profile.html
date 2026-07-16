@@ -1,0 +1,52 @@
+<main class="profile-page">
+  @if (loading()) {
+    <section class="state-card" role="status" aria-live="polite">
+      <span class="spinner" aria-hidden="true"></span>
+      <h1>Cargando tus datos</h1>
+    </section>
+  } @else if (error(); as errorMessage) {
+    <section class="state-card error" role="alert">
+      <h1>No se pudo mostrar tu perfil</h1>
+      <p>{{ errorMessage }}</p>
+      <button type="button" (click)="retry()">Reintentar</button>
+    </section>
+  } @else if (user(); as currentUser) {
+    <article class="profile-card">
+      <header>
+        <div class="avatar" aria-hidden="true">
+          {{ currentUser.nombre.charAt(0) }}{{ currentUser.apellidos.charAt(0) }}
+        </div>
+        <div>
+          <p class="eyebrow">Mis datos</p>
+          <h1>{{ currentUser.nombre }} {{ currentUser.apellidos }}</h1>
+          <p class="username">&#64;{{ currentUser.nombreUsuario }}</p>
+        </div>
+      </header>
+
+      <dl>
+        <div>
+          <dt>Nombre</dt>
+          <dd>{{ currentUser.nombre }}</dd>
+        </div>
+        <div>
+          <dt>Apellidos</dt>
+          <dd>{{ currentUser.apellidos }}</dd>
+        </div>
+        <div>
+          <dt>Correo electrónico</dt>
+          <dd>{{ currentUser.email }}</dd>
+        </div>
+        <div>
+          <dt>Nombre de usuario</dt>
+          <dd>{{ currentUser.nombreUsuario }}</dd>
+        </div>
+      </dl>
+    </article>
+  } @else {
+    <section class="state-card empty">
+      <h1>Todavía no hay datos de usuario</h1>
+      <p>Crea una cuenta para consultar aquí tu información.</p>
+      <a routerLink="/registro">Crear una cuenta</a>
+    </section>
+  }
+</main>

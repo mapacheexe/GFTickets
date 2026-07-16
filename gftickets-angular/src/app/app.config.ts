@@ -5,6 +5,8 @@ import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
+import { MockUserService } from './services/mock-user.service';
+import { USER_SERVICE } from './services/user.service';
 
 registerLocaleData(localeEs);
 
@@ -13,6 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(),
     { provide: LOCALE_ID, useValue: 'es-ES' },
+    { provide: USER_SERVICE, useClass: MockUserService },
     provideRouter(routes),
   ],
 };

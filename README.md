@@ -143,7 +143,6 @@ Además de las validaciones automáticas, cada Pull Request debe cumplir los sig
 | Diseño y responsabilidad de componentes | Cada componente tiene una única responsabilidad, mantiene un tamaño razonable y favorece la reutilización. Se evita concentrar demasiada lógica en un único componente. |
 | Limpieza del código | No existen imports sin utilizar, variables o funciones sin uso, código comentado innecesario, `console.log`, `debugger` ni código obsoleto. |
 | Gestión del estado | El estado se mantiene en el nivel adecuado, evitando duplicidades, estados derivados innecesarios y sincronizaciones manuales que puedan provocar inconsistencias. |
-| Rendimiento de la aplicación | Se evitan renderizados innecesarios y se utilizan técnicas de optimización como `memo`, `useMemo`, `useCallback`, `OnPush`, `trackBy`, Lazy Loading o Code Splitting cuando aportan valor. |
 | Gestión de errores | Las operaciones asíncronas y llamadas HTTP gestionan correctamente los errores y muestran mensajes adecuados al usuario sin exponer información interna. |
 | Accesibilidad (A11y) | Se utiliza HTML semántico, atributos ARIA cuando son necesarios, navegación mediante teclado, textos alternativos y contraste adecuado. |
 | Seguridad | Se validan entradas del usuario, se evita el uso inseguro de `innerHTML` o `dangerouslySetInnerHTML` sin sanitización y no se expone información sensible. |

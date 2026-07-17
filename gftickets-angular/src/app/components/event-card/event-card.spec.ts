@@ -61,8 +61,8 @@ describe('EventCardComponent', () => {
   });
 
   it('debe mostrar solo la ciudad cuando el recinto no está disponible', () => {
-    fixture.componentRef.setInput('evento', {
-      ...evento,
+    fixture.componentRef.setInput('event', {
+      ...event,
       nombreRecinto: '',
     });
     fixture.detectChanges();

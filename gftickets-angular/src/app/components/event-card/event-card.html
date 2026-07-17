@@ -37,7 +37,7 @@
       </p>
 
       <p>
-        <span aria-hidden="true">📍</span>
+        {{ event().nombreRecinto || 'Recinto no disponible' }},
         {{ event().localidad }}
       </p>
     </div>

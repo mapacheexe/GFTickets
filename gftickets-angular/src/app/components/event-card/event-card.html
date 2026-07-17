@@ -1,4 +1,7 @@
-<article class="event-card">
+<article 
+  class="event-card"
+  [routerLink]="['/eventos', event().id]"
+>
 
   <div class="event-image">
 
@@ -55,10 +58,6 @@
           {{ event().precioMinimo | currency:'EUR':'symbol':'1.0-0' }}
         }
       </strong>
-
-      <a [routerLink]="['/eventos', event().id]">
-        Ver detalle
-      </a>
     </footer>
   </div>
 

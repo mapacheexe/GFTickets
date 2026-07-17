@@ -15,13 +15,13 @@
   transition:
     transform 180ms ease,
     box-shadow 180ms ease;
+  cursor: pointer;
 }
 
 .event-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 30px 60px rgb(15 23 42 / 12%);
 }
-
 
 /* Imagen */
 

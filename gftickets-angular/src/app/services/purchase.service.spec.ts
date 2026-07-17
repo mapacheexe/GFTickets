@@ -109,7 +109,7 @@ describe('PurchaseService', () => {
     ['400.0008', 'El nombre del titular no tiene un formato válido.'],
     ['500.0001', 'La pasarela de pago no está disponible temporalmente.'],
   ])('traduce el código %s a un mensaje comprensible', (code, expectedMessage) => {
-    expect(service.interpretResponse({ status: 'KO', message: [code] })).toEqual({
+    expect(service.validatePurchase({ status: 'KO', message: [code] })).toEqual({
       successful: false,
       code,
       message: expectedMessage,
@@ -117,7 +117,7 @@ describe('PurchaseService', () => {
   });
 
   it('reconoce la respuesta correcta de la pasarela', () => {
-    expect(service.interpretResponse({ status: 'OK', message: ['200.0001'] })).toEqual({
+    expect(service.validatePurchase({ status: 'OK', message: ['200.0001'] })).toEqual({
       successful: true,
       code: '200.0001',
       message: 'Compra registrada correctamente.',

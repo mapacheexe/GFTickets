@@ -214,7 +214,7 @@ describe('PurchaseComponent', () => {
           provide: PurchaseService,
           useValue: {
             buyTickets,
-            interpretResponse: (response: RespuestaCompra) => ({
+            validatePurchase: (response: RespuestaCompra) => ({
               successful: response.status !== 'KO' && !response.error,
               message:
                 response.message?.join(' ') || response.error || 'Compra registrada correctamente.',

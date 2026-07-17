@@ -41,14 +41,14 @@ export class PurchaseService {
 
     return this.http.post<RespuestaCompra>(this.apiUrl, request).pipe(
       tap((response) => {
-        if (this.interpretResponse(response).successful) {
+        if (this.validatePurchase(response).successful) {
           this.purchaseRepository.save(this.createTransaction(userEmail, invoice));
         }
       }),
     );
   }
 
-  interpretResponse(response: RespuestaCompra): PurchaseResult {
+  validatePurchase(response: RespuestaCompra): PurchaseResult {
     const responseText = [response.error, ...(response.message ?? []), response.infoadicional]
       .filter((value): value is string => Boolean(value))
       .join(' ');

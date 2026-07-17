@@ -223,7 +223,7 @@ export class PurchaseComponent implements OnInit {
   }
 
   private handleResponse(response: RespuestaCompra): void {
-    const result = this.purchaseService.interpretResponse(response);
+    const result = this.purchaseService.validatePurchase(response);
 
     if (!result.successful) {
       this.error.set(result.message);

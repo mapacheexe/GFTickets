@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { EventDetailsComponent } from './EventDetailsComponent';
 import { findEventById } from '../services/EventsService';
+import userEvent from '@testing-library/user-event';
 
 vi.mock('../services/EventsService', () => ({
   findEventById: vi.fn(),
@@ -142,4 +143,30 @@ describe('EventDetailsComponent', () => {
     const botonLeerMas = screen.queryByTestId('toggle-descripcion-btn');
     expect(botonLeerMas).not.toBeInTheDocument();
   });
+
+test('10. Al hacer clic en "Ver más", se despliega el texto completo y cambia el botón a "Ver menos"', async () => {
+  const descripcionLarga =
+    'Esta es una descripción larga de prueba que tiene que superar el límite fijado de ciento cincuenta caracteres para forzar a que aparezca el botón de ver más y comprobar la funcionalidad. ' +
+    'Lorem Ipsum '.repeat(30);
+
+  const eventoConDescripcionLarga = { ...mockEvento, descripcion: descripcionLarga };
+  vi.mocked(findEventById).mockResolvedValue(eventoConDescripcionLarga);
+
+  render(<EventDetailsComponent />);
+
+  await waitFor(() => {
+    expect(screen.queryByTestId('cargando-detalle')).not.toBeInTheDocument();
+  });
+
+  const botonToggle = screen.getByTestId('toggle-descripcion-btn');
+  expect(botonToggle).toHaveTextContent('Ver más');
+
+  const parrafo = botonToggle.closest('p');
+  expect(parrafo.textContent).not.toContain(descripcionLarga.trim());
+
+  await userEvent.click(botonToggle);
+
+  expect(parrafo.textContent).toContain(descripcionLarga.trim());
+  expect(botonToggle).toHaveTextContent('Ver menos');
+});
 });

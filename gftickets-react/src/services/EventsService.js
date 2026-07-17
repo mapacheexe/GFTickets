@@ -18,3 +18,17 @@ export const findEventById = async (id) => {
 
   return await response.json();
 }
+
+export const createEvent = async (eventData) => {
+  const response = await fetch(import.meta.env.VITE_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(eventData),
+  });
+  if (!response.ok) {
+    throw new Error('No se pudo crear el evento');
+  }
+  return await response.json();
+};

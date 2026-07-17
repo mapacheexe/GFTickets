@@ -1,4 +1,4 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -20,10 +20,13 @@ import {
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { CompraEntrada, RespuestaCompra } from '../../models/compra-entrada.model';
+import { RespuestaCompra } from '../../models/compra-entrada.model';
+import { CreditCard } from '../../models/credit-card.model';
 import { Evento } from '../../models/evento.model';
+import { Invoice } from '../../models/invoice.model';
 import { EventService } from '../../services/event.service';
 import { PurchaseService } from '../../services/purchase.service';
+import { USER_SERVICE } from '../../services/user.service';
 
 function validCardNumber(control: AbstractControl): ValidationErrors | null {
   const value = String(control.value).trim();
@@ -51,7 +54,7 @@ function validExpiryDate(control: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-purchase',
-  imports: [CurrencyPipe, ReactiveFormsModule, RouterLink],
+  imports: [CurrencyPipe, DatePipe, ReactiveFormsModule, RouterLink],
   templateUrl: './purchase.html',
   styleUrl: './purchase.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,6 +63,7 @@ export class PurchaseComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly eventService = inject(EventService);
   private readonly purchaseService = inject(PurchaseService);
+  private readonly userService = inject(USER_SERVICE);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly event = signal<Evento | null>(null);
@@ -67,6 +71,7 @@ export class PurchaseComponent implements OnInit {
   protected readonly submitting = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly success = signal<string | null>(null);
+  private readonly currentUserEmail = signal<string | null>(null);
 
   protected readonly form = new FormGroup(
     {
@@ -94,11 +99,23 @@ export class PurchaseComponent implements OnInit {
         nonNullable: true,
         validators: [Validators.required],
       }),
+      ticketQuantity: new FormControl(1, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)],
+      }),
     },
     { validators: validExpiryDate },
   );
 
   ngOnInit(): void {
+    this.userService
+      .getCurrentUser()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (user) => this.currentUserEmail.set(user?.email ?? null),
+        error: () => this.currentUserEmail.set(null),
+      });
+
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const eventId = Number(params.get('eventoId'));
 
@@ -113,12 +130,22 @@ export class PurchaseComponent implements OnInit {
   }
 
   protected createPurchase(): void {
+    if (this.submitting()) {
+      return;
+    }
+
     this.error.set(null);
     this.success.set(null);
 
     const currentEvent = this.event();
+    const userEmail = this.currentUserEmail();
     if (this.form.invalid || currentEvent === null) {
       this.form.markAllAsTouched();
+      return;
+    }
+
+    if (userEmail === null) {
+      this.error.set('Debes acceder a tu cuenta antes de registrar una compra.');
       return;
     }
 
@@ -128,18 +155,28 @@ export class PurchaseComponent implements OnInit {
     }
 
     const values = this.form.getRawValue();
-    const purchase: CompraEntrada = {
-      ...values,
-      nombreTitular: values.nombreTitular.trim(),
-      numeroTarjeta: values.numeroTarjeta.replace(/\D/g, ''),
-      mesCaducidad: values.mesCaducidad.padStart(2, '0'),
-      concepto: `Entrada para ${currentEvent.nombre}`,
-      cantidad: currentEvent.precioMinimo.toFixed(2),
+    const card: CreditCard = {
+      cardholderName: values.nombreTitular.trim(),
+      cardNumber: values.numeroTarjeta.replace(/\D/g, ''),
+      expiryMonth: values.mesCaducidad.padStart(2, '0'),
+      expiryYear: values.yearCaducidad,
+      securityCode: values.cvv,
+      issuer: values.emisor,
+    };
+    const invoice: Invoice = {
+      eventId: currentEvent.id,
+      eventName: currentEvent.nombre,
+      eventDate: currentEvent.fechaEvento,
+      venueName: currentEvent.nombreRecinto,
+      concept: `${values.ticketQuantity} entrada(s) para ${currentEvent.nombre}`,
+      ticketQuantity: values.ticketQuantity,
+      unitPrice: currentEvent.precioMinimo,
+      totalAmount: this.totalAmount(),
     };
 
     this.submitting.set(true);
     this.purchaseService
-      .createPurchase(purchase)
+      .buyTickets(userEmail, card, invoice)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.submitting.set(false)),
@@ -154,6 +191,13 @@ export class PurchaseComponent implements OnInit {
           );
         },
       });
+  }
+
+  protected totalAmount(): number {
+    const unitPrice = this.event()?.precioMinimo ?? 0;
+    const quantity = this.form.controls.ticketQuantity.value;
+
+    return Number.isInteger(quantity) && quantity > 0 ? unitPrice * quantity : 0;
   }
 
   private loadEvent(eventId: number): void {
@@ -179,16 +223,14 @@ export class PurchaseComponent implements OnInit {
   }
 
   private handleResponse(response: RespuestaCompra): void {
-    if (response.error || response.status?.toUpperCase() === 'KO') {
-      this.error.set(
-        response.message?.join(' ') || response.error || 'La pasarela ha rechazado la compra.',
-      );
+    const result = this.purchaseService.interpretResponse(response);
+
+    if (!result.successful) {
+      this.error.set(result.message);
       return;
     }
 
-    this.success.set(
-      response.infoadicional || response.message?.join(' ') || 'Compra registrada correctamente.',
-    );
-    this.form.reset();
+    this.success.set(result.message);
+    this.form.reset({ ticketQuantity: 1 });
   }
 }

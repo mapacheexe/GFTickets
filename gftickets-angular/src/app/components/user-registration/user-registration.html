@@ -21,7 +21,13 @@
       <div class="form-grid">
         <div class="field">
           <label for="nombre">Nombre</label>
-          <input id="nombre" type="text" formControlName="nombre" autocomplete="given-name" />
+          <input
+            id="nombre"
+            type="text"
+            formControlName="nombre"
+            autocomplete="given-name"
+            required
+          />
           @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
             <small>Introduce tu nombre.</small>
           }
@@ -34,6 +40,7 @@
             type="text"
             formControlName="apellidos"
             autocomplete="family-name"
+            required
           />
           @if (form.controls.apellidos.touched && form.controls.apellidos.invalid) {
             <small>Introduce tus apellidos.</small>
@@ -42,7 +49,7 @@
 
         <div class="field full-width">
           <label for="email">Correo electrónico</label>
-          <input id="email" type="email" formControlName="email" autocomplete="email" />
+          <input id="email" type="email" formControlName="email" autocomplete="email" required />
           @if (form.controls.email.touched && form.controls.email.invalid) {
             <small>Introduce un correo electrónico válido.</small>
           }
@@ -55,6 +62,7 @@
             type="text"
             formControlName="nombreUsuario"
             autocomplete="username"
+            required
           />
           @if (form.controls.nombreUsuario.touched && form.controls.nombreUsuario.invalid) {
             <small>Usa entre 3 y 30 letras, números, puntos, guiones o guiones bajos.</small>
@@ -68,6 +76,7 @@
             type="password"
             formControlName="password"
             autocomplete="new-password"
+            required
           />
           @if (form.controls.password.touched && form.controls.password.invalid) {
             <small>Debe tener al menos 8 caracteres.</small>
@@ -81,8 +90,16 @@
             type="password"
             formControlName="passwordConfirmation"
             autocomplete="new-password"
+            required
           />
-          @if (form.controls.passwordConfirmation.touched && form.hasError('passwordsMismatch')) {
+          @if (
+            form.controls.passwordConfirmation.touched &&
+            form.controls.passwordConfirmation.hasError('required')
+          ) {
+            <small>Repite la contraseña.</small>
+          } @else if (
+            form.controls.passwordConfirmation.touched && form.hasError('passwordsMismatch')
+          ) {
             <small>Las contraseñas no coinciden.</small>
           }
         </div>

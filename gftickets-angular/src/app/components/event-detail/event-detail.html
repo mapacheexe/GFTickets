@@ -42,7 +42,20 @@
       <div class="event-content">
         <p class="eyebrow">Evento destacado</p>
         <h1>{{ eventoActual.nombre }}</h1>
-        <p class="description">{{ eventoActual.descripcion }}</p>
+        <p id="event-description" class="description">
+          {{ descripcionMostrada(eventoActual.descripcion) }}
+        </p>
+        @if (esDescripcionLarga(eventoActual.descripcion)) {
+          <button
+            type="button"
+            class="description-toggle"
+            aria-controls="event-description"
+            [attr.aria-expanded]="descripcionExpandida()"
+            (click)="alternarDescripcion()"
+          >
+            {{ descripcionExpandida() ? 'Ver menos' : 'Ver más' }}
+          </button>
+        }
 
         <dl class="event-data">
           <div>

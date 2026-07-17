@@ -12,6 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
+import { EVENT_DESCRIPTION_PREVIEW_LIMIT } from '../../constants/event.constants';
 import { Evento } from '../../models/evento.model';
 import { HoraEvento } from '../../models/hora-evento.model';
 import { EventService } from '../../services/event.service';
@@ -32,6 +33,7 @@ export class EventDetailComponent implements OnInit {
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly imagenNoDisponible = signal(false);
+  protected readonly descripcionExpandida = signal(false);
 
   private eventoId: number | null = null;
 
@@ -62,11 +64,28 @@ export class EventDetailComponent implements OnInit {
     return `${hora.hour.toString().padStart(2, '0')}:${hora.minute.toString().padStart(2, '0')}`;
   }
 
+  protected esDescripcionLarga(descripcion: string): boolean {
+    return descripcion.length > EVENT_DESCRIPTION_PREVIEW_LIMIT;
+  }
+
+  protected descripcionMostrada(descripcion: string): string {
+    if (this.descripcionExpandida() || !this.esDescripcionLarga(descripcion)) {
+      return descripcion;
+    }
+
+    return `${descripcion.slice(0, EVENT_DESCRIPTION_PREVIEW_LIMIT).trimEnd()}…`;
+  }
+
+  protected alternarDescripcion(): void {
+    this.descripcionExpandida.update((expandida) => !expandida);
+  }
+
   private cargarEvento(id: number): void {
     this.cargando.set(true);
     this.error.set(null);
     this.evento.set(null);
     this.imagenNoDisponible.set(false);
+    this.descripcionExpandida.set(false);
 
     this.eventService
       .findEventById(id)

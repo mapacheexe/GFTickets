@@ -50,13 +50,13 @@ export class EventDetailComponent implements OnInit {
       }
 
       this.eventoId = id;
-      this.cargarEvento(id);
+      this.loadEvent(id);
     });
   }
 
   protected retry(): void {
     if (this.eventoId !== null) {
-      this.cargarEvento(this.eventoId);
+      this.loadEvent(this.eventoId);
     }
   }
 
@@ -79,7 +79,7 @@ export class EventDetailComponent implements OnInit {
     this.expandedDescription.update((expanded) => !expanded);
   }
 
-  private cargarEvento(id: number): void {
+  private loadEvent(id: number): void {
     this.isLoading.set(true);
     this.error.set(null);
     this.event.set(null);

@@ -4,7 +4,7 @@
     Volver a eventos
   </a>
 
-  @if (cargando()) {
+  @if (isLoading()) {
     <section class="state-card loading" role="status" aria-live="polite">
       <span class="spinner" aria-hidden="true"></span>
       <h1>Cargando evento</h1>
@@ -16,19 +16,19 @@
       <h1>No se pudo mostrar el evento</h1>
       <p>{{ mensajeError }}</p>
       <div class="state-actions">
-        <button type="button" (click)="reintentar()">Reintentar</button>
+        <button type="button" (click)="retry()">Reintentar</button>
         <a routerLink="/eventos">Ver todos los eventos</a>
       </div>
     </section>
-  } @else if (evento(); as eventoActual) {
+  } @else if (event(); as eventoActual) {
     <article class="event-card">
       <div class="event-image">
-        @if (eventoActual.imagenUrl && !imagenNoDisponible()) {
+        @if (eventoActual.imagenUrl && isImageAvailable()) {
           <img
             [src]="eventoActual.imagenUrl"
             [alt]="'Imagen de ' + eventoActual.nombre"
             loading="lazy"
-            (error)="imagenNoDisponible.set(true)"
+            (error)="isImageAvailable.set(true)"
           />
         } @else {
           <div class="image-placeholder" role="img" aria-label="Imagen no disponible">
@@ -45,15 +45,15 @@
         <p id="event-description" class="description">
           {{ descripcionMostrada(eventoActual.descripcion) }}
         </p>
-        @if (esDescripcionLarga(eventoActual.descripcion)) {
+        @if (isLongerThanPreviewLimit(eventoActual.descripcion)) {
           <button
             type="button"
             class="description-toggle"
             aria-controls="event-description"
-            [attr.aria-expanded]="descripcionExpandida()"
-            (click)="alternarDescripcion()"
+            [attr.aria-expanded]="expandedDescription()"
+            (click)="alternateDescrition()"
           >
-            {{ descripcionExpandida() ? 'Ver menos' : 'Ver más' }}
+            {{ expandedDescription() ? 'Ver menos' : 'Ver más' }}
           </button>
         }
 
@@ -64,7 +64,7 @@
           </div>
           <div>
             <dt>Hora</dt>
-            <dd>{{ horaCorta(eventoActual.horaEvento) }}</dd>
+            <dd>{{ shortFormatHour(eventoActual.horaEvento) }}</dd>
           </div>
           <div>
             <dt>Recinto</dt>
@@ -81,7 +81,11 @@
             <span class="price-label">Precio de las entradas</span>
             @if (eventoActual.precioMaximo === 0) {
               <strong>Entrada gratuita</strong>
-            } @else {
+            }
+            @else if (eventoActual.precioMinimo < 0 || eventoActual.precioMaximo < 0) {
+              <strong>Precio no disponible</strong>
+            }
+            @else {
               <strong>
                 {{ eventoActual.precioMinimo | currency: 'EUR' : 'symbol' : '1.2-2' }}
                 –

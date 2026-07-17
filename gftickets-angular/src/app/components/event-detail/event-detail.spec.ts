@@ -165,4 +165,11 @@ describe('EventDetailComponent', () => {
       evento.descripcion,
     );
   });
+
+  it('debe mostrar no disponible cuando el precio es negativo', async () => {
+    await configurarTest(of({ ...evento, precioMinimo: -1, precioMaximo: -1 }));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Precio no disponible');
+  });
 });

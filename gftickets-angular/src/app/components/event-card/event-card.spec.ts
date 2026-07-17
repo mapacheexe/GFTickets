@@ -105,4 +105,26 @@ describe('EventCardComponent', () => {
       fixture.nativeElement.textContent,
     ).toContain('Imagen no disponible');
   });
+
+  it('should show "Entrada gratuita" when price is 0', () => {
+    fixture.componentRef.setInput('event', {
+      ...event,
+      precioMinimo: 0,
+      precioMaximo: 0,
+    });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Entrada gratuita');
+  });
+
+  it('should show "Precio no disponible" when price is negative', () => {
+    fixture.componentRef.setInput('event', {
+      ...event,
+      precioMinimo: -1,
+      precioMaximo: -1,
+    });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Precio no disponible');
+  });
 });

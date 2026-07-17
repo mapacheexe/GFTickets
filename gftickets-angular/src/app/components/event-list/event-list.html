@@ -9,7 +9,7 @@
     </p>
   </header>
 
-  @if (cargando()) {
+  @if (isLoading()) {
     <section class="state-card" role="status" aria-live="polite">
       <span class="spinner"></span>
 
@@ -31,7 +31,7 @@
       </button>
     </section>
   }
-  @else if (eventos().length === 0) {
+  @else if (events().length === 0) {
     <section class="state-card">
       <span class="state-icon">♪</span>
 
@@ -42,8 +42,8 @@
   }
   @else {
     <section class="events-grid" aria-label="Listado de eventos">
-      @for (evento of eventos(); track evento.id) {
-        <app-event-card [evento]="evento" />
+      @for (evento of events(); track evento.id) {
+        <app-event-card [event]="evento" />
       }
     </section>
   }

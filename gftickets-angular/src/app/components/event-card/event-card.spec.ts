@@ -8,7 +8,7 @@ describe('EventCardComponent', () => {
   let fixture: ComponentFixture<EventCardComponent>;
   let component: EventCardComponent;
 
-  const evento: Evento = {
+  const event: Evento = {
     id: 7,
     nombre: 'Anochecer Sinfónico',
     descripcion: 'Concierto al aire libre.',
@@ -36,7 +36,7 @@ describe('EventCardComponent', () => {
     fixture = TestBed.createComponent(EventCardComponent);
     component = fixture.componentInstance;
 
-    fixture.componentRef.setInput('evento', evento);
+    fixture.componentRef.setInput('event', event);
     fixture.detectChanges();
   });
 
@@ -57,8 +57,8 @@ describe('EventCardComponent', () => {
   });
 
   it('should show placeholder when image url is missing', () => {
-    fixture.componentRef.setInput('evento', {
-      ...evento,
+    fixture.componentRef.setInput('event', {
+      ...event,
       imagenUrl: '',
     });
 

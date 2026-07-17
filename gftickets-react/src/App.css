@@ -1,0 +1,76 @@
+/* Reset global — corrige el borde oscuro que venía del index.css de Vite */
+html, body, #root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  background: #eef1f6;
+  color-scheme: light;
+}
+
+body {
+  display: block;
+  place-items: unset;
+}
+
+.app-shell {
+  min-height: 100dvh;
+  width: 100%;
+  display: block;
+  background: #eef1f6;
+}
+
+.site-header {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 max(1.5rem, calc((100% - 1180px) / 2));
+  border-bottom: 1px solid #1e293b;
+  background: #0f172a;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #f8fafc;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.7rem;
+  padding: 0 0.5rem;
+  border-radius: 0.4rem;
+  color: #ffffff;
+  background: #e11d48;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.site-header nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.site-header nav a {
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.site-header nav a:hover {
+  color: #ffffff;
+  background: rgb(255 255 255 / 8%);
+}

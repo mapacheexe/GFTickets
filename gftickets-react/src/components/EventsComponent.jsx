@@ -6,127 +6,108 @@ import { formatearFecha } from '../utils/dateUtils.js';
 import { EventImage } from './EventImage.jsx';
 
 export const EventsComponent = () => {
-  const [eventos, setEventos] = useState([]);
-  const [cargando, setCargando] = useState(true);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const cargarEventos = async () => {
-      try {
-        setCargando(true);
-        setError(null);
-        const data = await findAllEvents();
-        setEventos(data);
-      } catch (err) {
-        setError('No se pudieron cargar los eventos.' + (err.message || ''));
-      } finally {
-        setCargando(false);
-      }
-    };
+  const loadEvents = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await findAllEvents();
+      setEvents(data);
+    } catch (err) {
+      setError('No se pudieron cargar los eventos.' + (err.message || ''));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    cargarEventos();
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadEvents();
   }, []);
 
-  if (cargando) {
-    return (
-      <div className="catalog-container">
-        <header className="catalog-header">
-          <h1 className="catalog-header__title">GFTickets Back Office</h1>
-        </header>
-        <div className="catalog-loading">
-          <span className="catalog-spinner" aria-hidden="true"></span>
-          <p data-testid="cargando-eventos" className="catalog-empty__text">
-            Cargando eventos...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="catalog-container">
-        <header className="catalog-header">
-          <h1 className="catalog-header__title">GFTickets Back Office</h1>
-        </header>
-        <div className="catalog-empty">
-          <span className="catalog-empty__icon">⚠️</span>
-          <h3 className="catalog-empty__title">Error al cargar eventos</h3>
-          <p data-testid="error-eventos" className="catalog-empty__text">
-            {error}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="catalog-container">
-      <header className="catalog-header">
-        <h1 className="catalog-header__title">GFTickets Back Office</h1>
+    <main className="list-page">
+      <header className="page-header">
+        <p className="eyebrow">Eventos</p>
+        <h1>Descubre próximos eventos</h1>
+        <p className="subtitle">Encuentra conciertos y experiencias disponibles.</p>
       </header>
 
-      {eventos.length === 0 ? (
-        <div className="catalog-empty">
-          <span className="catalog-empty__icon">📅</span>
-          <h3 className="catalog-empty__title">No se encontraron eventos</h3>
-          <p data-testid="no-eventos" className="catalog-empty__text">
-            En este momento no hay conciertos ni espectáculos disponibles en esta categoría.
-          </p>
-        </div>
+      {loading ? (
+        <section className="state-card" role="status" aria-live="polite">
+          <span className="spinner" aria-hidden="true"></span>
+          <h2>Cargando eventos</h2>
+          <p data-testid="cargando-eventos">Estamos preparando la lista.</p>
+        </section>
+      ) : error ? (
+        <section className="state-card" role="alert">
+          <span className="state-icon" aria-hidden="true">!</span>
+          <h2>Error al cargar eventos</h2>
+          <p data-testid="error-eventos">{error}</p>
+          <button type="button" onClick={loadEvents}>Reintentar</button>
+        </section>
+      ) : events.length === 0 ? (
+        <section className="state-card">
+          <span className="state-icon" aria-hidden="true">♪</span>
+          <h2>No hay eventos disponibles</h2>
+          <p data-testid="no-eventos">Actualmente no existen eventos.</p>
+        </section>
       ) : (
-        <div className="catalog-grid">
-          {eventos.map((evento) => (
+        <section className="events-grid" aria-label="Listado de eventos">
+          {events.map((ev) => (
             <article
-              className="catalog-card"
-              key={evento.id}
-              onClick={() => navigate(`/eventos/${evento.id}`)}
+              className="event-card"
+              key={ev.id}
+              onClick={() => navigate(`/eventos/${ev.id}`)}
               style={{ cursor: 'pointer' }}
             >
-              <div className="catalog-card__media">
-                <EventImage src={evento.imagenUrl} alt={evento.nombre} />
-                <span className="catalog-card__tag">{evento.genero}</span>
+              <div className="event-image">
+                <EventImage
+                  src={ev.imagenUrl}
+                  alt={ev.nombre}
+                  className="event-img"
+                  fallbackClassName="image-placeholder"
+                />
+                <span className="genre">{ev.genero}</span>
               </div>
 
-              <div className="catalog-card__body">
-                <div className="catalog-card__meta">
-                  <span>{evento.localidad}</span> • {evento.nombreRecinto}
+              <div className="event-content">
+                <h2 title={ev.nombre}>{ev.nombre}</h2>
+
+                <div className="event-info">
+                  <p>
+                    <span aria-hidden="true">📅</span> {formatearFecha(ev.fechaEvento)}
+                    {' · '}
+                    <span aria-hidden="true">🕒</span> {ev.horaEvento.substring(0, 5)}h
+                  </p>
+                  <p>
+                    <span aria-hidden="true">📍</span>
+                    <span>{ev.localidad}</span>
+                    {ev.nombreRecinto && <> · {ev.nombreRecinto}</>}
+                  </p>
                 </div>
 
-                <h3 className="catalog-card__title" title={evento.nombre}>
-                  {evento.nombre}
-                </h3>
-
-                <div className="catalog-card__schedule">
-                  <span>📅 {formatearFecha(evento.fechaEvento)}</span>
-                  <span>🕒 {evento.horaEvento.substring(0, 5)}h</span>
-                </div>
-
-                <div className="catalog-card__footer">
-                  <div className="catalog-card__price">
-                    {evento.precioMinimo < 0 ? (
-                      <span className="catalog-card__price-val" data-testid="precios-no-disponibles">
-                        Precios no disponibles
-                      </span>
-                    ) :
-                      evento.precioMinimo === 0 ? (
-                        <span className="catalog-card__price-val" data-testid="entrada-gratuita">
-                          Entrada GRATUITA
-                        </span>
-                      ) : (
-                        <>
-                          <span className="catalog-card__price-label">Desde</span>
-                          <span className="catalog-card__price-val">{evento.precioMinimo}€</span>
-                        </>
-                      )}
-                  </div>
-                </div>
+                <footer>
+                  <strong>
+                    {ev.precioMinimo < 0 ? (
+                      <span data-testid="precios-no-disponibles">Precios no disponibles</span>
+                    ) : ev.precioMinimo === 0 ? (
+                      <span data-testid="entrada-gratuita">Entrada GRATUITA</span>
+                    ) : (
+                      <>Desde <span>{ev.precioMinimo}€</span></>
+                    )}
+                  </strong>
+                  <span className="card-link">Ver detalle</span>
+                </footer>
               </div>
             </article>
           ))}
-        </div>
+        </section>
       )}
-    </div>
+    </main>
   );
 };

@@ -1,284 +1,226 @@
-/* ==========================================================================
-   EventsComponent — Catálogo de conciertos/festivales
-   ========================================================================== */
-
-.catalog-header {
-  display: flex;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.catalog-header__title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-.catalog-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 3rem 0;
-}
-
-.catalog-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(245, 166, 35, 0.2);
-  border-top-color: #f5a623;
-  border-radius: 50%;
-  animation: catalog-spin 0.8s linear infinite;
-}
-
-@keyframes catalog-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.catalog-container {
-  --bg: #0d0d12;
-  --surface: #17171f;
-  --surface-hover: #1e1e29;
-  --border: rgba(255, 255, 255, 0.08);
-  --text-primary: #f5f5f7;
-  --text-secondary: #9a9aa5;
-  --accent: #f5a623;
-  --accent-soft: rgba(245, 166, 35, 0.14);
-
-  max-width: 1280px;
+.list-page {
+  width: min(1180px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 2.5rem 1.5rem;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: var(--bg);
-  color: var(--text-primary);
+  padding: 2rem 0 4rem;
 }
 
-/* ---------- Grid ---------- */
+.list-page .page-header {
+  margin: 0 0 2rem;
+  padding: 1.5rem 1.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.9rem;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+}
 
-.catalog-grid {
+.list-page .eyebrow {
+  display: block;
+  margin: 0 0 0.4rem;
+  color: #e11d48;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.list-page h1 {
+  margin: 0 0 0.5rem;
+  color: #0f172a;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  letter-spacing: -0.02em;
+}
+
+.list-page .subtitle {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* GRID */
+.events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
 }
 
-/* ---------- Card ---------- */
-
-.catalog-card {
+/* CARD */
+.list-page .event-card {
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  height: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.9rem;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
-.catalog-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(245, 166, 35, 0.35);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
+.list-page .event-card:hover {
+  border-color: #fecdd3;
+  box-shadow: 0 4px 14px rgb(225 29 72 / 10%);
 }
 
-.catalog-card__media {
+.list-page .event-image {
   position: relative;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  background: #000;
+  height: 180px;
+  background: #1e293b;
 }
 
-.catalog-card__img {
+.list-page .event-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
 }
 
-.catalog-card:hover .catalog-card__img {
-  transform: scale(1.06);
+.list-page .image-placeholder {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  gap: 0.4rem;
+  color: #94a3b8;
+  text-align: center;
 }
 
-.catalog-card__media::after {
-  content: '';
+.list-page .image-placeholder-icon {
+  font-size: 3rem;
+}
+
+.list-page .image-placeholder-text {
+  font-size: 0.85rem;
+}
+
+.list-page .genre {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.6) 100%);
-  pointer-events: none;
-}
-
-.catalog-card__tag {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  z-index: 1;
-  padding: 0.3rem 0.7rem;
+  top: 0.85rem;
+  left: 0.85rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 0.4rem;
+  background: rgb(15 23 42 / 82%);
+  color: #ffffff;
   font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  color: #111;
-  background: var(--accent);
-  border-radius: 999px;
 }
 
-/* ---------- Body ---------- */
-
-.catalog-card__body {
+.list-page .event-content {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 1.1rem 1.25rem 1.25rem;
   flex: 1;
+  padding: 1.1rem 1.25rem;
 }
 
-.catalog-card__meta {
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.catalog-card__meta span {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.catalog-card__title {
-  margin: 0;
-  font-size: 1.15rem;
+.list-page .event-content h2 {
+  margin: 0 0 0.85rem;
+  color: #0f172a;
+  font-size: 1.05rem;
   font-weight: 700;
   line-height: 1.3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.catalog-card__schedule {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin: 0.15rem 0 0.5rem;
+.list-page .event-info {
+  display: grid;
+  gap: 0.4rem;
+  color: #64748b;
+  font-size: 0.88rem;
 }
 
-/* ---------- Footer ---------- */
+.list-page .event-info p {
+  margin: 0;
+}
 
-.catalog-card__footer {
+.list-page footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: auto;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--border);
+  gap: 1rem;
+  margin-top: 1.1rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid #f1f5f9;
 }
 
-.catalog-card__price {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
+.list-page footer strong {
+  color: #0f172a;
+  font-size: 0.95rem;
 }
 
-.catalog-card__price-label {
-  font-size: 0.7rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.catalog-card__price-val {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--accent);
-}
-
-.catalog-card__btn {
-  padding: 0.55rem 1.15rem;
+.list-page .card-link {
+  padding: 0.45rem 0.8rem;
+  border-radius: 0.5rem;
+  color: #e11d48;
+  background: #ffe4e6;
   font-size: 0.85rem;
-  font-weight: 600;
-  color: #111;
-  background: var(--accent);
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
-}
-
-.catalog-card__btn:hover {
-  background: #ffb84d;
-}
-
-.catalog-card__btn:active {
-  transform: scale(0.96);
-}
-
-/* ---------- Empty state ---------- */
-
-.catalog-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 5rem 1.5rem;
-  border: 1px dashed var(--border);
-  border-radius: 16px;
-  background: var(--surface);
-}
-
-.catalog-empty__icon {
-  font-size: 2.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.catalog-empty__title {
-  margin: 0 0 0.4rem;
-  font-size: 1.2rem;
   font-weight: 700;
+  transition: background 150ms ease, color 150ms ease;
 }
 
-.catalog-empty__text {
-  max-width: 420px;
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.5;
+.list-page .event-card:hover .card-link {
+  background: #e11d48;
+  color: #ffffff;
 }
 
-/* ---------- Responsive ---------- */
-
-@media (max-width: 480px) {
-  .catalog-container {
-    padding: 1.5rem 1rem;
-  }
-
-  .catalog-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.catalog-card__img-fallback {
-  width: 100%;
-  height: 100%;
+/* STATES */
+.list-page .state-card {
+  min-height: 320px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  background: var(--surface-hover);
-  color: var(--text-secondary);
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.9rem;
+  background: #ffffff;
+  text-align: center;
 }
 
-.catalog-card__img-fallback-icon {
-  font-size: 1.8rem;
-  opacity: 0.6;
+.list-page .state-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #ffe4e6;
+  color: #be123c;
+  font-weight: 900;
 }
 
-.catalog-card__img-fallback-text {
-  font-size: 0.8rem;
-  font-weight: 500;
+.list-page .state-card button {
+  margin-top: 0.5rem;
+  padding: 0.55rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: #e11d48;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
 }
 
+.list-page .spinner {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 3px solid #e2e8f0;
+  border-top-color: #e11d48;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+  .list-page {
+    width: calc(100% - 1rem);
+  }
+
+  .list-page footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .list-page .card-link {
+    text-align: center;
+  }
+}

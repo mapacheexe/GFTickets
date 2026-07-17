@@ -12,6 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
+import { EVENT_DESCRIPTION_PREVIEW_LIMIT } from '../../constants/event.constants';
 import { Evento } from '../../models/evento.model';
 import { HoraEvento } from '../../models/hora-evento.model';
 import { EventService } from '../../services/event.service';
@@ -33,8 +34,6 @@ export class EventDetailComponent implements OnInit {
   protected readonly error = signal<string | null>(null);
   protected readonly imagenNoDisponible = signal(false);
   protected readonly descripcionExpandida = signal(false);
-
-  private readonly limiteDescripcion = 150;
 
   private eventoId: number | null = null;
 
@@ -66,7 +65,7 @@ export class EventDetailComponent implements OnInit {
   }
 
   protected esDescripcionLarga(descripcion: string): boolean {
-    return descripcion.length > this.limiteDescripcion;
+    return descripcion.length > EVENT_DESCRIPTION_PREVIEW_LIMIT;
   }
 
   protected descripcionMostrada(descripcion: string): string {
@@ -74,7 +73,7 @@ export class EventDetailComponent implements OnInit {
       return descripcion;
     }
 
-    return `${descripcion.slice(0, this.limiteDescripcion).trimEnd()}…`;
+    return `${descripcion.slice(0, EVENT_DESCRIPTION_PREVIEW_LIMIT).trimEnd()}…`;
   }
 
   protected alternarDescripcion(): void {

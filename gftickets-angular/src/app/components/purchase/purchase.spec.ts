@@ -104,6 +104,22 @@ describe('PurchaseComponent', () => {
     );
   });
 
+  it('no permite comprar con la cantidad de entradas vacía', async () => {
+    await createComponent(of(event));
+    setValidCard();
+    const quantityInput = fixture.nativeElement.querySelector(
+      '#ticketQuantity',
+    ) as HTMLInputElement;
+    quantityInput.value = '';
+    quantityInput.dispatchEvent(new Event('input'));
+    submitForm();
+
+    expect(buyTickets).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain(
+      'Introduce una cantidad de entradas mayor que cero.',
+    );
+  });
+
   it('muestra el rechazo comunicado por la pasarela', async () => {
     await createComponent(of(event), of({ status: 'KO', message: ['Tarjeta rechazada.'] }));
     setValidCard();

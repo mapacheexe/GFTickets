@@ -1,5 +1,5 @@
-import { describe, test, expect, vi, afterEach } from 'vitest';
-import { findAllEvents, findEventById } from '../services/EventsService';
+import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import {createEvent, findAllEvents, findEventById } from '../services/EventsService';
 
 describe('EventsService', () => {
   afterEach(() => {
@@ -114,6 +114,72 @@ describe('EventsService', () => {
       });
 
       await expect(findEventById(null)).rejects.toThrow('No se pudo cargar el evento');
+    });
+  });
+
+  describe('createEvent()', () => {
+    const mockApiUrl = 'https://api.miseventos.com/v1/events';
+    const mockEventData = { title: 'Concierto de Rock', date: '2026-08-15' };
+
+    beforeEach(() => {
+      import.meta.env.VITE_API_URL = mockApiUrl;
+      vi.restoreAllMocks();
+    });
+
+    test('1. debería retornar el JSON del servidor si la respuesta es correcta (ok: true)', async () => {
+      const mockResponse = { id: '123', ...mockEventData };
+
+      vi.spyOn(global, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => mockResponse,
+      });
+
+      const result = await createEvent(mockEventData);
+
+      expect(result).toEqual(mockResponse);
+    });
+
+    test('2. debería lanzar un error específico si el servidor responde con un estado incorrecto (ok: false)', async () => {
+      vi.spyOn(global, 'fetch').mockResolvedValue({
+        ok: false,
+        status: 400,
+      });
+
+      await expect(createEvent(mockEventData)).rejects.toThrow('No se pudo crear el evento');
+    });
+
+    test('3. debería configurar correctamente el método, los headers y el body en la petición', async () => {
+      const fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => ({}),
+      });
+
+      await createEvent(mockEventData);
+
+      expect(fetchSpy).toHaveBeenCalledWith(mockApiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mockEventData),
+      });
+    });
+
+    test('4. debería lanzar un SyntaxError si el servidor responde ok pero el cuerpo no es un JSON válido', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => { 
+        throw new SyntaxError('Unexpected token < in JSON at position 0'); 
+      },
+    });
+
+    await expect(createEvent(mockEventData)).rejects.toThrow(SyntaxError);
+  });
+
+    test('5. debería propagar el error nativo si la petición fetch falla por completo (ej. sin internet)', async () => {
+      vi.spyOn(global, 'fetch').mockRejectedValue(new Error('Network Error'));
+
+      await expect(createEvent(mockEventData)).rejects.toThrow('Network Error');
     });
   });
 });

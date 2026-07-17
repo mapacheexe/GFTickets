@@ -8,7 +8,7 @@ describe('EventCardComponent', () => {
   let fixture: ComponentFixture<EventCardComponent>;
   let component: EventCardComponent;
 
-  const evento: Evento = {
+  const event: Evento = {
     id: 7,
     nombre: 'Anochecer Sinfónico',
     descripcion: 'Concierto al aire libre.',
@@ -36,15 +36,15 @@ describe('EventCardComponent', () => {
     fixture = TestBed.createComponent(EventCardComponent);
     component = fixture.componentInstance;
 
-    fixture.componentRef.setInput('evento', evento);
+    fixture.componentRef.setInput('evento', event);
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('debería crearse', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display event information', () => {
+  it('debería mostrar la información del evento', () => {
     const { textContent } = fixture.nativeElement;
 
     expect(textContent).toContain('Anochecer Sinfónico');
@@ -52,13 +52,13 @@ describe('EventCardComponent', () => {
     expect(textContent).toContain('Barcelona');
   });
 
-  it('should show minimum price', () => {
+  it('debería mostrar el precio mínimo', () => {
     expect(fixture.nativeElement.textContent).toContain('15');
   });
 
-  it('should show placeholder when image url is missing', () => {
+  it('debería mostrar el marcador de posición cuando no hay URL de imagen', () => {
     fixture.componentRef.setInput('evento', {
-      ...evento,
+      ...event,
       imagenUrl: '',
     });
 
@@ -69,8 +69,7 @@ describe('EventCardComponent', () => {
     ).toContain('Imagen no disponible');
   });
 
-
-  it('should show placeholder when image loading fails', () => {
+  it('debería mostrar el marcador de posición cuando falla la carga de la imagen', () => {
     fixture.detectChanges();
 
     const image =
@@ -85,16 +84,16 @@ describe('EventCardComponent', () => {
     ).toContain('Imagen no disponible');
   });
 
-  it('should show price unavailable when minimum price is negative', () => {
-  fixture.componentRef.setInput('evento', {
-    ...evento,
-    precioMinimo: -1,
+  it('debería mostrar "Precio no disponible" cuando el precio mínimo es negativo', () => {
+    fixture.componentRef.setInput('evento', {
+      ...event,
+      precioMinimo: -1,
+    });
+
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.textContent,
+    ).toContain('Precio no disponible');
   });
-
-  fixture.detectChanges();
-
-  expect(
-    fixture.nativeElement.textContent,
-  ).toContain('Precio no disponible');
-});
 });

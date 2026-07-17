@@ -22,7 +22,7 @@ describe('EventDetailComponent', () => {
   let fixture: ComponentFixture<EventDetailComponent>;
   let findEventById: ReturnType<typeof vi.fn>;
 
-  const evento: Evento = {
+  const event: Evento = {
     id: 7,
     nombre: 'Anochecer Sinfónico',
     descripcion: 'Concierto al aire libre.',
@@ -62,7 +62,7 @@ describe('EventDetailComponent', () => {
   }
 
   it('debe solicitar y mostrar un evento válido', async () => {
-    await configurarTest(of(evento));
+    await configurarTest(of(event));
     fixture.detectChanges();
 
     expect(findEventById).toHaveBeenCalledWith(7);
@@ -70,14 +70,14 @@ describe('EventDetailComponent', () => {
   });
 
   it('debe visualizar los campos principales del evento', async () => {
-    await configurarTest(of(evento));
+    await configurarTest(of(event));
     fixture.detectChanges();
 
     const contenido = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(contenido).toContain(evento.descripcion);
-    expect(contenido).toContain(evento.genero);
-    expect(contenido).toContain(evento.localidad);
-    expect(contenido).toContain(evento.nombreRecinto);
+    expect(contenido).toContain(event.descripcion);
+    expect(contenido).toContain(event.genero);
+    expect(contenido).toContain(event.localidad);
+    expect(contenido).toContain(event.nombreRecinto);
     expect(contenido).toContain('21:30');
     expect(contenido).toContain('15,00');
     expect(contenido).toContain('45,00');
@@ -111,7 +111,7 @@ describe('EventDetailComponent', () => {
   });
 
   it('debe volver al listado de eventos', async () => {
-    await configurarTest(of(evento));
+    await configurarTest(of(event));
     fixture.detectChanges();
 
     const volver = fixture.nativeElement.querySelector('.back-link') as HTMLAnchorElement;
@@ -122,7 +122,7 @@ describe('EventDetailComponent', () => {
   });
 
   it('debe permitir iniciar la compra del evento mostrado', async () => {
-    await configurarTest(of(evento));
+    await configurarTest(of(event));
     fixture.detectChanges();
 
     const comprar = fixture.nativeElement.querySelector('.purchase-link') as HTMLAnchorElement;
@@ -134,7 +134,7 @@ describe('EventDetailComponent', () => {
 
   it('debe mostrar "Precio no disponible" cuando el precio mínimo es negativo', async () => {
     const eventoSinPrecio: Evento = {
-      ...evento,
+      ...event,
       precioMinimo: -1,
       precioMaximo: 45,
     };

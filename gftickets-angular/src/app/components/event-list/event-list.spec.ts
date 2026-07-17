@@ -1,9 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import {
+  provideHttpClientTesting,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { EventListComponent } from './event-list';
+import { Evento } from '../../models/evento.model';
 
 describe('EventListComponent', () => {
   let fixture: ComponentFixture<EventListComponent>;
@@ -29,14 +33,14 @@ describe('EventListComponent', () => {
     httpTesting.verify();
   });
 
-  it('should load events', () => {
+  it('debería cargar los eventos', () => {
     fixture.detectChanges();
 
     const request = httpTesting.expectOne(apiUrl);
 
     expect(request.request.method).toBe('GET');
 
-    request.flush([
+    const events: Evento[] = [
       {
         id: 1,
         nombre: 'Concierto',
@@ -55,7 +59,9 @@ describe('EventListComponent', () => {
         nombreRecinto: 'Palau',
         imagenUrl: 'image.jpg',
       },
-    ]);
+    ];
+
+    request.flush(events);
 
     fixture.detectChanges();
 
@@ -64,7 +70,7 @@ describe('EventListComponent', () => {
     expect(cards.length).toBe(1);
   });
 
-  it('should show error when loading fails', () => {
+  it('debería mostrar un error cuando falle la carga de los eventos', () => {
     fixture.detectChanges();
 
     const request = httpTesting.expectOne(apiUrl);
@@ -79,32 +85,35 @@ describe('EventListComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent)
-      .toContain('Error al cargar eventos');
+    expect(fixture.nativeElement.textContent).toContain(
+      'Error al cargar eventos',
+    );
   });
 
-  it('should show empty state when no events are available', () => {
+  it('debería mostrar el estado vacío cuando no haya eventos disponibles', () => {
     fixture.detectChanges();
 
     const request = httpTesting.expectOne(apiUrl);
 
     expect(request.request.method).toBe('GET');
 
-    request.flush([]);
+    const events: Evento[] = [];
+
+    request.flush(events);
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent)
-      .toContain('No hay eventos disponibles');
+    expect(fixture.nativeElement.textContent).toContain(
+      'No hay eventos disponibles',
+    );
   });
 
-
-  it('should render all received events without duplicates', () => {
+  it('debería mostrar todos los eventos recibidos sin duplicados', () => {
     fixture.detectChanges();
 
     const request = httpTesting.expectOne(apiUrl);
 
-    request.flush([
+    const events: Evento[] = [
       {
         id: 1,
         nombre: 'Concierto A',
@@ -141,17 +150,17 @@ describe('EventListComponent', () => {
         nombreRecinto: 'Wizink',
         imagenUrl: 'image-b.jpg',
       },
-    ]);
+    ];
+
+    request.flush(events);
 
     fixture.detectChanges();
 
-    const cards =
-      fixture.nativeElement.querySelectorAll('app-event-card');
+    const cards = fixture.nativeElement.querySelectorAll('app-event-card');
 
     expect(cards.length).toBe(2);
 
-    const content =
-      fixture.nativeElement.textContent;
+    const content = fixture.nativeElement.textContent;
 
     expect(content).toContain('Concierto A');
     expect(content).toContain('Concierto B');

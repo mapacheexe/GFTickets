@@ -148,7 +148,7 @@ describe('EventsService', () => {
       await expect(createEvent(mockEventData)).rejects.toThrow('No se pudo crear el evento');
     });
 
-    test('3. debería configurar correctamente el método, los headers y el body en la petición', async () => {
+    test('3. debería usar correctamente el método post, los headers y el body en la petición', async () => {
       const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
         ok: true,
         json: async () => ({}),

@@ -6,26 +6,27 @@ import { formatearFecha } from '../utils/dateUtils.js';
 import { EventImage } from './EventImage.jsx';
 
 export const EventsComponent = () => {
-  const [eventos, setEventos] = useState([]);
-  const [cargando, setCargando] = useState(true);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const cargarEventos = async () => {
+  const loadEvents = async () => {
     try {
-      setCargando(true);
+      setLoading(true);
       setError(null);
       const data = await findAllEvents();
-      setEventos(data);
+      setEvents(data);
     } catch (err) {
       setError('No se pudieron cargar los eventos.' + (err.message || ''));
     } finally {
-      setCargando(false);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    cargarEventos();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadEvents();
   }, []);
 
   return (
@@ -47,9 +48,9 @@ export const EventsComponent = () => {
           <span className="state-icon" aria-hidden="true">!</span>
           <h2>Error al cargar eventos</h2>
           <p data-testid="error-eventos">{error}</p>
-          <button type="button" onClick={cargarEventos}>Reintentar</button>
+          <button type="button" onClick={loadEvents}>Reintentar</button>
         </section>
-      ) : eventos.length === 0 ? (
+      ) : events.length === 0 ? (
         <section className="state-card">
           <span className="state-icon" aria-hidden="true">♪</span>
           <h2>No hay eventos disponibles</h2>
@@ -57,46 +58,46 @@ export const EventsComponent = () => {
         </section>
       ) : (
         <section className="events-grid" aria-label="Listado de eventos">
-          {eventos.map((evento) => (
+          {events.map((ev) => (
             <article
               className="event-card"
-              key={evento.id}
-              onClick={() => navigate(`/eventos/${evento.id}`)}
+              key={ev.id}
+              onClick={() => navigate(`/eventos/${ev.id}`)}
               style={{ cursor: 'pointer' }}
             >
               <div className="event-image">
                 <EventImage
-                  src={evento.imagenUrl}
-                  alt={evento.nombre}
+                  src={ev.imagenUrl}
+                  alt={ev.nombre}
                   className="event-img"
                   fallbackClassName="image-placeholder"
                 />
-                <span className="genre">{evento.genero}</span>
+                <span className="genre">{ev.genero}</span>
               </div>
 
               <div className="event-content">
-                <h2 title={evento.nombre}>{evento.nombre}</h2>
+                <h2 title={ev.nombre}>{ev.nombre}</h2>
 
                 <div className="event-info">
                   <p>
-                    <span aria-hidden="true">📅</span> {formatearFecha(evento.fechaEvento)}
+                    <span aria-hidden="true">📅</span> {formatearFecha(ev.fechaEvento)}
                     {' · '}
-                    <span aria-hidden="true">🕒</span> {evento.horaEvento.substring(0, 5)}h
+                    <span aria-hidden="true">🕒</span> {ev.horaEvento.substring(0, 5)}h
                   </p>
                   <p>
-                    <span aria-hidden="true">📍</span> {evento.localidad}
-                    {evento.nombreRecinto ? ` · ${evento.nombreRecinto}` : ''}
+                    <span aria-hidden="true">📍</span> {ev.localidad}
+                    {ev.nombreRecinto ? ` · ${ev.nombreRecinto}` : ''}
                   </p>
                 </div>
 
                 <footer>
                   <strong>
-                    {evento.precioMinimo < 0 ? (
+                    {ev.precioMinimo < 0 ? (
                       <span data-testid="precios-no-disponibles">Precios no disponibles</span>
-                    ) : evento.precioMinimo === 0 ? (
+                    ) : ev.precioMinimo === 0 ? (
                       <span data-testid="entrada-gratuita">Entrada GRATUITA</span>
                     ) : (
-                      <>Desde {evento.precioMinimo}€</>
+                      <>Desde {ev.precioMinimo}€</>
                     )}
                   </strong>
                   <span className="card-link">Ver detalle</span>

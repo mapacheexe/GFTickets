@@ -2,17 +2,17 @@
 
   <div class="event-image">
 
-    @if (evento().imagenUrl && !imagenNoDisponible()) {
+    @if (event().imagenUrl && isImageAvailable()) {
         <img
-            [src]="evento().imagenUrl"
-            [alt]="'Imagen de ' + evento().nombre"
-            (error)="imagenNoDisponible.set(true)"
+            [src]="event().imagenUrl"
+            [alt]="'Imagen de ' + event().nombre"
+            (error)="isImageAvailable.set(false)"
         />
     } @else {
         <div
             class="image-placeholder"
             role="img"
-            [attr.aria-label]="'Imagen no disponible de ' + evento().nombre"
+            [attr.aria-label]="'Imagen no disponible de ' + event().nombre"
         >
             <span aria-hidden="true">♪</span>
             <p>Imagen no disponible</p>
@@ -20,43 +20,43 @@
     }
 
     <span class="genre">
-      {{ evento().genero }}
+      {{ event().genero }}
     </span>
   </div>
 
 
   <div class="event-content">
     <h2>
-      {{ evento().nombre }}
+      {{ event().nombre }}
     </h2>
 
     <div class="event-info">
       <p>
         <span aria-hidden="true">📅</span>
-        {{ evento().fechaEvento | date:'d MMMM y' }}
+        {{ event().fechaEvento | date:'d MMMM y' }}
       </p>
 
       <p>
         <span aria-hidden="true">📍</span>
-        {{ evento().localidad }}
+        {{ event().localidad }}
       </p>
     </div>
 
     <footer>
       <strong>
-        @if (evento().precioMaximo === 0) {
+        @if (event().precioMaximo === 0) {
           Entrada gratuita
         }
-        @else if (evento().precioMinimo < 0) {
+        @else if (event().precioMinimo < 0) {
           Precio no disponible
         }
         @else {
           Desde
-          {{ evento().precioMinimo | currency:'EUR':'symbol':'1.0-0' }}
+          {{ event().precioMinimo | currency:'EUR':'symbol':'1.0-0' }}
         }
       </strong>
 
-      <a [routerLink]="['/eventos', evento().id]">
+      <a [routerLink]="['/eventos', event().id]">
         Ver detalle
       </a>
     </footer>

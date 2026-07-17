@@ -4,31 +4,31 @@
     Volver a eventos
   </a>
 
-  @if (cargando()) {
+  @if (isLoading()) {
     <section class="state-card loading" role="status" aria-live="polite">
       <span class="spinner" aria-hidden="true"></span>
       <h1>Cargando evento</h1>
       <p>Estamos preparando todos los detalles.</p>
     </section>
-  } @else if (error(); as mensajeError) {
+  } @else if (error(); as errorMsg) {
     <section class="state-card error" role="alert">
       <span class="state-icon" aria-hidden="true">!</span>
       <h1>No se pudo mostrar el evento</h1>
-      <p>{{ mensajeError }}</p>
+      <p>{{ errorMsg }}</p>
       <div class="state-actions">
         <button type="button" (click)="reintentar()">Reintentar</button>
         <a routerLink="/eventos">Ver todos los eventos</a>
       </div>
     </section>
-  } @else if (evento(); as eventoActual) {
+  } @else if (event(); as currentEvent) {
     <article class="event-card">
       <div class="event-image">
-        @if (eventoActual.imagenUrl && !imagenNoDisponible()) {
+        @if (currentEvent.imagenUrl && !imageNotAvailable()) {
           <img
-            [src]="eventoActual.imagenUrl"
-            [alt]="'Imagen de ' + eventoActual.nombre"
+            [src]="currentEvent.imagenUrl"
+            [alt]="'Imagen de ' + currentEvent.nombre"
             loading="lazy"
-            (error)="imagenNoDisponible.set(true)"
+            (error)="imageNotAvailable.set(true)"
           />
         } @else {
           <div class="image-placeholder" role="img" aria-label="Imagen no disponible">
@@ -36,55 +36,55 @@
             Imagen no disponible
           </div>
         }
-        <span class="genre">{{ eventoActual.genero }}</span>
+        <span class="genre">{{ currentEvent.genero }}</span>
       </div>
 
       <div class="event-content">
         <p class="eyebrow">Evento destacado</p>
-        <h1>{{ eventoActual.nombre }}</h1>
-        <p class="description">{{ eventoActual.descripcion }}</p>
+        <h1>{{ currentEvent.nombre }}</h1>
+        <p class="description">{{ currentEvent.descripcion }}</p>
 
         <dl class="event-data">
           <div>
             <dt>Fecha</dt>
-            <dd>{{ eventoActual.fechaEvento | date: 'd MMMM y' }}</dd>
+            <dd>{{ currentEvent.fechaEvento | date: 'd MMMM y' }}</dd>
           </div>
           <div>
             <dt>Hora</dt>
-            <dd>{{ horaCorta(eventoActual.horaEvento) }}</dd>
+            <dd>{{ horaCorta(currentEvent.horaEvento) }}</dd>
           </div>
           <div>
             <dt>Recinto</dt>
-            <dd>{{ eventoActual.nombreRecinto }}</dd>
+            <dd>{{ currentEvent.nombreRecinto }}</dd>
           </div>
           <div>
             <dt>Localidad</dt>
-            <dd>{{ eventoActual.localidad }}</dd>
+            <dd>{{ currentEvent.localidad }}</dd>
           </div>
         </dl>
 
         <div class="price-panel">
           <div>
             <span class="price-label">Precio de las entradas</span>
-            @if (eventoActual.precioMaximo === 0) {
+            @if (currentEvent.precioMaximo === 0) {
               <strong>Entrada gratuita</strong>
             } 
-            @else if (eventoActual.precioMinimo < 0) {
+            @else if (currentEvent.precioMinimo < 0) {
               <strong>Precio no disponible</strong>
             }
             @else {
               <strong>
-                {{ eventoActual.precioMinimo | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                {{ currentEvent.precioMinimo | currency: 'EUR' : 'symbol' : '1.2-2' }}
                 –
-                {{ eventoActual.precioMaximo | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                {{ currentEvent.precioMaximo | currency: 'EUR' : 'symbol' : '1.2-2' }}
               </strong>
             }
           </div>
           <span class="availability">Disponible</span>
         </div>
 
-        @if (eventoActual.precioMinimo >= 0) {
-          <a class="purchase-link" [routerLink]="['/compra', eventoActual.id]">
+        @if (currentEvent.precioMinimo >= 0) {
+          <a class="purchase-link" [routerLink]="['/compra', currentEvent.id]">
             Comprar entrada
           </a>
         }

@@ -28,33 +28,33 @@ export class EventDetailComponent implements OnInit {
   private readonly eventService = inject(EventService);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly evento = signal<Evento | null>(null);
-  protected readonly cargando = signal(true);
+  protected readonly event = signal<Evento | null>(null);
+  protected readonly isLoading = signal(true);
   protected readonly error = signal<string | null>(null);
-  protected readonly imagenNoDisponible = signal(false);
+  protected readonly imageNotAvailable = signal(false);
 
-  private eventoId: number | null = null;
+  private eventId: number | null = null;
 
   ngOnInit(): void {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const id = Number(params.get('id'));
 
       if (!Number.isInteger(id) || id <= 0) {
-        this.eventoId = null;
-        this.evento.set(null);
-        this.cargando.set(false);
+        this.eventId = null;
+        this.event.set(null);
+        this.isLoading.set(false);
         this.error.set('El identificador del evento no es válido.');
         return;
       }
 
-      this.eventoId = id;
+      this.eventId = id;
       this.cargarEvento(id);
     });
   }
 
   protected reintentar(): void {
-    if (this.eventoId !== null) {
-      this.cargarEvento(this.eventoId);
+    if (this.eventId !== null) {
+      this.cargarEvento(this.eventId);
     }
   }
 
@@ -63,15 +63,15 @@ export class EventDetailComponent implements OnInit {
   }
 
   private cargarEvento(id: number): void {
-    this.cargando.set(true);
+    this.isLoading.set(true);
     this.error.set(null);
-    this.evento.set(null);
-    this.imagenNoDisponible.set(false);
+    this.event.set(null);
+    this.imageNotAvailable.set(false);
 
     this.eventService
       .findEventById(id)
       .pipe(
-        finalize(() => this.cargando.set(false)),
+        finalize(() => this.isLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
@@ -81,7 +81,7 @@ export class EventDetailComponent implements OnInit {
             return;
           }
 
-          this.evento.set(evento);
+          this.event.set(evento);
         },
         error: (error: HttpErrorResponse) => {
           this.error.set(

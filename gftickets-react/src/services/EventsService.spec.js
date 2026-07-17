@@ -129,7 +129,7 @@ describe('EventsService', () => {
     test('1. debería retornar el JSON del servidor si la respuesta es correcta (ok: true)', async () => {
       const mockResponse = { id: '123', ...mockEventData };
 
-      vi.spyOn(global, 'fetch').mockResolvedValue({
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
         ok: true,
         json: async () => mockResponse,
       });
@@ -140,7 +140,7 @@ describe('EventsService', () => {
     });
 
     test('2. debería lanzar un error específico si el servidor responde con un estado incorrecto (ok: false)', async () => {
-      vi.spyOn(global, 'fetch').mockResolvedValue({
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
         ok: false,
         status: 400,
       });
@@ -149,7 +149,7 @@ describe('EventsService', () => {
     });
 
     test('3. debería configurar correctamente el método, los headers y el body en la petición', async () => {
-      const fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue({
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
         ok: true,
         json: async () => ({}),
       });
@@ -166,7 +166,7 @@ describe('EventsService', () => {
     });
 
     test('4. debería lanzar un SyntaxError si el servidor responde ok pero el cuerpo no es un JSON válido', async () => {
-    vi.spyOn(global, 'fetch').mockResolvedValue({
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue({
       ok: true,
       json: async () => { 
         throw new SyntaxError('Unexpected token < in JSON at position 0'); 
@@ -177,7 +177,7 @@ describe('EventsService', () => {
   });
 
     test('5. debería propagar el error nativo si la petición fetch falla por completo (ej. sin internet)', async () => {
-      vi.spyOn(global, 'fetch').mockRejectedValue(new Error('Network Error'));
+      vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network Error'));
 
       await expect(createEvent(mockEventData)).rejects.toThrow('Network Error');
     });

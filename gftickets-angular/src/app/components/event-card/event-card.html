@@ -46,7 +46,11 @@
       <strong>
         @if (event().precioMaximo === 0) {
           Entrada gratuita
-        } @else {
+        }
+        @else if (event().precioMinimo < 0 || event().precioMaximo < 0) {
+          Precio no disponible
+        }
+        @else {
           Desde
           {{ event().precioMinimo | currency:'EUR':'symbol':'1.0-0' }}
         }

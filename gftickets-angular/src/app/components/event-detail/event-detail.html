@@ -28,7 +28,7 @@
             [src]="eventoActual.imagenUrl"
             [alt]="'Imagen de ' + eventoActual.nombre"
             loading="lazy"
-            (error)="isImageAvailable.set(true)"
+            (error)="isImageAvailable.set(false)"
           />
         } @else {
           <div class="image-placeholder" role="img" aria-label="Imagen no disponible">

@@ -30,3 +30,24 @@ textarea,
 select {
   font: inherit;
 }
+
+app-event-detail .description-toggle {
+  align-self: flex-start;
+  margin-top: -0.75rem;
+  padding: 0;
+  border: 0;
+  color: #be123c;
+  background: transparent;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+app-event-detail .description-toggle:hover {
+  text-decoration: underline;
+}
+
+app-event-detail .description-toggle:focus-visible {
+  border-radius: 0.25rem;
+  outline: 3px solid rgb(225 29 72 / 25%);
+  outline-offset: 3px;
+}

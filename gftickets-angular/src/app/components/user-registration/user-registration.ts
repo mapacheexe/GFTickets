@@ -78,7 +78,14 @@ export class UserRegistrationComponent {
       return;
     }
 
-    const { passwordConfirmation: _passwordConfirmation, ...registro } = this.form.getRawValue();
+    const values = this.form.getRawValue();
+    const registro = {
+      nombre: values.nombre,
+      apellidos: values.apellidos,
+      email: values.email,
+      nombreUsuario: values.nombreUsuario,
+      password: values.password,
+    };
     this.submitting.set(true);
 
     this.userService

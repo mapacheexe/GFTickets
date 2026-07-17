@@ -142,14 +142,11 @@ Además de las validaciones automáticas, cada Pull Request debe cumplir los sig
 | Convenciones de nomenclatura | Variables y funciones utilizan **camelCase**, componentes, clases, interfaces y tipos utilizan **PascalCase** y los archivos siguen la convención definida por el proyecto. Los nombres deben describir claramente su propósito y evitar abreviaturas ambiguas. |
 | Diseño y responsabilidad de componentes | Cada componente tiene una única responsabilidad, mantiene un tamaño razonable y favorece la reutilización. Se evita concentrar demasiada lógica en un único componente. |
 | Limpieza del código | No existen imports sin utilizar, variables o funciones sin uso, código comentado innecesario, `console.log`, `debugger` ni código obsoleto. |
-| Gestión del estado | El estado se mantiene en el nivel adecuado, evitando duplicidades, estados derivados innecesarios y sincronizaciones manuales que puedan provocar inconsistencias. |
-| Rendimiento de la aplicación | Se evitan renderizados innecesarios y se utilizan técnicas de optimización como `memo`, `useMemo`, `useCallback`, `OnPush`, `trackBy`, Lazy Loading o Code Splitting cuando aportan valor. |
 | Gestión de errores | Las operaciones asíncronas y llamadas HTTP gestionan correctamente los errores y muestran mensajes adecuados al usuario sin exponer información interna. |
-| Accesibilidad (A11y) | Se utiliza HTML semántico, atributos ARIA cuando son necesarios, navegación mediante teclado, textos alternativos y contraste adecuado. |
 | Seguridad | Se validan entradas del usuario, se evita el uso inseguro de `innerHTML` o `dangerouslySetInnerHTML` sin sanitización y no se expone información sensible. |
 | Tipado fuerte | Se utilizan interfaces y tipos específicos, evitando `any` salvo casos excepcionales debidamente justificados. |
 | Separación de responsabilidades | La lógica de negocio está separada de la presentación mediante servicios, hooks o utilidades compartidas. |
-| Gestión eficiente de llamadas HTTP | Se evitan peticiones duplicadas, se reutilizan datos cuando sea posible y se gestionan correctamente estados de carga, error y caché. |
+| Gestión eficiente de llamadas HTTP | Se evitan peticiones duplicadas, se reutilizan datos cuando sea posible. |
 | Arquitectura del proyecto | Se respeta la estructura de carpetas, organización de módulos, servicios, componentes compartidos y patrones definidos por el proyecto. |
 | Legibilidad y mantenibilidad | El código es claro, modular y fácil de mantener. Los comentarios se utilizan únicamente cuando aportan contexto relevante. |
 

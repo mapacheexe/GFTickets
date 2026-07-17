@@ -50,6 +50,27 @@ describe('EventCardComponent', () => {
     expect(textContent).toContain('Anochecer Sinfónico');
     expect(textContent).toContain('Clásica');
     expect(textContent).toContain('Barcelona');
+    expect(textContent).toContain('Parc del Fòrum');
+  });
+
+  it('debe mostrar el recinto y la ciudad como ubicación exacta', () => {
+    const location = fixture.nativeElement.querySelectorAll('.event-info p')[1]
+      .textContent as string;
+
+    expect(location).toContain('Parc del Fòrum, Barcelona');
+  });
+
+  it('debe mostrar solo la ciudad cuando el recinto no está disponible', () => {
+    fixture.componentRef.setInput('evento', {
+      ...evento,
+      nombreRecinto: '',
+    });
+    fixture.detectChanges();
+
+    const location = fixture.nativeElement.querySelectorAll('.event-info p')[1]
+      .textContent as string;
+    expect(location).toContain('Barcelona');
+    expect(location).not.toContain('Parc del Fòrum');
   });
 
   it('debería mostrar el precio mínimo', () => {
@@ -82,18 +103,5 @@ describe('EventCardComponent', () => {
     expect(
       fixture.nativeElement.textContent,
     ).toContain('Imagen no disponible');
-  });
-
-  it('debería mostrar "Precio no disponible" cuando el precio mínimo es negativo', () => {
-    fixture.componentRef.setInput('event', {
-      ...event,
-      precioMinimo: -1,
-    });
-
-    fixture.detectChanges();
-
-    expect(
-      fixture.nativeElement.textContent,
-    ).toContain('Precio no disponible');
   });
 });

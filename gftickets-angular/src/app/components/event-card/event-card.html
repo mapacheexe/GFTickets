@@ -38,7 +38,11 @@
 
       <p>
         <span aria-hidden="true">📍</span>
-        {{ event().localidad }}
+        @if (event().nombreRecinto) {
+          {{ event().nombreRecinto }}, {{ evento().localidad }}
+        } @else {
+          {{ event().localidad }}
+        }
       </p>
     </div>
 

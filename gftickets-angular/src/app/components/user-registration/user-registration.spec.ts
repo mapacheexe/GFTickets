@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 
 import { Usuario } from '../../models/usuario.model';
 import { USER_SERVICE } from '../../services/user.service';
@@ -31,6 +31,20 @@ describe('UserRegistrationComponent', () => {
     fixture.detectChanges();
   });
 
+  it('muestra los seis campos obligatorios del registro', () => {
+    const requiredFields = fixture.nativeElement.querySelectorAll('input[required]');
+
+    expect(requiredFields).toHaveLength(6);
+    expect(Array.from(requiredFields).map((field) => (field as HTMLInputElement).id)).toEqual([
+      'nombre',
+      'apellidos',
+      'email',
+      'nombreUsuario',
+      'password',
+      'passwordConfirmation',
+    ]);
+  });
+
   it('no envía un formulario vacío y muestra sus validaciones', () => {
     const form = fixture.nativeElement.querySelector('form') as HTMLFormElement;
     form.dispatchEvent(new Event('submit'));
@@ -38,6 +52,21 @@ describe('UserRegistrationComponent', () => {
 
     expect(registerUser).not.toHaveBeenCalled();
     expect(fixture.nativeElement.textContent).toContain('Introduce tu nombre.');
+  });
+
+  it.each([
+    'nombre',
+    'apellidos',
+    'email',
+    'nombreUsuario',
+    'password',
+    'passwordConfirmation',
+  ] as const)('no envía el formulario cuando falta el campo obligatorio %s', (field) => {
+    setValidValues();
+    fixture.componentInstance['form'].controls[field].setValue('');
+    submitForm();
+
+    expect(registerUser).not.toHaveBeenCalled();
   });
 
   it('no permite registrar contraseñas diferentes', () => {
@@ -74,6 +103,36 @@ describe('UserRegistrationComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('El correo ya está registrado.');
   });
 
+  it('muestra un mensaje genérico cuando el servicio devuelve un error desconocido', () => {
+    registerUser.mockReturnValue(throwError(() => ({ status: 500 })));
+    setValidValues();
+    submitForm();
+
+    expect(fixture.nativeElement.textContent).toContain(
+      'No se ha podido crear la cuenta. Inténtalo de nuevo.',
+    );
+  });
+
+  it('deshabilita el botón y evita registros duplicados mientras procesa la petición', () => {
+    const pendingRegistration = new Subject<Usuario>();
+    registerUser.mockReturnValue(pendingRegistration);
+    setValidValues();
+    submitForm();
+
+    const submitButton = fixture.nativeElement.querySelector(
+      'button[type="submit"]',
+    ) as HTMLButtonElement;
+    expect(submitButton.disabled).toBe(true);
+
+    submitForm();
+    expect(registerUser).toHaveBeenCalledTimes(1);
+
+    pendingRegistration.next(user);
+    pendingRegistration.complete();
+    fixture.detectChanges();
+    expect(submitButton.disabled).toBe(false);
+  });
+
   function setValidValues(): void {
     fixture.componentInstance['form'].setValue({
       nombre: 'Julia',
@@ -83,5 +142,10 @@ describe('UserRegistrationComponent', () => {
       password: 'segura123',
       passwordConfirmation: 'segura123',
     });
+  }
+
+  function submitForm(): void {
+    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
   }
 });

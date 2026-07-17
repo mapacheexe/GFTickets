@@ -85,8 +85,9 @@ export const EventsComponent = () => {
                     <span aria-hidden="true">🕒</span> {ev.horaEvento.substring(0, 5)}h
                   </p>
                   <p>
-                    <span aria-hidden="true">📍</span> {ev.localidad}
-                    {ev.nombreRecinto ? ` · ${ev.nombreRecinto}` : ''}
+                    <span aria-hidden="true">📍</span>
+                    <span>{ev.localidad}</span>
+                    {ev.nombreRecinto && <> · {ev.nombreRecinto}</>}
                   </p>
                 </div>
 
@@ -97,7 +98,7 @@ export const EventsComponent = () => {
                     ) : ev.precioMinimo === 0 ? (
                       <span data-testid="entrada-gratuita">Entrada GRATUITA</span>
                     ) : (
-                      <>Desde {ev.precioMinimo}€</>
+                      <>Desde <span>{ev.precioMinimo}€</span></>
                     )}
                   </strong>
                   <span className="card-link">Ver detalle</span>

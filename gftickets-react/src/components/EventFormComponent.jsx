@@ -8,12 +8,7 @@ export function EventFormComponent() {
         "nombre": "",
         "descripcion": "",
         "fechaEvento": "",
-        "horaEvento": {
-            "hour": 0,
-            "minute": 0,
-            "second": 0,
-            "nano": 0
-        },
+        "horaEvento": "",
         "precioMinimo": 0,
         "precioMaximo": 0,
         "localidad": "",
@@ -39,7 +34,6 @@ export function EventFormComponent() {
 
         const datosParaEnviar = {
             ...formData,
-            horaEvento: `${String(formData.horaEvento.hour).padStart(2,'0')}:${String(formData.horaEvento.minute).padStart(2,'0')}:00`,
             precioMinimo: Number(formData.precioMinimo),
             precioMaximo: Number(formData.precioMaximo),
         };
@@ -105,18 +99,10 @@ export function EventFormComponent() {
                     <input
                         type="time"
                         name="horaEvento"
-                        value={`${String(formData.horaEvento.hour).padStart(2, '0')}:${String(formData.horaEvento.minute).padStart(2, '0')}`}
-                        onChange={(e) => {
-                            const [hour, minute] = e.target.value.split(':');
-                            setFormData((prevData) => ({
-                                ...prevData,
-                                horaEvento: {
-                                    ...prevData.horaEvento,
-                                    hour: parseInt(hour),
-                                    minute: parseInt(minute)
-                                }
-                            }));
-                        }}
+                        value={formData.horaEvento}
+                        onChange={handleChange}
+                        step="1"
+                        required
                     />
                 </label>
                 <label>

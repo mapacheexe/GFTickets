@@ -42,8 +42,8 @@
   }
   @else {
     <section class="events-grid" aria-label="Listado de eventos">
-      @for (evento of events(); track evento.id) {
-        <app-event-card [event]="evento" />
+      @for (event of events(); track event.id) {
+        <app-event-card [event]="event" />
       }
     </section>
   }

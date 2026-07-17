@@ -53,14 +53,14 @@ describe('EventCardComponent', () => {
     expect(textContent).toContain('Parc del Fòrum');
   });
 
-  it('should display venue and city as the exact location', () => {
+  it('debe mostrar el recinto y la ciudad como ubicación exacta', () => {
     const location = fixture.nativeElement.querySelectorAll('.event-info p')[1]
       .textContent as string;
 
     expect(location).toContain('Parc del Fòrum, Barcelona');
   });
 
-  it('should display only the city when the venue is unavailable', () => {
+  it('debe mostrar solo la ciudad cuando el recinto no está disponible', () => {
     fixture.componentRef.setInput('evento', {
       ...evento,
       nombreRecinto: '',

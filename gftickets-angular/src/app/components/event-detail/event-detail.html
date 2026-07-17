@@ -81,7 +81,11 @@
             <span class="price-label">Precio de las entradas</span>
             @if (eventoActual.precioMaximo === 0) {
               <strong>Entrada gratuita</strong>
-            } @else {
+            }
+            @else if (eventoActual.precioMinimo < 0 || eventoActual.precioMaximo < 0) {
+              <strong>Precio no disponible</strong>
+            }
+            @else {
               <strong>
                 {{ eventoActual.precioMinimo | currency: 'EUR' : 'symbol' : '1.2-2' }}
                 –

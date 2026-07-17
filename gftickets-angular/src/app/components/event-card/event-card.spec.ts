@@ -36,7 +36,7 @@ describe('EventCardComponent', () => {
     fixture = TestBed.createComponent(EventCardComponent);
     component = fixture.componentInstance;
 
-    fixture.componentRef.setInput('evento', event);
+    fixture.componentRef.setInput('event', event);
     fixture.detectChanges();
   });
 
@@ -57,7 +57,7 @@ describe('EventCardComponent', () => {
   });
 
   it('debería mostrar el marcador de posición cuando no hay URL de imagen', () => {
-    fixture.componentRef.setInput('evento', {
+    fixture.componentRef.setInput('event', {
       ...event,
       imagenUrl: '',
     });
@@ -85,7 +85,7 @@ describe('EventCardComponent', () => {
   });
 
   it('debería mostrar "Precio no disponible" cuando el precio mínimo es negativo', () => {
-    fixture.componentRef.setInput('evento', {
+    fixture.componentRef.setInput('event', {
       ...event,
       precioMinimo: -1,
     });

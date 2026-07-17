@@ -37,7 +37,7 @@ export const EventsComponent = () => {
         <p className="subtitle">Encuentra conciertos y experiencias disponibles.</p>
       </header>
 
-      {cargando ? (
+      {loading ? (
         <section className="state-card" role="status" aria-live="polite">
           <span className="spinner" aria-hidden="true"></span>
           <h2>Cargando eventos</h2>

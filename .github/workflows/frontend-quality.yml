@@ -17,6 +17,8 @@ jobs:
   angular-quality:
     name: Angular lint, tests and build
     runs-on: ubuntu-latest
+    environment:
+      name: deploy
     defaults:
       run:
         working-directory: gftickets-angular

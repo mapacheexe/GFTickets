@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
 
 import { Usuario } from '../../models/usuario.model';
 import { USER_SERVICE } from '../../services/user.service';
@@ -42,13 +41,16 @@ export class UserProfileComponent implements OnInit {
 
     this.userService
       .getCurrentUser()
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.loading.set(false)),
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (user) => this.user.set(user),
-        error: () => this.error.set('No se han podido cargar tus datos.'),
+        next: (user) => {
+          this.user.set(user);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.error.set('No se han podido cargar tus datos.');
+          this.loading.set(false);
+        },
       });
   }
 }

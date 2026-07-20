@@ -15,6 +15,28 @@ export const routes: Routes = [
     title: 'Detalle del evento | GFTickets',
   },
   {
+    path: 'registro',
+    loadComponent: () =>
+      import('./components/user-registration/user-registration').then(
+        (module) => module.UserRegistrationComponent,
+      ),
+    title: 'Crear una cuenta | GFTickets',
+  },
+  {
+    path: 'mi-perfil',
+    loadComponent: () =>
+      import('./components/user-profile/user-profile').then(
+        (module) => module.UserProfileComponent,
+      ),
+    title: 'Mis datos | GFTickets',
+  },
+  {
+    path: 'compra/:eventoId',
+    loadComponent: () =>
+      import('./components/purchase/purchase').then((module) => module.PurchaseComponent),
+    title: 'Comprar entrada | GFTickets',
+  },
+  {
     path: '',
     redirectTo: 'eventos',
     pathMatch: 'full',

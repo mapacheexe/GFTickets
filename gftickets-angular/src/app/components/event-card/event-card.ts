@@ -17,7 +17,7 @@ import { Evento } from '../../models/evento.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventCardComponent {
-  readonly evento = input.required<Evento>();
+  readonly event = input.required<Evento>();
 
   protected readonly imagenNoDisponible = signal(false);
 }

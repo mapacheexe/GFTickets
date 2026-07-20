@@ -12,6 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
+import { EVENT_DESCRIPTION_PREVIEW_LIMIT } from '../../constants/event.constants';
 import { Evento } from '../../models/evento.model';
 import { HoraEvento } from '../../models/hora-evento.model';
 import { EventService } from '../../services/event.service';
@@ -28,10 +29,11 @@ export class EventDetailComponent implements OnInit {
   private readonly eventService = inject(EventService);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly evento = signal<Evento | null>(null);
-  protected readonly cargando = signal(true);
+  protected readonly event = signal<Evento | null>(null);
+  protected readonly isLoading = signal(true);
   protected readonly error = signal<string | null>(null);
-  protected readonly imagenNoDisponible = signal(false);
+  protected readonly isImageAvailable = signal(false);
+  protected readonly expandedDescription = signal(false);
 
   private eventoId: number | null = null;
 
@@ -41,47 +43,63 @@ export class EventDetailComponent implements OnInit {
 
       if (!Number.isInteger(id) || id <= 0) {
         this.eventoId = null;
-        this.evento.set(null);
-        this.cargando.set(false);
+        this.event.set(null);
+        this.isLoading.set(false);
         this.error.set('El identificador del evento no es válido.');
         return;
       }
 
       this.eventoId = id;
-      this.cargarEvento(id);
+      this.loadEvent(id);
     });
   }
 
-  protected reintentar(): void {
+  protected retry(): void {
     if (this.eventoId !== null) {
-      this.cargarEvento(this.eventoId);
+      this.loadEvent(this.eventoId);
     }
   }
 
-  protected horaCorta(hora: HoraEvento): string {
+  protected shortFormatHour(hora: HoraEvento): string {
     return `${hora.hour.toString().padStart(2, '0')}:${hora.minute.toString().padStart(2, '0')}`;
   }
 
-  private cargarEvento(id: number): void {
-    this.cargando.set(true);
+  protected isLongerThanPreviewLimit(descripcion: string): boolean {
+    return descripcion.length > EVENT_DESCRIPTION_PREVIEW_LIMIT;
+  }
+
+  protected descripcionMostrada(descripcion: string): string {
+    if (this.expandedDescription() || !this.isLongerThanPreviewLimit(descripcion)) {
+      return descripcion;
+    }
+    return `${descripcion.slice(0, EVENT_DESCRIPTION_PREVIEW_LIMIT).trimEnd()}…`;
+  }
+
+  protected alternateDescrition(): void {
+    this.expandedDescription.update((expanded) => !expanded);
+  }
+
+  private loadEvent(id: number): void {
+    this.isLoading.set(true);
     this.error.set(null);
-    this.evento.set(null);
-    this.imagenNoDisponible.set(false);
+    this.event.set(null);
+    this.isImageAvailable.set(true);
+    this.expandedDescription.set(false);
 
     this.eventService
       .findEventById(id)
       .pipe(
-        finalize(() => this.cargando.set(false)),
+        finalize(() => this.isLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: (evento) => {
-          if (evento === null) {
+        next: (event) => {
+          if (event === null) {
             this.error.set('No se pudo cargar el evento.');
             return;
           }
 
-          this.evento.set(evento);
+          this.event.set(event);
         },
         error: (error: HttpErrorResponse) => {
           this.error.set(

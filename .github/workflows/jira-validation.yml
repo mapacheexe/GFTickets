@@ -20,9 +20,10 @@ jobs:
 
           echo "Branch: $BRANCH"
 
-          # Expresión regular que solo exige el prefijo y cualquier descripción posterior
-          if [[ ! "$BRANCH" =~ ^(feature|bugfix|hotfix|release|chore)/.+$ ]]; then
+          # Validación de prefijos permitidos y descripción obligatoria
+          if [[ ! "$BRANCH" =~ ^(feature|bugfix|hotfix|release|docs|chore)/.+$ ]]; then
             echo "❌ Branch name must start with a valid prefix followed by a description."
+            echo "Allowed prefixes: feature/, bugfix/, hotfix/, release/, docs/, chore/"
             echo "Example: feature/add-event-catalog-card"
             exit 1
           fi

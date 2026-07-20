@@ -17,6 +17,8 @@ jobs:
   angular-quality:
     name: Angular lint, tests and build
     runs-on: ubuntu-latest
+    environment:
+      name: deploy
     defaults:
       run:
         working-directory: gftickets-angular
@@ -32,6 +34,16 @@ jobs:
 
       - name: Install Angular dependencies
         run: npm ci
+
+      - name: Create Angular environment file
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> .env
+          echo "VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }}" >> .env
+          echo "VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}" >> .env
+          echo "VITE_FIREBASE_PROJECT_ID=${{ secrets.VITE_FIREBASE_PROJECT_ID }}" >> .env
+          echo "VITE_FIREBASE_STORAGE_BUCKET=${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}" >> .env
+          echo "VITE_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}" >> .env
+          echo "VITE_FIREBASE_APP_ID=${{ secrets.VITE_FIREBASE_APP_ID }}" >> .env
 
       - name: Run Angular static analysis
         run: npm run lint

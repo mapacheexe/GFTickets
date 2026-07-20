@@ -9,30 +9,31 @@ GFTicket-Frontend/
 ├── gftickets-react/      # Implementación React
 ├── gftickets-angular/    # Implementación Angular
 └── .github/workflows/    # Pipelines de GitHub Actions
+
 ```
 
 ---
 
-# Integración continua (CI)
+## Integración continua (CI)
 
 Todas las Pull Requests dirigidas a la rama `main` ejecutan validaciones automáticas mediante GitHub Actions antes de permitir su integración.
 
 Las validaciones están divididas en:
 
-- **Validaciones automáticas:** ejecutadas por las pipelines de CI.
-- **Revisión manual:** comprobaciones realizadas durante la revisión del código.
+* **Validaciones automáticas:** ejecutadas por las pipelines de CI.
+* **Revisión manual:** comprobaciones realizadas durante la revisión del código.
 
 ---
 
-# Pipelines disponibles
+## Pipelines disponibles
 
 El repositorio dispone de las siguientes pipelines:
 
-## Branch and Commit Validation
+### Branch and Commit Validation
 
 Valida la nomenclatura de ramas y la calidad de los mensajes de commit.
 
-### Validación de nombres de ramas
+#### Validación de nombres de ramas
 
 Todas las ramas deben seguir una de estas convenciones:
 
@@ -43,6 +44,7 @@ hotfix/<descripción>
 release/<descripción>
 docs/<descripción>
 chore/<descripción>
+
 ```
 
 Ejemplos:
@@ -54,13 +56,14 @@ hotfix/security-patch
 release/v1.0.0
 docs/update-readme
 chore/update-dependencies
+
 ```
 
 La descripción posterior al prefijo es obligatoria y debe identificar claramente el objetivo del cambio.
 
 ---
 
-### Validación de commits
+#### Validación de commits
 
 Todos los commits incluidos en una Pull Request deben cumplir la especificación **Conventional Commits**.
 
@@ -68,6 +71,7 @@ Formato:
 
 ```text
 <tipo>(<ámbito opcional>): <descripción>
+
 ```
 
 Ejemplos:
@@ -80,12 +84,13 @@ refactor: simplify ticket service
 test: add ticket component tests
 chore: update dependencies
 ci: update github actions workflow
+
 ```
 
 Tipos habituales:
 
 | Tipo | Uso |
-|------|-----|
+| --- | --- |
 | `feat` | Nueva funcionalidad. |
 | `fix` | Corrección de errores. |
 | `docs` | Cambios en documentación. |
@@ -96,36 +101,36 @@ Tipos habituales:
 
 ---
 
-# Frontend Quality
+### Frontend Quality
 
 Esta pipeline valida la calidad técnica de las aplicaciones frontend.
 
-## Angular
+#### Angular
 
 Ejecuta:
 
-- Instalación de dependencias.
-- Análisis estático del código mediante linting.
-- Ejecución de pruebas unitarias.
-- Compilación de la aplicación.
+* Instalación de dependencias.
+* Análisis estático del código mediante linting.
+* Ejecución de pruebas unitarias.
+* Compilación de la aplicación.
 
-## React
+#### React
 
 Ejecuta:
 
-- Instalación de dependencias.
-- Análisis estático mediante ESLint.
-- Ejecución de pruebas unitarias.
-- Compilación de la aplicación.
+* Instalación de dependencias.
+* Análisis estático mediante ESLint.
+* Ejecución de pruebas unitarias.
+* Compilación de la aplicación.
 
 Además, permite ejecutar manualmente un análisis completo de ESLint mediante `workflow_dispatch`.
 
 ---
 
-# Pruebas de calidad automáticas
+## Pruebas de calidad automáticas
 
 | Prueba | Descripción |
-|--------|-------------|
+| --- | --- |
 | Instalación de dependencias | El proyecto instala correctamente todas sus dependencias sin errores ni conflictos de versiones. |
 | Análisis estático del código | El código cumple las reglas definidas por ESLint y las herramientas de análisis configuradas en el proyecto. |
 | Pruebas unitarias | Todas las pruebas unitarias finalizan correctamente y el código nuevo incorpora pruebas cuando introduce lógica de negocio. |
@@ -133,12 +138,12 @@ Además, permite ejecutar manualmente un análisis completo de ESLint mediante `
 
 ---
 
-# Pruebas de calidad manuales
+## Pruebas de calidad manuales
 
 Además de las validaciones automáticas, cada Pull Request debe cumplir los siguientes criterios durante la revisión de código.
 
 | Prueba | Qué revisar |
-|--------|-------------|
+| --- | --- |
 | Convenciones de nomenclatura | Variables y funciones utilizan **camelCase**, componentes, clases, interfaces y tipos utilizan **PascalCase** y los archivos siguen la convención definida por el proyecto. Los nombres deben describir claramente su propósito y evitar abreviaturas ambiguas. |
 | Diseño y responsabilidad de componentes | Cada componente tiene una única responsabilidad, mantiene un tamaño razonable y favorece la reutilización. Se evita concentrar demasiada lógica en un único componente. |
 | Limpieza del código | No existen imports sin utilizar, variables o funciones sin uso, código comentado innecesario, `console.log`, `debugger` ni código obsoleto. |
@@ -152,27 +157,27 @@ Además de las validaciones automáticas, cada Pull Request debe cumplir los sig
 
 ---
 
-# Entorno de ejecución
+## Entorno de ejecución
 
 Las validaciones automáticas se ejecutan en entornos reproducibles mediante:
 
-- Runner Ubuntu.
-- Versión de Node.js definida en cada pipeline.
-- Dependencias instaladas mediante el gestor de paquetes del proyecto.
+* Runner Ubuntu.
+* Versión de Node.js definida en cada pipeline.
+* Dependencias instaladas mediante el gestor de paquetes del proyecto.
 
 ---
 
-# Tecnologías
+## Tecnologías
 
-- Angular
-- React
-- TypeScript
-- GitHub Actions
-- ESLint
-- Vitest / herramientas de testing configuradas por cada aplicación
+* Angular
+* React
+* TypeScript
+* GitHub Actions
+* ESLint
+* Vitest / herramientas de testing configuradas por cada aplicación
 
 ---
 
-# Licencia
+## Licencia
 
 ISC

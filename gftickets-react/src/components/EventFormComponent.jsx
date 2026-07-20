@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { createEvent } from "../services/EventsService";
+import './EventFormComponent.css';
 export function EventFormComponent() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({

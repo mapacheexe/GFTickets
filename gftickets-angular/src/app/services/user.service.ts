@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { Service } from '@angular/core';
+import { InjectionToken, Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -21,7 +20,9 @@ export interface FirebaseAuthResponse {
   expiresIn: string;
 }
 
-@Service()
+@Injectable({
+  providedIn: 'root',
+})
 export class UserService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiBaseUrl;
@@ -37,3 +38,5 @@ export class UserService {
     return this.http.post<FirebaseAuthResponse>(`${this.apiUrl}/login`, data);
   }
 }
+
+export const USER_SERVICE = new InjectionToken<UserService>('USER_SERVICE');

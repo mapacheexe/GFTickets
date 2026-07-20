@@ -32,6 +32,8 @@ describe('MockUserService', () => {
     });
   });
 
+  afterEach(() => vi.restoreAllMocks());
+
   it('registra y recupera únicamente los datos públicos del usuario', async () => {
     const service = TestBed.inject(MockUserService);
     const user = await firstValueFrom(service.registerUser(registro));
@@ -42,13 +44,41 @@ describe('MockUserService', () => {
     expect(storedValue).not.toContain(registro.password);
   });
 
-  it('rechaza un correo o nombre de usuario ya registrado', async () => {
+  it('genera el identificador del usuario en el frontend', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(12345);
+    const service = TestBed.inject(MockUserService);
+
+    await expect(firstValueFrom(service.registerUser(registro))).resolves.toEqual(
+      expect.objectContaining({ id: 12345 }),
+    );
+  });
+
+  it('rechaza un correo electrónico ya registrado', async () => {
     const service = TestBed.inject(MockUserService);
     await firstValueFrom(service.registerUser(registro));
 
-    await expect(firstValueFrom(service.registerUser(registro))).rejects.toThrow(
-      'ya está registrado',
-    );
+    await expect(
+      firstValueFrom(
+        service.registerUser({
+          ...registro,
+          nombreUsuario: 'otro.usuario',
+        }),
+      ),
+    ).rejects.toThrow('ya está registrado');
+  });
+
+  it('rechaza un nombre de usuario ya registrado', async () => {
+    const service = TestBed.inject(MockUserService);
+    await firstValueFrom(service.registerUser(registro));
+
+    await expect(
+      firstValueFrom(
+        service.registerUser({
+          ...registro,
+          email: 'otro@example.com',
+        }),
+      ),
+    ).rejects.toThrow('ya está registrado');
   });
 
   it('elimina datos locales dañados y devuelve null', async () => {

@@ -70,6 +70,10 @@ export class UserRegistrationComponent {
   );
 
   protected submit(): void {
+    if (this.submitting()) {
+      return;
+    }
+
     this.error.set(null);
     this.success.set(false);
 

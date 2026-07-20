@@ -2,6 +2,7 @@ import './App.css'
 import { EventsComponent } from './components/EventsComponent.jsx';
 import { EventDetailsComponent } from './components/EventDetailsComponent.jsx';
 import { createBrowserRouter, RouterProvider, Outlet, Link } from "react-router-dom";
+import { EventFormComponent } from './components/EventFormComponent.jsx';
 
 function Layout() {
   return (
@@ -13,6 +14,7 @@ function Layout() {
         </Link>
         <nav aria-label="Navegación principal">
           <Link to="/">Eventos</Link>
+          <Link to="/form">Añadir Evento</Link>
         </nav>
       </header>
       <Outlet />
@@ -26,6 +28,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <EventsComponent /> },
       { path: "/eventos/:id", element: <EventDetailsComponent /> },
+      { path: "/form", element: <EventFormComponent />}
     ],
   },
 ]);

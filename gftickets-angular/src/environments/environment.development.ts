@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   apiBaseUrl: import.meta.env.VITE_API_URL,
   firebase: {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

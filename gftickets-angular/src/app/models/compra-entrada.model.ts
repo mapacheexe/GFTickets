@@ -16,3 +16,9 @@ export interface RespuestaCompra {
   message?: string[];
   infoadicional?: string;
 }
+
+export interface PurchaseResult {
+  successful: boolean;
+  message: string;
+  code?: string;
+}

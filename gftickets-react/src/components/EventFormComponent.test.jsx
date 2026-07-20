@@ -107,4 +107,82 @@ describe("EventFormComponent", () => {
             expect(mockNavigate).toHaveBeenCalledWith("/");
         });
     });
+    test("5. No se permite crear un evento si el precio máximo es menor que el mínimo", () => {
+        render(
+            <BrowserRouter>
+                <EventFormComponent />
+            </BrowserRouter>
+        );
+
+        rellenarFormulario();
+
+        fireEvent.change(screen.getByLabelText(/Precio Mínimo:/i), { target: { value: "50" } });
+        fireEvent.change(screen.getByLabelText(/Precio Máximo:/i), { target: { value: "10" } });
+
+        const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
+        fireEvent.click(botonEnviar);
+
+        expect(screen.getByText(/El precio máximo no puede ser menor que el precio mínimo\./i)).toBeInTheDocument();
+        expect(createEvent).not.toHaveBeenCalled();
+    });
+
+    test("6. No se permite crear un evento con precio mínimo negativo", () => {
+        render(
+            <BrowserRouter>
+                <EventFormComponent />
+            </BrowserRouter>
+        );
+
+        rellenarFormulario();
+
+        fireEvent.change(screen.getByLabelText(/Precio Mínimo:/i), { target: { value: "-5" } });
+        fireEvent.change(screen.getByLabelText(/Precio Máximo:/i), { target: { value: "50" } });
+
+        const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
+        fireEvent.click(botonEnviar);
+
+        expect(screen.getByText(/Los precios no pueden ser negativos\./i)).toBeInTheDocument();
+        expect(createEvent).not.toHaveBeenCalled();
+    });
+
+    test("7. No se permite crear un evento con precio máximo negativo", () => {
+        render(
+            <BrowserRouter>
+                <EventFormComponent />
+            </BrowserRouter>
+        );
+
+        rellenarFormulario();
+
+        fireEvent.change(screen.getByLabelText(/Precio Mínimo:/i), { target: { value: "0" } });
+        fireEvent.change(screen.getByLabelText(/Precio Máximo:/i), { target: { value: "-10" } });
+
+        const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
+        fireEvent.click(botonEnviar);
+
+        expect(screen.getByText(/Los precios no pueden ser negativos\./i)).toBeInTheDocument();
+        expect(createEvent).not.toHaveBeenCalled();
+    });
+
+    test("8. Se permite crear un evento cuando el precio mínimo y máximo son iguales", async () => {
+        createEvent.mockResolvedValueOnce({ success: true });
+
+        render(
+            <BrowserRouter>
+                <EventFormComponent />
+            </BrowserRouter>
+        );
+
+        rellenarFormulario();
+
+        fireEvent.change(screen.getByLabelText(/Precio Mínimo:/i), { target: { value: "20" } });
+        fireEvent.change(screen.getByLabelText(/Precio Máximo:/i), { target: { value: "20" } });
+
+        const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
+        fireEvent.click(botonEnviar);
+
+        await waitFor(() => {
+            expect(createEvent).toHaveBeenCalledTimes(1);
+        });
+    });
 });

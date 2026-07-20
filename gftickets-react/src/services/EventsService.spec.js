@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import {createEvent, findAllEvents, findEventById } from '../services/EventsService';
+import {deleteEvent, createEvent, findAllEvents, findEventById } from '../services/EventsService';
 
 describe('EventsService', () => {
   afterEach(() => {
@@ -180,6 +180,69 @@ describe('EventsService', () => {
       vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network Error'));
 
       await expect(createEvent(mockEventData)).rejects.toThrow('Network Error');
+    });
+  });
+
+  describe('deleteEvent()', () => {
+    const mockApiUrl = 'https://api.miseventos.com/v1/events';
+    const mockId = '65';
+
+    beforeEach(() => {
+      import.meta.env.VITE_API_URL = mockApiUrl;
+      vi.restoreAllMocks();
+    });
+
+    test('1. llama a fetch con la URL correcta concatenando el ID y el método DELETE', async () => {
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => ({}),
+      });
+
+      await deleteEvent(mockId);
+
+      expect(fetchSpy).toHaveBeenCalledWith(mockApiUrl + '/' + mockId, {
+        method: 'DELETE',
+      });
+    });
+
+    test('2. devuelve el JSON del servidor cuando la respuesta es correcta (ok: true)', async () => {
+      const mockResponse = {
+        deleted: true,
+        message: 'El evento con ID 65 ha sido eliminado correctamente.',
+      };
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => mockResponse,
+      });
+
+      const resultado = await deleteEvent(mockId);
+
+      expect(resultado).toEqual(mockResponse);
+      expect(resultado.deleted).toBe(true);
+    });
+
+    test('3. lanza el error exacto cuando la respuesta HTTP no es ok (p.ej. 404)', async () => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: false,
+        status: 404,
+      });
+
+      await expect(deleteEvent(mockId)).rejects.toThrow('No se pudo eliminar el evento');
+    });
+
+    test('4. lanza el error exacto cuando el servidor responde con 500', async () => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: false,
+        status: 500,
+      });
+
+      await expect(deleteEvent(mockId)).rejects.toThrow('No se pudo eliminar el evento');
+    });
+
+    test('5. propaga el error nativo si la petición fetch falla por completo (ej. sin internet)', async () => {
+      vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network Error'));
+
+      await expect(deleteEvent(mockId)).rejects.toThrow('Network Error');
     });
   });
 });

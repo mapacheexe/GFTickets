@@ -32,3 +32,13 @@ export const createEvent = async (eventData) => {
   }
   return await response.json();
 };
+
+export const deleteEvent = async (id) => {
+  const response = await fetch(import.meta.env.VITE_API_URL + '/' + id, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('No se pudo eliminar el evento');
+  }
+  return await response.json();
+};

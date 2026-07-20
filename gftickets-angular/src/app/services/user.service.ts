@@ -1,11 +1,39 @@
-import { InjectionToken } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Service } from '@angular/core';
+import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
-import { RegistroUsuario, Usuario } from '../models/usuario.model';
-
-export interface UserService {
-  registerUser(registro: RegistroUsuario): Observable<Usuario>;
-  getCurrentUser(): Observable<Usuario | null>;
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  displayName?: string;
 }
 
-export const USER_SERVICE = new InjectionToken<UserService>('USER_SERVICE');
+export interface FirebaseAuthResponse {
+  kind: string;
+  localId: string;
+  email: string;
+  displayName: string;
+  idToken: string;
+  registered?: boolean;
+  refreshToken: string;
+  expiresIn: string;
+}
+
+@Service()
+export class UserService {
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = environment.apiBaseUrl;
+
+  registerUser(data: RegisterRequest): Observable<FirebaseAuthResponse> {
+    return this.http.post<FirebaseAuthResponse>(
+      `${this.apiUrl}/register`,
+      data,
+    );
+  }
+
+  loginUser(data: RegisterRequest): Observable<FirebaseAuthResponse> {
+    return this.http.post<FirebaseAuthResponse>(`${this.apiUrl}/login`, data);
+  }
+}

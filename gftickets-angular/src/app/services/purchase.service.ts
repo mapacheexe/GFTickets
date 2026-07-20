@@ -12,7 +12,7 @@ import { LocalPurchaseRepository } from './purchase.repository';
 const PAYMENT_RESPONSE_MESSAGES: Readonly<Record<string, string>> = {
   '200.0001': 'Compra registrada correctamente.',
   '400.0001': 'La tarjeta no dispone de fondos suficientes.',
-  '400.0002': 'Faltan datos obligatorios para procesar la compra.',
+  '400.0002': 'No se ha encontrado el usuario asociado a la compra.',
   '400.0003': 'El número de tarjeta no es válido.',
   '400.0004': 'El código de seguridad no es válido.',
   '400.0005': 'El mes de caducidad no es válido.',

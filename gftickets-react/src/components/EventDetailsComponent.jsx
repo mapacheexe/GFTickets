@@ -1,9 +1,9 @@
+import "./EventDetailsComponent.css";
 import { useParams, useNavigate } from "react-router-dom";
-import { findEventById } from "../services/EventsService";
+import { findEventById, deleteEvent } from "../services/EventsService";
 import { useEffect, useState } from "react";
 import { formatearFecha } from "./../utils/dateUtils.js";
 import { EventImage } from "./EventImage";
-import './EventDetailsComponent.css';
 
 export function EventDetailsComponent() {
     const { id } = useParams();
@@ -13,6 +13,10 @@ export function EventDetailsComponent() {
     const [error, setError] = useState(null);
     
     const [leerMas, setLeerMas] = useState(false);
+
+    const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+    const [eliminando, setEliminando] = useState(false);
+    const [errorEliminar, setErrorEliminar] = useState(null);
 
     const LIMITE_CARACTERES = 150;
 
@@ -36,6 +40,29 @@ export function EventDetailsComponent() {
             fetchEvent();
         }
     }, [id]);
+
+    const handleEliminarClick = () => {
+        setErrorEliminar(null);
+        setMostrarConfirmacion(true);
+    };
+
+    const handleCancelarEliminar = () => {
+        if (eliminando) return;
+        setMostrarConfirmacion(false);
+    };
+
+    const handleConfirmarEliminar = async () => {
+        setEliminando(true);
+        setErrorEliminar(null);
+        try {
+            await deleteEvent(id);
+            navigate('/');
+        } catch (err) {
+            console.error('Error deleting event:', err);
+            setErrorEliminar('No se pudo eliminar el evento. Inténtalo de nuevo.');
+            setEliminando(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -187,9 +214,69 @@ export function EventDetailsComponent() {
                                     </>
                                 )}
                             </div>
+
+                            <button
+                                type="button"
+                                className="details-delete-btn"
+                                data-testid="eliminar-evento-btn"
+                                onClick={handleEliminarClick}
+                            >
+                                Eliminar evento
+                            </button>
                         </div>
                     </div>
                 </article>
+            )}
+
+            {mostrarConfirmacion && (
+                <div
+                    className="details-modal-overlay"
+                    role="presentation"
+                    onClick={handleCancelarEliminar}
+                >
+                    <div
+                        className="details-modal"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="confirmar-eliminar-titulo"
+                        data-testid="modal-confirmar-eliminar"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h2 id="confirmar-eliminar-titulo" className="details-modal-title">
+                            ¿Eliminar este evento?
+                        </h2>
+                        <p className="details-modal-text">
+                            Esta acción no se puede deshacer. Se eliminará permanentemente
+                            {event ? ` "${event.nombre}"` : ' el evento'}.
+                        </p>
+
+                        {errorEliminar && (
+                            <p className="details-modal-error" data-testid="error-eliminar">
+                                {errorEliminar}
+                            </p>
+                        )}
+
+                        <div className="details-modal-actions">
+                            <button
+                                type="button"
+                                className="details-modal-cancel"
+                                onClick={handleCancelarEliminar}
+                                disabled={eliminando}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="button"
+                                className="details-modal-confirm"
+                                data-testid="confirmar-eliminar-btn"
+                                onClick={handleConfirmarEliminar}
+                                disabled={eliminando}
+                            >
+                                {eliminando ? "Eliminando..." : "Sí, eliminar"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

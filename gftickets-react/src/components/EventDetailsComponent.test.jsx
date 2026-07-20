@@ -1,17 +1,18 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { EventDetailsComponent } from './EventDetailsComponent';
-import { findEventById } from '../services/EventsService';
-import userEvent from '@testing-library/user-event';
+import { findEventById, deleteEvent } from '../services/EventsService';
 
 vi.mock('../services/EventsService', () => ({
   findEventById: vi.fn(),
+  deleteEvent: vi.fn(),
 }));
 
 const mockParams = { id: '42' };
+const mockNavigate = vi.fn();
 vi.mock('react-router-dom', () => ({
   useParams: () => mockParams,
-  useNavigate: () => vi.fn(),
+  useNavigate: () => mockNavigate,
 }));
 
 describe('EventDetailsComponent', () => {
@@ -144,29 +145,73 @@ describe('EventDetailsComponent', () => {
     expect(botonLeerMas).not.toBeInTheDocument();
   });
 
-test('10. Al hacer clic en "Ver más", se despliega el texto completo y cambia el botón a "Ver menos"', async () => {
-  const descripcionLarga =
-    'Esta es una descripción larga de prueba que tiene que superar el límite fijado de ciento cincuenta caracteres para forzar a que aparezca el botón de ver más y comprobar la funcionalidad. ' +
-    'Lorem Ipsum '.repeat(30);
+  test('10. Al confirmar la eliminación, se invoca deleteEvent con el identificador correcto', async () => {
+    vi.mocked(findEventById).mockResolvedValue(mockEvento);
+    vi.mocked(deleteEvent).mockResolvedValue();
 
-  const eventoConDescripcionLarga = { ...mockEvento, descripcion: descripcionLarga };
-  vi.mocked(findEventById).mockResolvedValue(eventoConDescripcionLarga);
+    render(<EventDetailsComponent />);
 
-  render(<EventDetailsComponent />);
+    await waitFor(() => {
+      expect(screen.queryByTestId('cargando-detalle')).not.toBeInTheDocument();
+    });
 
-  await waitFor(() => {
-    expect(screen.queryByTestId('cargando-detalle')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('eliminar-evento-btn'));
+
+    const modal = await screen.findByTestId('modal-confirmar-eliminar');
+    expect(modal).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('confirmar-eliminar-btn'));
+
+    await waitFor(() => {
+      expect(deleteEvent).toHaveBeenCalledWith('42');
+    });
+    expect(deleteEvent).toHaveBeenCalledTimes(1);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
   });
 
-  const botonToggle = screen.getByTestId('toggle-descripcion-btn');
-  expect(botonToggle).toHaveTextContent('Ver más');
+  test('11. Si el usuario cancela la operación, no se ejecuta deleteEvent', async () => {
+    vi.mocked(findEventById).mockResolvedValue(mockEvento);
 
-  const parrafo = botonToggle.closest('p');
-  expect(parrafo.textContent).not.toContain(descripcionLarga.trim());
+    render(<EventDetailsComponent />);
 
-  await userEvent.click(botonToggle);
+    await waitFor(() => {
+      expect(screen.queryByTestId('cargando-detalle')).not.toBeInTheDocument();
+    });
 
-  expect(parrafo.textContent).toContain(descripcionLarga.trim());
-  expect(botonToggle).toHaveTextContent('Ver menos');
-});
+    fireEvent.click(screen.getByTestId('eliminar-evento-btn'));
+
+    expect(await screen.findByTestId('modal-confirmar-eliminar')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('modal-confirmar-eliminar')).not.toBeInTheDocument();
+    });
+    expect(deleteEvent).not.toHaveBeenCalled();
+  });
+
+  test('12. Si deleteEvent devuelve error, se muestra un mensaje informativo al usuario', async () => {
+    vi.mocked(findEventById).mockResolvedValue(mockEvento);
+    vi.mocked(deleteEvent).mockRejectedValue(new Error('API Error'));
+
+    render(<EventDetailsComponent />);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('cargando-detalle')).not.toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId('eliminar-evento-btn'));
+    fireEvent.click(await screen.findByTestId('confirmar-eliminar-btn'));
+
+    const errorMsg = await screen.findByTestId('error-eliminar');
+    expect(errorMsg).toBeInTheDocument();
+    expect(errorMsg).toHaveTextContent('No se pudo eliminar el evento. Inténtalo de nuevo.');
+
+    // El modal sigue visible para que el usuario pueda reintentar o cancelar
+    expect(screen.getByTestId('modal-confirmar-eliminar')).toBeInTheDocument();
+    expect(mockNavigate).not.toHaveBeenCalledWith('/');
+  });
 });

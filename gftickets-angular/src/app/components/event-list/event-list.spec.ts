@@ -29,7 +29,7 @@ describe('EventListComponent', () => {
     httpTesting.verify();
   });
 
-  it('should load events', () => {
+  it('debería cargar eventos', () => {
     fixture.detectChanges();
 
     const request = httpTesting.expectOne(apiUrl);
@@ -64,7 +64,7 @@ describe('EventListComponent', () => {
     expect(cards.length).toBe(1);
   });
 
-  it('should show error when loading fails', () => {
+  it('debería mostrar error cuando falla la carga', () => {
     fixture.detectChanges();
 
     const request = httpTesting.expectOne(apiUrl);
@@ -83,7 +83,7 @@ describe('EventListComponent', () => {
       .toContain('Error al cargar eventos');
   });
 
-  it('should show empty state when no events are available', () => {
+  it('debería mostrar estado vacío cuando no hay eventos disponibles', () => {
     fixture.detectChanges();
 
     const request = httpTesting.expectOne(apiUrl);
@@ -99,7 +99,7 @@ describe('EventListComponent', () => {
   });
 
 
-  it('should render all received events without duplicates', () => {
+  it('debería renderizar todos los eventos recibidos sin duplicados', () => {
     fixture.detectChanges();
 
     const request = httpTesting.expectOne(apiUrl);

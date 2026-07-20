@@ -131,4 +131,45 @@ describe('EventDetailComponent', () => {
 
     expect(TestBed.inject(Router).url).toBe('/compra/7');
   });
+
+  it('debe desplegar y contraer una descripción larga', async () => {
+    const descripcionLarga = 'Descripción extensa del evento. '.repeat(10);
+    await configurarTest(of({ ...evento, descripcion: descripcionLarga }));
+    fixture.detectChanges();
+
+    const boton = fixture.nativeElement.querySelector(
+      '.description-toggle',
+    ) as HTMLButtonElement;
+    const descripcion = fixture.nativeElement.querySelector(
+      '#event-description',
+    ) as HTMLParagraphElement;
+
+    expect(boton.textContent).toContain('Ver más');
+    expect(boton.getAttribute('aria-expanded')).toBe('false');
+    expect(descripcion.textContent).not.toContain(descripcionLarga);
+
+    boton.click();
+    fixture.detectChanges();
+
+    expect(boton.textContent).toContain('Ver menos');
+    expect(boton.getAttribute('aria-expanded')).toBe('true');
+    expect(descripcion.textContent).toContain(descripcionLarga);
+  });
+
+  it('no debe mostrar el desplegable para una descripción corta', async () => {
+    await configurarTest(of(evento));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.description-toggle')).toBeNull();
+    expect(fixture.nativeElement.querySelector('#event-description')?.textContent).toContain(
+      evento.descripcion,
+    );
+  });
+
+  it('debe mostrar no disponible cuando el precio es negativo', async () => {
+    await configurarTest(of({ ...evento, precioMinimo: -1, precioMaximo: -1 }));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Precio no disponible');
+  });
 });

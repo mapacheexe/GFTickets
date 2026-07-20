@@ -9,15 +9,16 @@ export function EventDetailsComponent() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [event, setEvent] = useState(null);
-    const [cargando, setCargando] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
     const [leerMas, setLeerMas] = useState(false);
 
+    const LIMITE_CARACTERES = 150;
 
     useEffect(() => {
         const fetchEvent = async () => {
-            setCargando(true);
+            setLoading(true);
             setError(null);
             try {
                 const data = await findEventById(id);
@@ -26,16 +27,17 @@ export function EventDetailsComponent() {
                 console.error('Error fetching event details:', err);
                 setError('No se pudo cargar la información del evento');
             } finally {
-                setCargando(false);
+                setLoading(false);
             }
         };
 
         if (id) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             fetchEvent();
         }
     }, [id]);
 
-    if (cargando) {
+    if (loading) {
         return (
             <div className="details-container">
                 <header className="details-page-header">
@@ -78,13 +80,13 @@ export function EventDetailsComponent() {
     const renderDescripcion = () => {
         const descripcion = event?.descripcion || "";
         
-        if (descripcion.length <= import.meta.env.VITE_LIMITE_CARACTERES) {
+        if (descripcion.length <= LIMITE_CARACTERES) {
             return <p className="details-desc-text">{descripcion}</p>;
         }
 
         const textoMostrado = leerMas 
             ? descripcion 
-            : `${descripcion.substring(0, import.meta.env.VITE_LIMITE_CARACTERES)}... `;
+            : `${descripcion.substring(0, LIMITE_CARACTERES)}... `;
 
         return (
             <p className="details-desc-text">

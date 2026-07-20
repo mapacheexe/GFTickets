@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
+import { environment } from '../../environments/environment';
 import { CompraEntrada, PurchaseResult, RespuestaCompra } from '../models/compra-entrada.model';
 import { CreditCard } from '../models/credit-card.model';
 import { Invoice } from '../models/invoice.model';
@@ -25,7 +26,7 @@ const PAYMENT_RESPONSE_MESSAGES: Readonly<Record<string, string>> = {
 export class PurchaseService {
   private readonly http = inject(HttpClient);
   private readonly purchaseRepository = inject(LocalPurchaseRepository);
-  private readonly apiUrl = 'http://teacherbanking.us-east-1.elasticbeanstalk.com/pasarela/compra';
+  private readonly apiUrl = `${environment.apiBaseUrl}/pasarela/compra`;
 
   buyTickets(userEmail: string, card: CreditCard, invoice: Invoice): Observable<RespuestaCompra> {
     const request: CompraEntrada = {

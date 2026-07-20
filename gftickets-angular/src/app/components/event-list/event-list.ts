@@ -24,8 +24,8 @@ export class EventListComponent implements OnInit {
   private readonly eventService = inject(EventService);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly eventos = signal<readonly Evento[]>([]);
-  protected readonly cargando = signal(true);
+  protected readonly events = signal<readonly Evento[]>([]);
+  protected readonly isLoading = signal(true);
   protected readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
@@ -37,17 +37,17 @@ export class EventListComponent implements OnInit {
   }
 
   private cargarEventos(): void {
-    this.cargando.set(true);
+    this.isLoading.set(true);
     this.error.set(null);
 
     this.eventService
       .findAllEvents()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.cargando.set(false)),
+        finalize(() => this.isLoading.set(false)),
       )
       .subscribe({
-        next: (eventos) => this.eventos.set(eventos),
+        next: (eventos) => this.events.set(eventos),
         error: () => this.error.set('No se han podido cargar los eventos.'),
       });
   }

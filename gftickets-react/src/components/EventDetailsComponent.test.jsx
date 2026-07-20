@@ -1,16 +1,18 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { EventDetailsComponent } from './EventDetailsComponent';
-import { findEventById } from '../services/EventsService';
+import { findEventById, deleteEvent } from '../services/EventsService';
 
 vi.mock('../services/EventsService', () => ({
   findEventById: vi.fn(),
+  deleteEvent: vi.fn(),
 }));
 
 const mockParams = { id: '42' };
+const mockNavigate = vi.fn();
 vi.mock('react-router-dom', () => ({
   useParams: () => mockParams,
-  useNavigate: () => vi.fn(),
+  useNavigate: () => mockNavigate,
 }));
 
 describe('EventDetailsComponent', () => {
@@ -141,5 +143,75 @@ describe('EventDetailsComponent', () => {
 
     const botonLeerMas = screen.queryByTestId('toggle-descripcion-btn');
     expect(botonLeerMas).not.toBeInTheDocument();
+  });
+
+  test('10. Al confirmar la eliminación, se invoca deleteEvent con el identificador correcto', async () => {
+    vi.mocked(findEventById).mockResolvedValue(mockEvento);
+    vi.mocked(deleteEvent).mockResolvedValue();
+
+    render(<EventDetailsComponent />);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('cargando-detalle')).not.toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId('eliminar-evento-btn'));
+
+    const modal = await screen.findByTestId('modal-confirmar-eliminar');
+    expect(modal).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('confirmar-eliminar-btn'));
+
+    await waitFor(() => {
+      expect(deleteEvent).toHaveBeenCalledWith('42');
+    });
+    expect(deleteEvent).toHaveBeenCalledTimes(1);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
+  });
+
+  test('11. Si el usuario cancela la operación, no se ejecuta deleteEvent', async () => {
+    vi.mocked(findEventById).mockResolvedValue(mockEvento);
+
+    render(<EventDetailsComponent />);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('cargando-detalle')).not.toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId('eliminar-evento-btn'));
+
+    expect(await screen.findByTestId('modal-confirmar-eliminar')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('modal-confirmar-eliminar')).not.toBeInTheDocument();
+    });
+    expect(deleteEvent).not.toHaveBeenCalled();
+  });
+
+  test('12. Si deleteEvent devuelve error, se muestra un mensaje informativo al usuario', async () => {
+    vi.mocked(findEventById).mockResolvedValue(mockEvento);
+    vi.mocked(deleteEvent).mockRejectedValue(new Error('API Error'));
+
+    render(<EventDetailsComponent />);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('cargando-detalle')).not.toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId('eliminar-evento-btn'));
+    fireEvent.click(await screen.findByTestId('confirmar-eliminar-btn'));
+
+    const errorMsg = await screen.findByTestId('error-eliminar');
+    expect(errorMsg).toBeInTheDocument();
+    expect(errorMsg).toHaveTextContent('No se pudo eliminar el evento. Inténtalo de nuevo.');
+
+    // El modal sigue visible para que el usuario pueda reintentar o cancelar
+    expect(screen.getByTestId('modal-confirmar-eliminar')).toBeInTheDocument();
+    expect(mockNavigate).not.toHaveBeenCalledWith('/');
   });
 });

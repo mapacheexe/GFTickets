@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import {deleteEvent, createEvent, findAllEvents, findEventById } from '../services/EventsService';
+import { updateEvent, deleteEvent, createEvent, findAllEvents, findEventById } from '../services/EventsService';
 
 describe('EventsService', () => {
   afterEach(() => {
@@ -243,6 +243,70 @@ describe('EventsService', () => {
       vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network Error'));
 
       await expect(deleteEvent(mockId)).rejects.toThrow('Network Error');
+    });
+  });
+
+  describe('updateEvent()', () => {
+    const mockApiUrl = 'https://api.miseventos.com/v1/events';
+    const mockId = '65';
+    const mockEventData = { title: 'Concierto de Rock (actualizado)', date: '2026-09-01' };
+
+    beforeEach(() => {
+      import.meta.env.VITE_API_URL = mockApiUrl;
+      vi.restoreAllMocks();
+    });
+
+    test('1. llama a fetch con la URL correcta, método PUT, headers y body', async () => {
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => ({}),
+      });
+
+      await updateEvent(mockId, mockEventData);
+
+      expect(fetchSpy).toHaveBeenCalledWith(mockApiUrl + '/' + mockId, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mockEventData),
+      });
+    });
+
+    test('2. devuelve el JSON del servidor cuando la respuesta es correcta (ok: true)', async () => {
+      const mockResponse = { id: mockId, ...mockEventData };
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => mockResponse,
+      });
+
+      const resultado = await updateEvent(mockId, mockEventData);
+
+      expect(resultado).toEqual(mockResponse);
+    });
+
+    test('3. lanza el error exacto cuando la respuesta HTTP no es ok (p.ej. 404)', async () => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: false,
+        status: 404,
+      });
+
+      await expect(updateEvent(mockId, mockEventData)).rejects.toThrow('No se pudo actualizar el evento');
+    });
+
+    test('4. lanza el error exacto cuando el servidor responde con 500', async () => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: false,
+        status: 500,
+      });
+
+      await expect(updateEvent(mockId, mockEventData)).rejects.toThrow('No se pudo actualizar el evento');
+    });
+
+    test('5. propaga el error nativo si la petición fetch falla por completo (ej. sin internet)', async () => {
+      vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network Error'));
+
+      await expect(updateEvent(mockId, mockEventData)).rejects.toThrow('Network Error');
     });
   });
 });

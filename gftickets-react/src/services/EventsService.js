@@ -42,3 +42,17 @@ export const deleteEvent = async (id) => {
   }
   return await response.json();
 };
+
+export const updateEvent = async (id, eventData) => {
+  const response = await fetch(import.meta.env.VITE_API_URL + '/' + id, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(eventData),
+  });
+  if (!response.ok) {
+    throw new Error('No se pudo actualizar el evento');
+  }
+  return await response.json();
+};

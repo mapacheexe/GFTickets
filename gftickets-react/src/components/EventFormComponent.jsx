@@ -27,15 +27,42 @@ export function EventFormComponent() {
         }));
     };
 
+    const validarPrecios = (precioMinimo, precioMaximo) => {
+        if (precioMinimo < 0 || precioMaximo < 0) {
+            return "Los precios no pueden ser negativos.";
+        }
+        if (precioMaximo < precioMinimo) {
+            return "El precio máximo no puede ser menor que el precio mínimo.";
+        }
+        return null;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
         setError(null);
+
+        const camposObligatorios = ["nombre", "descripcion", "fechaEvento", "horaEvento", "localidad", "genero"];
+        const faltaAlgunCampo = camposObligatorios.some((campo) => !formData[campo]);
+        if (faltaAlgunCampo) {
+            setError("Por favor, completa todos los campos obligatorios.");
+            return;
+        }
+
+        const precioMinimo = Number(formData.precioMinimo);
+        const precioMaximo = Number(formData.precioMaximo);
+
+        const errorValidacion = validarPrecios(precioMinimo, precioMaximo);
+        if (errorValidacion) {
+            setError(errorValidacion);
+            return;
+        }
+
+        setLoading(true);
 
         const datosParaEnviar = {
             ...formData,
-            precioMinimo: Number(formData.precioMinimo),
-            precioMaximo: Number(formData.precioMaximo),
+            precioMinimo,
+            precioMaximo,
         };
 
         delete datosParaEnviar.id;
@@ -60,7 +87,7 @@ export function EventFormComponent() {
                     Volver
                 </button>
             </header>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
                 <h1>Crear Nuevo Evento</h1>
                 {error && <p className="error-message">{error}</p>}
                 <label>
@@ -112,6 +139,7 @@ export function EventFormComponent() {
                         name="precioMinimo"
                         value={formData.precioMinimo}
                         onChange={handleChange}
+                        min="0"
                         required
                     />
                 </label>
@@ -122,6 +150,7 @@ export function EventFormComponent() {
                         name="precioMaximo"
                         value={formData.precioMaximo}
                         onChange={handleChange}
+                        min="0"
                         required
                     />
                 </label>

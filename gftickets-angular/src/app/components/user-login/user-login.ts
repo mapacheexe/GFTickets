@@ -74,8 +74,6 @@ export class UserLogin {
         error: (error) => {
           this.loading = false;
 
-          console.error(error);
-
           this.errorMessage =
             error.error?.error?.message ??
             'Error al iniciar sesión';

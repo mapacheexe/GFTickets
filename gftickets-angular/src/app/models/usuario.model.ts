@@ -1,7 +1,6 @@
 export interface Usuario {
   id: string;
-  nombre: string;
-  apellidos: string;
+  displayName: string;
   email: string;
   nombreUsuario: string;
 }

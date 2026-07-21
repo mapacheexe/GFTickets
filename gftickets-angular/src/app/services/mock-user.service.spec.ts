@@ -10,8 +10,7 @@ describe('MockUserService', () => {
   let storage: UserStorage;
 
   const registro: RegistroUsuario = {
-    nombre: 'Julia',
-    apellidos: 'Adell Pérez',
+    displayName: 'Julia María Adell Pérez',
     email: 'julia@example.com',
     nombreUsuario: 'julia.adell',
     password: 'segura123',

@@ -47,8 +47,12 @@ export class EventListComponent implements OnInit {
         finalize(() => this.isLoading.set(false)),
       )
       .subscribe({
-        next: (eventos) => this.events.set(eventos),
-        error: () => this.error.set('No se han podido cargar los eventos.'),
+        next: (eventos) => {
+          this.events.set(eventos);
+        },
+        error: () => {
+          this.error.set('No se han podido cargar los eventos.');
+        },
       });
   }
 }

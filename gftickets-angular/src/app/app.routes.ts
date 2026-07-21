@@ -23,6 +23,12 @@ export const routes: Routes = [
     title: 'Crear una cuenta | GFTickets',
   },
   {
+    path: 'inicio-sesion',
+    loadComponent: () =>
+      import('./components/user-login/user-login').then((module) => module.UserLogin),
+    title: 'Iniciar sesión | GFTickets',
+  },
+  {
     path: 'mi-perfil',
     loadComponent: () =>
       import('./components/user-profile/user-profile').then(

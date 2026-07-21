@@ -55,7 +55,7 @@ export class FirebaseUserService implements UserService {
   private readonly storageKey = 'gftickets.firebase-session';
 
   registerUser(registration: RegistroUsuario): Observable<Usuario> {
-    const displayName = `${registration.nombre.trim()} ${registration.apellidos.trim()}`.trim();
+    const displayName = registration.displayName.trim();
 
     return this.http
       .post<FirebaseAuthResponse>(`${this.authUrl}/accounts:signUp?key=${this.apiKey}`, {
@@ -68,8 +68,7 @@ export class FirebaseUserService implements UserService {
         map((response) => {
           const user: Usuario = {
             id: response.localId,
-            nombre: registration.nombre.trim(),
-            apellidos: registration.apellidos.trim(),
+            displayName,
             email: response.email,
             nombreUsuario: registration.nombreUsuario.trim(),
           };
@@ -98,10 +97,9 @@ export class FirebaseUserService implements UserService {
           const hasMatchingStoredUser = previousUser?.id === response.localId;
           const user: Usuario = {
             id: response.localId,
-            nombre: hasMatchingStoredUser
-              ? previousUser.nombre
+            displayName: hasMatchingStoredUser
+              ? previousUser.displayName
               : response.displayName?.trim() || '',
-            apellidos: hasMatchingStoredUser ? previousUser.apellidos : '',
             email: response.email,
             nombreUsuario: hasMatchingStoredUser
               ? previousUser.nombreUsuario

@@ -9,8 +9,7 @@ import { UserProfileComponent } from './user-profile';
 describe('UserProfileComponent', () => {
   const user: Usuario = {
     id: 'firebase-user-id',
-    nombre: 'Julia',
-    apellidos: 'Adell Pérez',
+    displayName: 'Julia María Adell Pérez',
     email: 'julia@example.com',
     nombreUsuario: 'julia.adell',
   };
@@ -20,9 +19,10 @@ describe('UserProfileComponent', () => {
     const fixture = await createComponent(of(user));
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Julia Adell Pérez');
+    expect(content).toContain('Julia María Adell Pérez');
     expect(content).toContain('julia@example.com');
     expect(content).toContain('julia.adell');
+    expect(fixture.nativeElement.querySelector('.avatar')?.textContent.trim()).toBe('JP');
     expect(getCurrentUser).toHaveBeenCalledOnce();
   });
 
@@ -55,16 +55,16 @@ describe('UserProfileComponent', () => {
 
     userUpdates.next(user);
     fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('Julia Adell Pérez');
+    expect(fixture.nativeElement.textContent).toContain('Julia María Adell Pérez');
 
     userUpdates.next({
       ...user,
-      nombre: 'Julia María',
+      displayName: 'Julia María de los Ángeles Adell Pérez',
       email: 'julia.maria@example.com',
     });
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Julia María Adell Pérez');
+    expect(fixture.nativeElement.textContent).toContain('Julia María de los Ángeles Adell Pérez');
     expect(fixture.nativeElement.textContent).toContain('julia.maria@example.com');
     expect(fixture.nativeElement.textContent).not.toContain('julia@example.com');
   });

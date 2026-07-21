@@ -22,8 +22,7 @@ export class MockUserService implements UserService {
 
       const usuario: Usuario = {
         id: String(Date.now()),
-        nombre: registro.nombre.trim(),
-        apellidos: registro.apellidos.trim(),
+        displayName: registro.displayName.trim(),
         email: registro.email.trim(),
         nombreUsuario: registro.nombreUsuario.trim(),
       };

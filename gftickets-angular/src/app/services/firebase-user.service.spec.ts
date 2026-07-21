@@ -14,8 +14,7 @@ import { UserStorage } from './user.service';
 
 describe('FirebaseUserService', () => {
   const registration: RegistroUsuario = {
-    nombre: 'Julia María',
-    apellidos: 'De la Cruz Pérez',
+    displayName: 'Julia María De la Cruz Pérez',
     email: 'julia@example.com',
     nombreUsuario: 'julia.adell',
     password: 'segura123',
@@ -31,8 +30,7 @@ describe('FirebaseUserService', () => {
   };
   const user: Usuario = {
     id: authResponse.localId,
-    nombre: registration.nombre,
-    apellidos: registration.apellidos,
+    displayName: registration.displayName,
     email: registration.email,
     nombreUsuario: registration.nombreUsuario,
   };
@@ -67,7 +65,7 @@ describe('FirebaseUserService', () => {
 
   afterEach(() => http.verify());
 
-  it('registra el usuario, combina su nombre y conserva los tokens solo en la sesión', async () => {
+  it('registra el usuario con su nombre completo y conserva los tokens solo en la sesión', async () => {
     const resultPromise = firstValueFrom(service.registerUser(registration));
     const request = http.expectOne(
       `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebase.apiKey}`,
@@ -115,8 +113,6 @@ describe('FirebaseUserService', () => {
 
     await expect(resultPromise).resolves.toEqual({
       ...user,
-      nombre: authResponse.displayName,
-      apellidos: '',
       nombreUsuario: 'julia',
     });
     expect(JSON.stringify(await resultPromise)).not.toContain(authResponse.idToken);

@@ -108,6 +108,13 @@
       <button type="submit" [disabled]="submitting()">
         {{ submitting() ? 'Creando cuenta…' : 'Crear cuenta' }}
       </button>
+
+      <p class="register-link">
+        ¿Ya tienes cuenta?
+        <a routerLink="/inicio-sesion">
+          Inicia sesión
+        </a>
+      </p>
     </form>
   </section>
 </main>

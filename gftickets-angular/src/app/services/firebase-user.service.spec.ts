@@ -16,23 +16,26 @@ describe('FirebaseUserService', () => {
   const registration: RegistroUsuario = {
     displayName: 'Julia María De la Cruz Pérez',
     email: 'julia@example.com',
-    nombreUsuario: 'julia.adell',
     password: 'segura123',
   };
   const authResponse: FirebaseAuthResponse = {
     kind: 'identitytoolkit#SignupNewUserResponse',
     localId: 'firebase-user-id',
     email: registration.email,
-    displayName: 'Julia María De la Cruz Pérez',
     idToken: 'firebase-id-token',
     refreshToken: 'firebase-refresh-token',
     expiresIn: '3600',
+  };
+  const profileResponse: FirebaseAuthResponse = {
+    ...authResponse,
+    displayName: registration.displayName,
+    idToken: 'firebase-profile-id-token',
+    refreshToken: 'firebase-profile-refresh-token',
   };
   const user: Usuario = {
     id: authResponse.localId,
     displayName: registration.displayName,
     email: registration.email,
-    nombreUsuario: registration.nombreUsuario,
   };
 
   let service: FirebaseUserService;
@@ -75,15 +78,23 @@ describe('FirebaseUserService', () => {
     expect(request.request.body).toEqual({
       email: registration.email,
       password: registration.password,
-      displayName: 'Julia María De la Cruz Pérez',
       returnSecureToken: true,
     });
     request.flush(authResponse);
 
+    const profileRequest = http.expectOne((candidate) => candidate.url.includes('accounts:update'));
+    expect(profileRequest.request.method).toBe('POST');
+    expect(profileRequest.request.body).toEqual({
+      idToken: authResponse.idToken,
+      displayName: registration.displayName,
+      returnSecureToken: true,
+    });
+    profileRequest.flush(profileResponse);
+
     await expect(resultPromise).resolves.toEqual(user);
     expect(JSON.stringify(await resultPromise)).not.toContain('Token');
-    expect(storedSession).toContain(authResponse.idToken);
-    expect(storedSession).toContain(authResponse.refreshToken);
+    expect(storedSession).toContain(profileResponse.idToken);
+    expect(storedSession).toContain(profileResponse.refreshToken);
   });
 
   it('traduce el error de correo ya registrado', async () => {
@@ -109,13 +120,23 @@ describe('FirebaseUserService', () => {
       password: registration.password,
       returnSecureToken: true,
     });
-    request.flush(authResponse);
+    request.flush(profileResponse);
 
-    await expect(resultPromise).resolves.toEqual({
-      ...user,
-      nombreUsuario: 'julia',
-    });
+    await expect(resultPromise).resolves.toEqual(user);
     expect(JSON.stringify(await resultPromise)).not.toContain(authResponse.idToken);
+  });
+
+  it('informa si Firebase crea la cuenta pero no puede guardar el nombre completo', async () => {
+    const resultPromise = firstValueFrom(service.registerUser(registration));
+    http
+      .expectOne((candidate) => candidate.url.includes('accounts:signUp'))
+      .flush(authResponse);
+    http
+      .expectOne((candidate) => candidate.url.includes('accounts:update'))
+      .flush({}, { status: 500, statusText: 'Internal Server Error' });
+
+    await expect(resultPromise).rejects.toThrow('No se ha podido crear la cuenta.');
+    expect(storedSession).toBeNull();
   });
 
   it('devuelve null sin consultar Firebase cuando no existe una sesión', async () => {

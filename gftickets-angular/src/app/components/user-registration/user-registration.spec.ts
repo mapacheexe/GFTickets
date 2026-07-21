@@ -14,7 +14,6 @@ describe('UserRegistrationComponent', () => {
     id: 'firebase-user-id',
     displayName: 'Julia María Adell Pérez',
     email: 'julia@example.com',
-    nombreUsuario: 'julia.adell',
   };
 
   beforeEach(async () => {
@@ -54,7 +53,6 @@ describe('UserRegistrationComponent', () => {
   it.each([
     'displayName',
     'email',
-    'nombreUsuario',
     'password',
     'passwordConfirmation',
   ] as const)('no envía el formulario cuando falta el campo obligatorio %s', (field) => {
@@ -98,7 +96,6 @@ describe('UserRegistrationComponent', () => {
     expect(registerUser).toHaveBeenCalledWith({
       displayName: 'Julia María Adell Pérez',
       email: 'julia@example.com',
-      nombreUsuario: 'julia.adell',
       password: 'segura123',
     });
   });
@@ -153,7 +150,6 @@ describe('UserRegistrationComponent', () => {
     fixture.componentInstance['form'].setValue({
       displayName: 'Julia María Adell Pérez',
       email: 'julia@example.com',
-      nombreUsuario: 'julia.adell',
       password: 'segura123',
       passwordConfirmation: 'segura123',
     });

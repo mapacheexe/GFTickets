@@ -17,7 +17,6 @@ describe('UserLogin', () => {
     id: 'firebase-user-id',
     displayName: 'Julia María Adell Pérez',
     email: 'test@test.com',
-    nombreUsuario: 'test',
   };
 
   beforeEach(async () => {

@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, InjectionToken, inject } from '@angular/core';
-import { Observable, catchError, defer, map, of, throwError } from 'rxjs';
+import { Observable, catchError, defer, map, of, switchMap, throwError } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { RegistroUsuario, Usuario } from '../models/usuario.model';
@@ -61,16 +61,30 @@ export class FirebaseUserService implements UserService {
       .post<FirebaseAuthResponse>(`${this.authUrl}/accounts:signUp?key=${this.apiKey}`, {
         email: registration.email.trim(),
         password: registration.password,
-        displayName,
         returnSecureToken: true,
       })
       .pipe(
+        switchMap((signUpResponse) =>
+          this.http
+            .post<FirebaseAuthResponse>(`${this.authUrl}/accounts:update?key=${this.apiKey}`, {
+              idToken: signUpResponse.idToken,
+              displayName,
+              returnSecureToken: true,
+            })
+            .pipe(
+              map((profileResponse) => ({
+                ...signUpResponse,
+                ...profileResponse,
+                email: profileResponse.email || signUpResponse.email,
+                displayName: profileResponse.displayName || displayName,
+              })),
+            ),
+        ),
         map((response) => {
           const user: Usuario = {
             id: response.localId,
             displayName,
             email: response.email,
-            nombreUsuario: registration.nombreUsuario.trim(),
           };
           this.saveSession(response, user);
           return user;
@@ -101,9 +115,6 @@ export class FirebaseUserService implements UserService {
               ? previousUser.displayName
               : response.displayName?.trim() || '',
             email: response.email,
-            nombreUsuario: hasMatchingStoredUser
-              ? previousUser.nombreUsuario
-              : response.email.split('@')[0],
           };
           this.saveSession(response, user);
           return user;
@@ -194,9 +205,12 @@ export class FirebaseUserService implements UserService {
 
   private toAuthenticationError(error: unknown, fallbackMessage: string): Error {
     if (error instanceof HttpErrorResponse) {
-      const firebaseCode = (error.error as { error?: { message?: string } } | null)?.error?.message;
+      const firebaseMessage = (error.error as { error?: { message?: string } } | null)?.error
+        ?.message;
+      const firebaseCode = firebaseMessage?.split(' : ')[0];
       const messages: Readonly<Record<string, string>> = {
         EMAIL_EXISTS: 'El correo ya está registrado.',
+        INVALID_EMAIL: 'El correo electrónico no es válido.',
         INVALID_LOGIN_CREDENTIALS: 'El correo o la contraseña no son correctos.',
         EMAIL_NOT_FOUND: 'El correo o la contraseña no son correctos.',
         INVALID_PASSWORD: 'El correo o la contraseña no son correctos.',

@@ -233,7 +233,6 @@ describe('PurchaseComponent', () => {
                       id: 'firebase-user-id',
                       displayName: 'Julia Adell',
                       email: userEmail,
-                      nombreUsuario: 'julia',
                     },
               ),
           },

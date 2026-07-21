@@ -40,6 +40,7 @@ describe('PurchaseComponent', () => {
     expect(fixture.nativeElement.textContent).toContain(event.nombre);
     expect(fixture.nativeElement.textContent).toContain(event.nombreRecinto);
     expect(fixture.nativeElement.textContent).toContain('20 de julio de 2026');
+    expect(fixture.nativeElement.textContent).toContain('15,00');
   });
 
   it('no registra una compra con datos de pago inválidos', async () => {

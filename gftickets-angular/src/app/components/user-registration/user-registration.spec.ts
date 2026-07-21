@@ -76,10 +76,25 @@ describe('UserRegistrationComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Las contraseñas no coinciden.');
   });
 
-  it('registra un usuario válido sin enviar la confirmación de contraseña', () => {
+  it('no permite registrar un usuario con un correo electrónico inválido', () => {
     setValidValues();
-    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
-    fixture.detectChanges();
+    fixture.componentInstance['form'].controls.email.setValue('correo-invalido');
+    submitForm();
+
+    expect(registerUser).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain('Introduce un correo electrónico válido.');
+  });
+
+  it('llama al servicio al introducir datos válidos', () => {
+    setValidValues();
+    submitForm();
+
+    expect(registerUser).toHaveBeenCalledOnce();
+  });
+
+  it('envía al servicio los datos introducidos sin la confirmación de contraseña', () => {
+    setValidValues();
+    submitForm();
 
     expect(registerUser).toHaveBeenCalledWith({
       displayName: 'Julia María Adell Pérez',
@@ -87,6 +102,12 @@ describe('UserRegistrationComponent', () => {
       nombreUsuario: 'julia.adell',
       password: 'segura123',
     });
+  });
+
+  it('muestra la confirmación después de un registro satisfactorio', () => {
+    setValidValues();
+    submitForm();
+
     expect(fixture.nativeElement.textContent).toContain('Cuenta creada correctamente.');
   });
 

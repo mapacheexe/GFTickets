@@ -15,7 +15,13 @@ describe('UserProfileComponent', () => {
   };
   let getCurrentUser: ReturnType<typeof vi.fn>;
 
-  it('muestra todos los datos públicos del usuario', async () => {
+  it('solicita al servicio la información del usuario autenticado al acceder', async () => {
+    await createComponent(of(user));
+
+    expect(getCurrentUser).toHaveBeenCalledOnce();
+  });
+
+  it('muestra correctamente todos los datos recibidos', async () => {
     const fixture = await createComponent(of(user));
     const content = fixture.nativeElement.textContent as string;
 
@@ -23,7 +29,14 @@ describe('UserProfileComponent', () => {
     expect(content).toContain('julia@example.com');
     expect(content).toContain('julia.adell');
     expect(fixture.nativeElement.querySelector('.avatar')?.textContent.trim()).toBe('JP');
-    expect(getCurrentUser).toHaveBeenCalledOnce();
+  });
+
+  it('muestra la información correspondiente al usuario autenticado', async () => {
+    const fixture = await createComponent(of(user));
+
+    expect(fixture.nativeElement.textContent).toContain(user.displayName);
+    expect(fixture.nativeElement.textContent).toContain(user.email);
+    expect(fixture.nativeElement.textContent).toContain(user.nombreUsuario);
   });
 
   it('muestra el indicador de carga mientras espera los datos', async () => {
@@ -34,7 +47,7 @@ describe('UserProfileComponent', () => {
     expect(fixture.nativeElement.querySelector('[role="status"]')).not.toBeNull();
   });
 
-  it('ofrece crear una cuenta cuando no existe un usuario actual', async () => {
+  it('bloquea el acceso a datos personales cuando no existe una sesión activa', async () => {
     const fixture = await createComponent(of(null));
 
     expect(fixture.nativeElement.textContent).toContain('Todavía no hay datos de usuario');

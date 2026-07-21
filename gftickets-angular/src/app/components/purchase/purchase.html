@@ -27,8 +27,22 @@
             <dd>{{ currentEvent.localidad }}</dd>
           </div>
           <div>
+            <dt>Fecha</dt>
+            <dd>{{ currentEvent.fechaEvento | date: 'longDate' }}</dd>
+          </div>
+          <div>
             <dt>Precio desde</dt>
             <dd>{{ currentEvent.precioMinimo | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+          </div>
+          <div>
+            <dt>Entradas</dt>
+            <dd>{{ form.controls.ticketQuantity.value }}</dd>
+          </div>
+          <div>
+            <dt>Importe total</dt>
+            <dd data-testid="purchase-total">
+              {{ totalAmount() | currency: 'EUR' : 'symbol' : '1.2-2' }}
+            </dd>
           </div>
         </dl>
       </aside>
@@ -47,6 +61,21 @@
         }
 
         <form [formGroup]="form" (ngSubmit)="createPurchase()" novalidate>
+          <div class="field full-width">
+            <label for="ticketQuantity">Cantidad de entradas</label>
+            <input
+              id="ticketQuantity"
+              type="number"
+              formControlName="ticketQuantity"
+              inputmode="numeric"
+              min="1"
+              step="1"
+            />
+            @if (form.controls.ticketQuantity.touched && form.controls.ticketQuantity.invalid) {
+              <small>Introduce una cantidad de entradas mayor que cero.</small>
+            }
+          </div>
+
           <div class="field full-width">
             <label for="nombreTitular">Titular de la tarjeta</label>
             <input

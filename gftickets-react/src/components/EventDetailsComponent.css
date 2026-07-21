@@ -280,6 +280,130 @@
   gap: 0.25rem;
 }
 
+/* ---------- Botón eliminar ---------- */
+
+.details-delete-btn {
+  flex-shrink: 0;
+  border: 1px solid #e11d48;
+  padding: 0.65rem 1.1rem;
+  border-radius: 0.5rem;
+  color: #e11d48;
+  background: #ffffff;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.details-delete-btn:hover {
+  color: #ffffff;
+  background: #e11d48;
+}
+
+.details-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- Modal de confirmación ---------- */
+
+.details-modal-overlay {
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgb(15 23 42 / 55%);
+}
+
+.details-modal {
+  width: min(420px, 100%);
+  padding: 1.75rem;
+  border-radius: 0.9rem;
+  background: #ffffff;
+  box-shadow: 0 20px 40px rgb(15 23 42 / 25%);
+}
+
+.details-modal-title {
+  margin: 0 0 0.6rem;
+  color: #0f172a;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+}
+
+.details-modal-text {
+  margin: 0;
+  color: #475569;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.details-modal-error {
+  margin: 0.9rem 0 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  color: #be123c;
+  background: #ffe4e6;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.details-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin-top: 1.5rem;
+}
+
+.details-modal-cancel,
+.details-modal-confirm {
+  padding: 0.6rem 1.1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.details-modal-cancel {
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  background: #ffffff;
+}
+
+.details-modal-cancel:hover {
+  background: #f8fafc;
+}
+
+.details-modal-confirm {
+  border: 1px solid #e11d48;
+  color: #ffffff;
+  background: #e11d48;
+}
+
+.details-modal-confirm:hover {
+  background: #be123c;
+  border-color: #be123c;
+}
+
+.details-modal-cancel:disabled,
+.details-modal-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+  .details-footer {
+    align-items: stretch;
+  }
+  .details-delete-btn {
+    width: 100%;
+  }
+}
+
 /* ---------- Estados: loading / error ---------- */
 
 .details-loading,

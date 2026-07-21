@@ -11,7 +11,7 @@ describe('UserRegistrationComponent', () => {
   let registerUser: ReturnType<typeof vi.fn>;
 
   const user: Usuario = {
-    id: 1,
+    id: 'firebase-user-id',
     nombre: 'Julia',
     apellidos: 'Adell Pérez',
     email: 'julia@example.com',

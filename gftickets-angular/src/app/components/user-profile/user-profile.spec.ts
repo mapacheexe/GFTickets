@@ -8,7 +8,7 @@ import { UserProfileComponent } from './user-profile';
 
 describe('UserProfileComponent', () => {
   const user: Usuario = {
-    id: 1,
+    id: 'firebase-user-id',
     nombre: 'Julia',
     apellidos: 'Adell Pérez',
     email: 'julia@example.com',

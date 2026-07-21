@@ -2,7 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 
 import { RegistroUsuario } from '../models/usuario.model';
-import { MockUserService, USER_STORAGE, UserStorage } from './mock-user.service';
+import { MockUserService } from './mock-user.service';
+import { USER_STORAGE, UserStorage } from './user.service';
 
 describe('MockUserService', () => {
   let storedValue: string | null;
@@ -49,7 +50,7 @@ describe('MockUserService', () => {
     const service = TestBed.inject(MockUserService);
 
     await expect(firstValueFrom(service.registerUser(registro))).resolves.toEqual(
-      expect.objectContaining({ id: 12345 }),
+      expect.objectContaining({ id: '12345' }),
     );
   });
 

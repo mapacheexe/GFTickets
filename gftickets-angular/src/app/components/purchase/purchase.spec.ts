@@ -229,7 +229,7 @@ describe('PurchaseComponent', () => {
                 userEmail === null
                   ? null
                   : {
-                      id: 1,
+                      id: 'firebase-user-id',
                       nombre: 'Julia',
                       apellidos: 'Adell',
                       email: userEmail,

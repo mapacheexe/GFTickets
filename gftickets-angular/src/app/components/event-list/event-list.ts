@@ -40,6 +40,8 @@ export class EventListComponent implements OnInit {
     this.isLoading.set(true);
     this.error.set(null);
 
+    console.log('Cargando eventos...');
+
     this.eventService
       .findAllEvents()
       .pipe(
@@ -47,8 +49,14 @@ export class EventListComponent implements OnInit {
         finalize(() => this.isLoading.set(false)),
       )
       .subscribe({
-        next: (eventos) => this.events.set(eventos),
-        error: () => this.error.set('No se han podido cargar los eventos.'),
+        next: (eventos) => {
+          console.log('Eventos cargados:', eventos);
+          this.events.set(eventos);
+        },
+        error: (error) => {
+          console.error('Error al cargar los eventos:', error);
+          this.error.set('No se han podido cargar los eventos.');
+        },
       });
   }
 }

@@ -8,28 +8,60 @@ import { FirebaseUserService } from '../../services/firebase-user.service';
 describe('UserLogin', () => {
   let component: UserLogin;
   let fixture: ComponentFixture<UserLogin>;
+
   let firebaseUserServiceMock: {
     loginUser: ReturnType<typeof vi.fn>;
   };
 
+  const localStorageMock = (() => {
+    let store: Record<string, string> = {};
+
+    return {
+      getItem: vi.fn((key: string) => store[key] ?? null),
+
+      setItem: vi.fn((key: string, value: string) => {
+        store[key] = value;
+      }),
+
+      removeItem: vi.fn((key: string) => {
+        delete store[key];
+      }),
+
+      clear: vi.fn(() => {
+        store = {};
+      }),
+    };
+  })();
+
+
   beforeEach(async () => {
 
+    Object.defineProperty(window, 'localStorage', {
+      value: localStorageMock,
+      configurable: true,
+    });
+
+    localStorageMock.clear();
+    vi.clearAllMocks();
+
     firebaseUserServiceMock = {
-      loginUser: vi.fn()
+      loginUser: vi.fn(),
     };
+
 
     await TestBed.configureTestingModule({
       imports: [
-        UserLogin
+        UserLogin,
       ],
       providers: [
         provideRouter([]),
         {
           provide: FirebaseUserService,
-          useValue: firebaseUserServiceMock
-        }
-      ]
+          useValue: firebaseUserServiceMock,
+        },
+      ],
     }).compileComponents();
+
 
     fixture = TestBed.createComponent(UserLogin);
     component = fixture.componentInstance;
@@ -37,13 +69,12 @@ describe('UserLogin', () => {
     fixture.detectChanges();
   });
 
-
-  it('should create', () => {
+  it('debería crear el componente', () => {
     expect(component).toBeTruthy();
   });
 
 
-  it('should mark form as touched when submitting invalid form', () => {
+  it('debería marcar los campos como tocados al enviar un formulario inválido', () => {
 
     component.login();
 
@@ -58,7 +89,7 @@ describe('UserLogin', () => {
   });
 
 
-  it('should not call service when form is invalid', () => {
+  it('no debería llamar al servicio cuando el formulario es inválido', () => {
 
     component.login();
 
@@ -69,18 +100,18 @@ describe('UserLogin', () => {
   });
 
 
-  it('should call login service with form values', () => {
+  it('debería llamar al servicio de login con los valores del formulario', () => {
 
     firebaseUserServiceMock.loginUser.mockReturnValue(
       of({
         idToken: 'token-test',
-        email: 'test@test.com'
+        email: 'test@test.com',
       })
     );
 
     component.loginForm.setValue({
       email: 'test@test.com',
-      password: '123456'
+      password: '123456',
     });
 
     component.login();
@@ -89,50 +120,53 @@ describe('UserLogin', () => {
       firebaseUserServiceMock.loginUser
     ).toHaveBeenCalledWith({
       email: 'test@test.com',
-      password: '123456'
+      password: '123456',
     });
 
   });
 
 
-  it('should store token after successful login', () => {
+  it('debería guardar el token tras iniciar sesión correctamente', () => {
 
     firebaseUserServiceMock.loginUser.mockReturnValue(
       of({
         idToken: 'token-test',
-        email: 'test@test.com'
+        email: 'test@test.com',
       })
     );
 
     component.loginForm.setValue({
       email: 'test@test.com',
-      password: '123456'
+      password: '123456',
     });
 
     component.login();
 
     expect(
-      localStorage.getItem('token')
-    ).toBe('token-test');
+      localStorageMock.setItem
+    ).toHaveBeenCalledWith(
+      'token',
+      'token-test',
+    );
 
   });
 
 
-  it('should show error message when login fails', () => {
+  it('debería mostrar un mensaje de error cuando falla el inicio de sesión', () => {
 
     firebaseUserServiceMock.loginUser.mockReturnValue(
       throwError(() => ({
         error: {
           error: {
-            message: 'EMAIL_NOT_FOUND'
-          }
-        }
+            message: 'EMAIL_NOT_FOUND',
+          },
+        },
       }))
     );
 
     component.loginForm.setValue({
       email: 'test@test.com',
-      password: '123456'
+      password: '123456',
     });
 
     component.login();

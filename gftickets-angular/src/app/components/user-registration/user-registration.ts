@@ -55,7 +55,7 @@ export class UserRegistrationComponent {
       }),
       password: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.minLength(8), Validators.maxLength(72)],
+        validators: [Validators.required, Validators.minLength(6), Validators.maxLength(72)],
       }),
       passwordConfirmation: new FormControl('', {
         nonNullable: true,

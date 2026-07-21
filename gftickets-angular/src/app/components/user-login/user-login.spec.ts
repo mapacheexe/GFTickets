@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { UserLogin } from './user-login';
@@ -10,6 +10,14 @@ describe('UserLogin', () => {
   let fixture: ComponentFixture<UserLogin>;
   let firebaseUserServiceMock: {
     loginUser: ReturnType<typeof vi.fn>;
+  };
+  let router: Router;
+
+  const authenticatedUser = {
+    id: 'firebase-user-id',
+    displayName: 'Julia María Adell Pérez',
+    email: 'test@test.com',
+    nombreUsuario: 'test',
   };
 
   beforeEach(async () => {
@@ -33,17 +41,18 @@ describe('UserLogin', () => {
 
     fixture = TestBed.createComponent(UserLogin);
     component = fixture.componentInstance;
+    router = TestBed.inject(Router);
 
     fixture.detectChanges();
   });
 
 
-  it('should create', () => {
+  it('crea el componente', () => {
     expect(component).toBeTruthy();
   });
 
 
-  it('should mark form as touched when submitting invalid form', () => {
+  it('marca el formulario como tocado al enviar datos inválidos', () => {
 
     component.login();
 
@@ -58,7 +67,7 @@ describe('UserLogin', () => {
   });
 
 
-  it('should not call service when form is invalid', () => {
+  it('no llama al servicio cuando el formulario es inválido', () => {
 
     component.login();
 
@@ -69,13 +78,10 @@ describe('UserLogin', () => {
   });
 
 
-  it('should call login service with form values', () => {
+  it('llama al servicio de acceso con los valores del formulario', () => {
 
     firebaseUserServiceMock.loginUser.mockReturnValue(
-      of({
-        idToken: 'token-test',
-        email: 'test@test.com'
-      })
+      of(authenticatedUser)
     );
 
     component.loginForm.setValue({
@@ -95,14 +101,10 @@ describe('UserLogin', () => {
   });
 
 
-  it('should store token after successful login', () => {
+  it('redirige al inicio después de iniciar sesión', () => {
 
-    firebaseUserServiceMock.loginUser.mockReturnValue(
-      of({
-        idToken: 'token-test',
-        email: 'test@test.com'
-      })
-    );
+    firebaseUserServiceMock.loginUser.mockReturnValue(of(authenticatedUser));
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
     component.loginForm.setValue({
       email: 'test@test.com',
@@ -111,23 +113,16 @@ describe('UserLogin', () => {
 
     component.login();
 
-    expect(
-      localStorage.getItem('token')
-    ).toBe('token-test');
+    expect(navigate).toHaveBeenCalledWith(['/']);
+    expect(component.loading).toBe(false);
 
   });
 
 
-  it('should show error message when login fails', () => {
+  it('muestra el mensaje cuando falla el inicio de sesión', () => {
 
     firebaseUserServiceMock.loginUser.mockReturnValue(
-      throwError(() => ({
-        error: {
-          error: {
-            message: 'EMAIL_NOT_FOUND'
-          }
-        }
-      }))
+      throwError(() => new Error('El correo o la contraseña no son correctos.'))
     );
 
     component.loginForm.setValue({
@@ -139,7 +134,8 @@ describe('UserLogin', () => {
 
     expect(
       component.errorMessage
-    ).toBe('EMAIL_NOT_FOUND');
+    ).toBe('El correo o la contraseña no son correctos.');
+    expect(component.loading).toBe(false);
 
   });
 

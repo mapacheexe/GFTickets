@@ -58,25 +58,15 @@ export class UserLogin {
       })
       .subscribe({
 
-        next: (response) => {
+        next: () => {
           this.loading = false;
-
-          console.log('Usuario autenticado:', response);
-
-          localStorage.setItem(
-            'token',
-            response.idToken
-          );
-
           this.router.navigate(['/']);
         },
 
-        error: (error) => {
+        error: (error: unknown) => {
           this.loading = false;
 
-          this.errorMessage =
-            error.error?.error?.message ??
-            'Error al iniciar sesión';
+          this.errorMessage = error instanceof Error ? error.message : 'Error al iniciar sesión';
         }
 
       });

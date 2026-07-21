@@ -1,19 +1,8 @@
-import { Injectable, InjectionToken, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, defer, of, throwError } from 'rxjs';
 
 import { RegistroUsuario, Usuario } from '../models/usuario.model';
-import { UserService } from './user.service';
-
-export interface UserStorage {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-  removeItem(key: string): void;
-}
-
-export const USER_STORAGE = new InjectionToken<UserStorage>('USER_STORAGE', {
-  providedIn: 'root',
-  factory: () => window.localStorage,
-});
+import { USER_STORAGE, UserService } from './user.service';
 
 @Injectable()
 export class MockUserService implements UserService {
@@ -32,9 +21,8 @@ export class MockUserService implements UserService {
       }
 
       const usuario: Usuario = {
-        id: Date.now(),
-        nombre: registro.nombre.trim(),
-        apellidos: registro.apellidos.trim(),
+        id: String(Date.now()),
+        displayName: registro.displayName.trim(),
         email: registro.email.trim(),
         nombreUsuario: registro.nombreUsuario.trim(),
       };

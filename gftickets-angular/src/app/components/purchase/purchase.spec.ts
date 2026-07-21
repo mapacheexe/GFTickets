@@ -40,6 +40,7 @@ describe('PurchaseComponent', () => {
     expect(fixture.nativeElement.textContent).toContain(event.nombre);
     expect(fixture.nativeElement.textContent).toContain(event.nombreRecinto);
     expect(fixture.nativeElement.textContent).toContain('20 de julio de 2026');
+    expect(fixture.nativeElement.textContent).toContain('15,00');
   });
 
   it('no registra una compra con datos de pago inválidos', async () => {
@@ -229,9 +230,8 @@ describe('PurchaseComponent', () => {
                 userEmail === null
                   ? null
                   : {
-                      id: 1,
-                      nombre: 'Julia',
-                      apellidos: 'Adell',
+                      id: 'firebase-user-id',
+                      displayName: 'Julia Adell',
                       email: userEmail,
                       nombreUsuario: 'julia',
                     },

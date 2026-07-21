@@ -19,31 +19,17 @@
 
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <div class="form-grid">
-        <div class="field">
-          <label for="nombre">Nombre</label>
+        <div class="field full-width">
+          <label for="displayName">Nombre completo</label>
           <input
-            id="nombre"
+            id="displayName"
             type="text"
-            formControlName="nombre"
-            autocomplete="given-name"
+            formControlName="displayName"
+            autocomplete="name"
             required
           />
-          @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
-            <small>Introduce tu nombre.</small>
-          }
-        </div>
-
-        <div class="field">
-          <label for="apellidos">Apellidos</label>
-          <input
-            id="apellidos"
-            type="text"
-            formControlName="apellidos"
-            autocomplete="family-name"
-            required
-          />
-          @if (form.controls.apellidos.touched && form.controls.apellidos.invalid) {
-            <small>Introduce tus apellidos.</small>
+          @if (form.controls.displayName.touched && form.controls.displayName.invalid) {
+            <small>Introduce tu nombre completo.</small>
           }
         </div>
 

@@ -36,13 +36,9 @@ export class UserRegistrationComponent {
 
   protected readonly form = new FormGroup(
     {
-      nombre: new FormControl('', {
+      displayName: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(60)],
-      }),
-      apellidos: new FormControl('', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(100)],
+        validators: [Validators.required, Validators.maxLength(160)],
       }),
       email: new FormControl('', {
         nonNullable: true,
@@ -84,8 +80,7 @@ export class UserRegistrationComponent {
 
     const values = this.form.getRawValue();
     const registro = {
-      nombre: values.nombre,
-      apellidos: values.apellidos,
+      displayName: values.displayName,
       email: values.email,
       nombreUsuario: values.nombreUsuario,
       password: values.password,

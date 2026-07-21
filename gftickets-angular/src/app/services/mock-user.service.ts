@@ -13,18 +13,14 @@ export class MockUserService implements UserService {
     return defer(() => {
       const usuarioActual = this.readUser();
 
-      if (
-        usuarioActual?.email.toLowerCase() === registro.email.toLowerCase() ||
-        usuarioActual?.nombreUsuario.toLowerCase() === registro.nombreUsuario.toLowerCase()
-      ) {
-        return throwError(() => new Error('El correo o el nombre de usuario ya está registrado.'));
+      if (usuarioActual?.email.toLowerCase() === registro.email.toLowerCase()) {
+        return throwError(() => new Error('El correo ya está registrado.'));
       }
 
       const usuario: Usuario = {
         id: String(Date.now()),
         displayName: registro.displayName.trim(),
         email: registro.email.trim(),
-        nombreUsuario: registro.nombreUsuario.trim(),
       };
 
       this.storage.setItem(this.storageKey, JSON.stringify(usuario));

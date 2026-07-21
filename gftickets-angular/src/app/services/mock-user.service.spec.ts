@@ -12,7 +12,6 @@ describe('MockUserService', () => {
   const registro: RegistroUsuario = {
     displayName: 'Julia María Adell Pérez',
     email: 'julia@example.com',
-    nombreUsuario: 'julia.adell',
     password: 'segura123',
   };
 
@@ -39,7 +38,7 @@ describe('MockUserService', () => {
     const user = await firstValueFrom(service.registerUser(registro));
     const currentUser = await firstValueFrom(service.getCurrentUser());
 
-    expect(user.nombreUsuario).toBe('julia.adell');
+    expect(user.displayName).toBe('Julia María Adell Pérez');
     expect(currentUser).toEqual(user);
     expect(storedValue).not.toContain(registro.password);
   });
@@ -61,21 +60,7 @@ describe('MockUserService', () => {
       firstValueFrom(
         service.registerUser({
           ...registro,
-          nombreUsuario: 'otro.usuario',
-        }),
-      ),
-    ).rejects.toThrow('ya está registrado');
-  });
-
-  it('rechaza un nombre de usuario ya registrado', async () => {
-    const service = TestBed.inject(MockUserService);
-    await firstValueFrom(service.registerUser(registro));
-
-    await expect(
-      firstValueFrom(
-        service.registerUser({
-          ...registro,
-          email: 'otro@example.com',
+          displayName: 'Otro nombre',
         }),
       ),
     ).rejects.toThrow('ya está registrado');

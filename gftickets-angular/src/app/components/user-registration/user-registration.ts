@@ -44,15 +44,6 @@ export class UserRegistrationComponent {
         nonNullable: true,
         validators: [Validators.required, Validators.email, Validators.maxLength(120)],
       }),
-      nombreUsuario: new FormControl('', {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(30),
-          Validators.pattern(/^[a-zA-Z0-9._-]+$/),
-        ],
-      }),
       password: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.minLength(6), Validators.maxLength(72)],
@@ -82,7 +73,6 @@ export class UserRegistrationComponent {
     const registro = {
       displayName: values.displayName,
       email: values.email,
-      nombreUsuario: values.nombreUsuario,
       password: values.password,
     };
     this.submitting.set(true);

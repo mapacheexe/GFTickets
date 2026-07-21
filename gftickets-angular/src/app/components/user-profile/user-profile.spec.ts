@@ -11,7 +11,6 @@ describe('UserProfileComponent', () => {
     id: 'firebase-user-id',
     displayName: 'Julia María Adell Pérez',
     email: 'julia@example.com',
-    nombreUsuario: 'julia.adell',
   };
   let getCurrentUser: ReturnType<typeof vi.fn>;
 
@@ -27,7 +26,6 @@ describe('UserProfileComponent', () => {
 
     expect(content).toContain('Julia María Adell Pérez');
     expect(content).toContain('julia@example.com');
-    expect(content).toContain('julia.adell');
     expect(fixture.nativeElement.querySelector('.avatar')?.textContent.trim()).toBe('JP');
   });
 
@@ -36,7 +34,6 @@ describe('UserProfileComponent', () => {
 
     expect(fixture.nativeElement.textContent).toContain(user.displayName);
     expect(fixture.nativeElement.textContent).toContain(user.email);
-    expect(fixture.nativeElement.textContent).toContain(user.nombreUsuario);
   });
 
   it('muestra el indicador de carga mientras espera los datos', async () => {

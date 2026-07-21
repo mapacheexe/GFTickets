@@ -14,8 +14,8 @@ import { UserStorage } from './user.service';
 
 describe('FirebaseUserService', () => {
   const registration: RegistroUsuario = {
-    nombre: 'Julia',
-    apellidos: 'Adell Pérez',
+    nombre: 'Julia María',
+    apellidos: 'De la Cruz Pérez',
     email: 'julia@example.com',
     nombreUsuario: 'julia.adell',
     password: 'segura123',
@@ -24,7 +24,7 @@ describe('FirebaseUserService', () => {
     kind: 'identitytoolkit#SignupNewUserResponse',
     localId: 'firebase-user-id',
     email: registration.email,
-    displayName: 'Julia Adell Pérez',
+    displayName: 'Julia María De la Cruz Pérez',
     idToken: 'firebase-id-token',
     refreshToken: 'firebase-refresh-token',
     expiresIn: '3600',
@@ -77,7 +77,7 @@ describe('FirebaseUserService', () => {
     expect(request.request.body).toEqual({
       email: registration.email,
       password: registration.password,
-      displayName: 'Julia Adell Pérez',
+      displayName: 'Julia María De la Cruz Pérez',
       returnSecureToken: true,
     });
     request.flush(authResponse);
@@ -113,7 +113,12 @@ describe('FirebaseUserService', () => {
     });
     request.flush(authResponse);
 
-    await expect(resultPromise).resolves.toEqual({ ...user, nombreUsuario: 'julia' });
+    await expect(resultPromise).resolves.toEqual({
+      ...user,
+      nombre: authResponse.displayName,
+      apellidos: '',
+      nombreUsuario: 'julia',
+    });
     expect(JSON.stringify(await resultPromise)).not.toContain(authResponse.idToken);
   });
 
@@ -132,15 +137,13 @@ describe('FirebaseUserService', () => {
         {
           localId: authResponse.localId,
           email: 'julia.actualizada@example.com',
-          displayName: 'Julia María Adell Pérez',
+          displayName: 'Nombre modificado fuera de la aplicación',
         },
       ],
     });
 
     await expect(resultPromise).resolves.toEqual({
       ...user,
-      nombre: 'Julia',
-      apellidos: 'María Adell Pérez',
       email: 'julia.actualizada@example.com',
     });
   });

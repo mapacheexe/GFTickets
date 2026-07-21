@@ -94,13 +94,18 @@ export class FirebaseUserService implements UserService {
       )
       .pipe(
         map((response) => {
-          const names = this.splitDisplayName(response.displayName);
+          const previousUser = this.readSession()?.user;
+          const hasMatchingStoredUser = previousUser?.id === response.localId;
           const user: Usuario = {
             id: response.localId,
-            nombre: names.nombre,
-            apellidos: names.apellidos,
+            nombre: hasMatchingStoredUser
+              ? previousUser.nombre
+              : response.displayName?.trim() || '',
+            apellidos: hasMatchingStoredUser ? previousUser.apellidos : '',
             email: response.email,
-            nombreUsuario: response.email.split('@')[0],
+            nombreUsuario: hasMatchingStoredUser
+              ? previousUser.nombreUsuario
+              : response.email.split('@')[0],
           };
           this.saveSession(response, user);
           return user;
@@ -132,12 +137,8 @@ export class FirebaseUserService implements UserService {
               return null;
             }
 
-            const names = firebaseUser.displayName
-              ? this.splitDisplayName(firebaseUser.displayName)
-              : { nombre: session.user.nombre, apellidos: session.user.apellidos };
             const user: Usuario = {
               ...session.user,
-              ...names,
               id: firebaseUser.localId,
               email: firebaseUser.email,
             };
@@ -191,11 +192,6 @@ export class FirebaseUserService implements UserService {
 
   private clearSession(): void {
     this.storage.removeItem(this.storageKey);
-  }
-
-  private splitDisplayName(displayName?: string): Pick<Usuario, 'nombre' | 'apellidos'> {
-    const [nombre = '', ...remainingNames] = displayName?.trim().split(/\s+/) ?? [];
-    return { nombre, apellidos: remainingNames.join(' ') };
   }
 
   private toAuthenticationError(error: unknown, fallbackMessage: string): Error {

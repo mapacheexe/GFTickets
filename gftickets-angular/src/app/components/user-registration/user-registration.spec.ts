@@ -30,14 +30,13 @@ describe('UserRegistrationComponent', () => {
     fixture.detectChanges();
   });
 
-  it('muestra los cinco campos obligatorios del registro', () => {
+  it('muestra los cuatro campos obligatorios del registro', () => {
     const requiredFields = fixture.nativeElement.querySelectorAll('input[required]');
 
-    expect(requiredFields).toHaveLength(5);
+    expect(requiredFields).toHaveLength(4);
     expect(Array.from(requiredFields).map((field) => (field as HTMLInputElement).id)).toEqual([
       'displayName',
       'email',
-      'nombreUsuario',
       'password',
       'passwordConfirmation',
     ]);

@@ -1,9 +1,12 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { createEvent } from "../services/EventsService";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { createEvent, updateEvent, findEventById } from "../services/EventsService";
 import './EventFormComponent.css';
+
 export function EventFormComponent() {
     const navigate = useNavigate();
+    const {id} = useParams();
+
     const [formData, setFormData] = useState({
         "id": "",
         "nombre": "",
@@ -19,6 +22,18 @@ export function EventFormComponent() {
     });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (id) {
+            findEventById(id)
+                .then((event) => {
+                    setFormData(event);
+                })
+                .catch((err) => {
+                    setError('No se pudo cargar el evento. ' + (err.message || ''));
+                });
+        }
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -66,13 +81,18 @@ export function EventFormComponent() {
             precioMaximo,
         };
 
-        delete datosParaEnviar.id;
-
         try {
-            await createEvent(datosParaEnviar);
+            if (id) {
+                await updateEvent(id, datosParaEnviar);
+            } else {
+                delete datosParaEnviar.id;
+                await createEvent(datosParaEnviar);
+            }
             navigate('/');
         } catch (err) {
-            setError('No se pudo crear el evento. ' + (err.message || ''));
+            setError(id
+                ? 'No se pudo actualizar el evento. ' + (err.message || '')
+                : 'No se pudo crear el evento. ' + (err.message || ''));
         }
         setLoading(false);
     };
@@ -89,7 +109,7 @@ export function EventFormComponent() {
                 </button>
             </header>
             <form onSubmit={handleSubmit} noValidate>
-                <h1>Crear Nuevo Evento</h1>
+                <h1>{id ? 'Editar Evento' : 'Crear Nuevo Evento'}</h1>
                 {error && <p className="error-message">{error}</p>}
                 <label>
                     Nombre:
@@ -194,7 +214,9 @@ export function EventFormComponent() {
                     />
                 </label>
                 <button type="submit" disabled={loading}>
-                    {loading ? 'Creando...' : 'Crear Evento'}
+                    {loading
+                        ? (id ? 'Actualizando...' : 'Creando...')
+                        : (id ? 'Actualizar Evento' : 'Crear Evento')}
                 </button>
             </form>
         </div>

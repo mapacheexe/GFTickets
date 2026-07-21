@@ -50,7 +50,7 @@ export class EventListComponent implements OnInit {
         next: (eventos) => {
           this.events.set(eventos);
         },
-        error: (error) => {
+        error: () => {
           this.error.set('No se han podido cargar los eventos.');
         },
       });

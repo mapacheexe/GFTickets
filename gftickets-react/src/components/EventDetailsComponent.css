@@ -36,6 +36,83 @@
   color: #0f172a;
 }
 
+/* ---------- Acciones (editar / eliminar) ---------- */
+
+.details-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.details-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 0.55rem;
+  padding: 0.5rem 0.95rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.05s ease;
+}
+
+.details-action-btn:active {
+  transform: translateY(1px);
+}
+
+.details-action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+.details-edit-btn {
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.details-edit-btn:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.details-delete-btn {
+  border: 1px solid transparent;
+  color: #ffffff;
+  background: #e11d48;
+}
+
+.details-delete-btn:hover:not(:disabled) {
+  background: #be123c;
+}
+
+.details-delete-btn.is-outline {
+  border: 1px solid #fecdd3;
+  color: #e11d48;
+  background: #fff1f2;
+}
+
+.details-delete-btn.is-outline:hover:not(:disabled) {
+  background: #ffe4e6;
+}
+
+@media (max-width: 520px) {
+  .details-page-header {
+    flex-wrap: wrap;
+  }
+  .details-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+  .details-action-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
 /* ---------- Layout principal ---------- */
 
 .details-layout {
@@ -279,5 +356,124 @@
 @media (prefers-reduced-motion: reduce) {
   .details-spinner {
     animation-duration: 1.6s;
+  }
+}
+
+/* ---------- Modal de confirmación (eliminar) ---------- */
+
+.details-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgb(15 23 42 / 55%);
+  backdrop-filter: blur(2px);
+  animation: fade-in 0.15s ease;
+}
+
+.details-modal {
+  width: min(420px, 100%);
+  padding: 1.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.9rem;
+  background: #ffffff;
+  box-shadow: 0 20px 40px -12px rgb(15 23 42 / 25%);
+  animation: modal-pop 0.15s ease;
+}
+
+.details-modal-title {
+  margin: 0 0 0.6rem;
+  color: #0f172a;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.details-modal-text {
+  margin: 0 0 1.25rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.details-modal-error {
+  margin: -0.5rem 0 1.25rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #fecdd3;
+  border-radius: 0.55rem;
+  color: #be123c;
+  background: #fff1f2;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.details-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.details-modal-cancel,
+.details-modal-confirm {
+  border-radius: 0.55rem;
+  padding: 0.55rem 1.1rem;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+}
+
+.details-modal-cancel:active,
+.details-modal-confirm:active {
+  transform: translateY(1px);
+}
+
+.details-modal-cancel:disabled,
+.details-modal-confirm:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+
+.details-modal-cancel {
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  background: #ffffff;
+}
+
+.details-modal-cancel:hover:not(:disabled) {
+  background: #f8fafc;
+}
+
+.details-modal-confirm {
+  border: 1px solid transparent;
+  color: #ffffff;
+  background: #e11d48;
+}
+
+.details-modal-confirm:hover:not(:disabled) {
+  background: #be123c;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 520px) {
+  .details-modal-actions {
+    flex-direction: column-reverse;
+  }
+  .details-modal-cancel,
+  .details-modal-confirm {
+    width: 100%;
   }
 }

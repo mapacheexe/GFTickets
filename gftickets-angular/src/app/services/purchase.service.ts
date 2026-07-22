@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, throwError } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { CompraEntrada, PurchaseResult, RespuestaCompra } from '../models/compra-entrada.model';
 import { CreditCard } from '../models/credit-card.model';
 import { Invoice } from '../models/invoice.model';
 import { Transaction } from '../models/transaction.model';
+import { AuthStateService } from './auth-state.service';
 import { LocalPurchaseRepository } from './purchase.repository';
 
 const PAYMENT_RESPONSE_MESSAGES: Readonly<Record<string, string>> = {
@@ -25,10 +26,17 @@ const PAYMENT_RESPONSE_MESSAGES: Readonly<Record<string, string>> = {
 @Injectable({ providedIn: 'root' })
 export class PurchaseService {
   private readonly http = inject(HttpClient);
+  private readonly authState = inject(AuthStateService);
   private readonly purchaseRepository = inject(LocalPurchaseRepository);
   private readonly apiUrl = `${environment.apiBaseUrl}/pasarela/compra`;
 
   buyTickets(userEmail: string, card: CreditCard, invoice: Invoice): Observable<RespuestaCompra> {
+    const idToken = this.authState.getIdToken();
+
+    if (idToken === null) {
+      return throwError(() => new Error('No existe una sesión válida para registrar la compra.'));
+    }
+
     const request: CompraEntrada = {
       nombreTitular: card.cardholderName,
       numeroTarjeta: card.cardNumber,
@@ -40,13 +48,17 @@ export class PurchaseService {
       cantidad: invoice.totalAmount.toFixed(2),
     };
 
-    return this.http.post<RespuestaCompra>(this.apiUrl, request).pipe(
-      tap((response) => {
-        if (this.validatePurchase(response).successful) {
-          this.purchaseRepository.save(this.createTransaction(userEmail, invoice));
-        }
-      }),
-    );
+    return this.http
+      .post<RespuestaCompra>(this.apiUrl, request, {
+        headers: { Authorization: `Bearer ${idToken}` },
+      })
+      .pipe(
+        tap((response) => {
+          if (this.validatePurchase(response).successful) {
+            this.purchaseRepository.save(this.createTransaction(userEmail, invoice));
+          }
+        }),
+      );
   }
 
   validatePurchase(response: RespuestaCompra): PurchaseResult {

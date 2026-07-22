@@ -20,18 +20,24 @@ export class AuthStateService {
     this.authenticated.set(authenticated);
   }
 
-  private hasStoredSession(): boolean {
+  getIdToken(): string | null {
     const storedSession = this.storage.getItem(AUTH_SESSION_STORAGE_KEY);
 
     if (storedSession === null) {
-      return false;
+      return null;
     }
 
     try {
       const session = JSON.parse(storedSession) as { idToken?: unknown };
-      return typeof session.idToken === 'string' && session.idToken.length > 0;
+      return typeof session.idToken === 'string' && session.idToken.length > 0
+        ? session.idToken
+        : null;
     } catch {
-      return false;
+      return null;
     }
+  }
+
+  private hasStoredSession(): boolean {
+    return this.getIdToken() !== null;
   }
 }

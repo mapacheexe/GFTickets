@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { UserLogin } from './user-login';
@@ -11,6 +11,13 @@ describe('UserLogin', () => {
 
   let firebaseUserServiceMock: {
     loginUser: ReturnType<typeof vi.fn>;
+  };
+  let router: Router;
+
+  const authenticatedUser = {
+    id: 'firebase-user-id',
+    displayName: 'Julia María Adell Pérez',
+    email: 'test@test.com',
   };
 
   const localStorageMock = (() => {
@@ -65,6 +72,7 @@ describe('UserLogin', () => {
 
     fixture = TestBed.createComponent(UserLogin);
     component = fixture.componentInstance;
+    router = TestBed.inject(Router);
 
     fixture.detectChanges();
   });
@@ -173,7 +181,8 @@ describe('UserLogin', () => {
 
     expect(
       component.errorMessage
-    ).toBe('EMAIL_NOT_FOUND');
+    ).toBe('El correo o la contraseña no son correctos.');
+    expect(component.loading).toBe(false);
 
   });
 

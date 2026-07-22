@@ -1,9 +1,7 @@
 export interface Usuario {
-  id: number;
-  nombre: string;
-  apellidos: string;
+  id: string;
+  displayName: string;
   email: string;
-  nombreUsuario: string;
 }
 
 export interface RegistroUsuario extends Omit<Usuario, 'id'> {

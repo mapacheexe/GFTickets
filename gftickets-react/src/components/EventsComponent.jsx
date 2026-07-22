@@ -33,8 +33,6 @@ export const EventsComponent = () => {
     <main className="list-page">
       <header className="page-header">
         <p className="eyebrow">Eventos</p>
-        <h1>Descubre próximos eventos</h1>
-        <p className="subtitle">Encuentra conciertos y experiencias disponibles.</p>
       </header>
 
       {loading ? (

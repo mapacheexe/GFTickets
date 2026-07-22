@@ -36,30 +36,17 @@ export class UserRegistrationComponent {
 
   protected readonly form = new FormGroup(
     {
-      nombre: new FormControl('', {
+      displayName: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(60)],
-      }),
-      apellidos: new FormControl('', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(100)],
+        validators: [Validators.required, Validators.maxLength(160)],
       }),
       email: new FormControl('', {
         nonNullable: true,
         validators: [Validators.required, Validators.email, Validators.maxLength(120)],
       }),
-      nombreUsuario: new FormControl('', {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(30),
-          Validators.pattern(/^[a-zA-Z0-9._-]+$/),
-        ],
-      }),
       password: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.minLength(8), Validators.maxLength(72)],
+        validators: [Validators.required, Validators.minLength(6), Validators.maxLength(72)],
       }),
       passwordConfirmation: new FormControl('', {
         nonNullable: true,
@@ -84,10 +71,8 @@ export class UserRegistrationComponent {
 
     const values = this.form.getRawValue();
     const registro = {
-      nombre: values.nombre,
-      apellidos: values.apellidos,
+      displayName: values.displayName,
       email: values.email,
-      nombreUsuario: values.nombreUsuario,
       password: values.password,
     };
     this.submitting.set(true);

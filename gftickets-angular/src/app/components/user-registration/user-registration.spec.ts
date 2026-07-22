@@ -11,11 +11,9 @@ describe('UserRegistrationComponent', () => {
   let registerUser: ReturnType<typeof vi.fn>;
 
   const user: Usuario = {
-    id: 1,
-    nombre: 'Julia',
-    apellidos: 'Adell Pérez',
+    id: 'firebase-user-id',
+    displayName: 'Julia María Adell Pérez',
     email: 'julia@example.com',
-    nombreUsuario: 'julia.adell',
   };
 
   beforeEach(async () => {
@@ -31,15 +29,13 @@ describe('UserRegistrationComponent', () => {
     fixture.detectChanges();
   });
 
-  it('muestra los seis campos obligatorios del registro', () => {
+  it('muestra los cuatro campos obligatorios del registro', () => {
     const requiredFields = fixture.nativeElement.querySelectorAll('input[required]');
 
-    expect(requiredFields).toHaveLength(6);
+    expect(requiredFields).toHaveLength(4);
     expect(Array.from(requiredFields).map((field) => (field as HTMLInputElement).id)).toEqual([
-      'nombre',
-      'apellidos',
+      'displayName',
       'email',
-      'nombreUsuario',
       'password',
       'passwordConfirmation',
     ]);
@@ -51,14 +47,12 @@ describe('UserRegistrationComponent', () => {
     fixture.detectChanges();
 
     expect(registerUser).not.toHaveBeenCalled();
-    expect(fixture.nativeElement.textContent).toContain('Introduce tu nombre.');
+    expect(fixture.nativeElement.textContent).toContain('Introduce tu nombre completo.');
   });
 
   it.each([
-    'nombre',
-    'apellidos',
+    'displayName',
     'email',
-    'nombreUsuario',
     'password',
     'passwordConfirmation',
   ] as const)('no envía el formulario cuando falta el campo obligatorio %s', (field) => {
@@ -79,18 +73,37 @@ describe('UserRegistrationComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Las contraseñas no coinciden.');
   });
 
-  it('registra un usuario válido sin enviar la confirmación de contraseña', () => {
+  it('no permite registrar un usuario con un correo electrónico inválido', () => {
     setValidValues();
-    fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
-    fixture.detectChanges();
+    fixture.componentInstance['form'].controls.email.setValue('correo-invalido');
+    submitForm();
+
+    expect(registerUser).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain('Introduce un correo electrónico válido.');
+  });
+
+  it('llama al servicio al introducir datos válidos', () => {
+    setValidValues();
+    submitForm();
+
+    expect(registerUser).toHaveBeenCalledOnce();
+  });
+
+  it('envía al servicio los datos introducidos sin la confirmación de contraseña', () => {
+    setValidValues();
+    submitForm();
 
     expect(registerUser).toHaveBeenCalledWith({
-      nombre: 'Julia',
-      apellidos: 'Adell Pérez',
+      displayName: 'Julia María Adell Pérez',
       email: 'julia@example.com',
-      nombreUsuario: 'julia.adell',
       password: 'segura123',
     });
+  });
+
+  it('muestra la confirmación después de un registro satisfactorio', () => {
+    setValidValues();
+    submitForm();
+
     expect(fixture.nativeElement.textContent).toContain('Cuenta creada correctamente.');
   });
 
@@ -135,10 +148,8 @@ describe('UserRegistrationComponent', () => {
 
   function setValidValues(): void {
     fixture.componentInstance['form'].setValue({
-      nombre: 'Julia',
-      apellidos: 'Adell Pérez',
+      displayName: 'Julia María Adell Pérez',
       email: 'julia@example.com',
-      nombreUsuario: 'julia.adell',
       password: 'segura123',
       passwordConfirmation: 'segura123',
     });

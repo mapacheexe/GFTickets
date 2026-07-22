@@ -11,7 +11,7 @@ export function EventDetailsComponent() {
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+
     const [leerMas, setLeerMas] = useState(false);
 
     const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
@@ -106,21 +106,21 @@ export function EventDetailsComponent() {
 
     const renderDescripcion = () => {
         const descripcion = event?.descripcion || "";
-        
+
         if (descripcion.length <= LIMITE_CARACTERES) {
             return <p className="details-desc-text">{descripcion}</p>;
         }
 
-        const textoMostrado = leerMas 
-            ? descripcion 
+        const textoMostrado = leerMas
+            ? descripcion
             : `${descripcion.substring(0, LIMITE_CARACTERES)}... `;
 
         return (
             <p className="details-desc-text">
                 {textoMostrado}
-                <button 
-                    type="button" 
-                    className="details-toggle-btn" 
+                <button
+                    type="button"
+                    className="details-toggle-btn"
                     data-testid="toggle-descripcion-btn"
                     onClick={() => setLeerMas(!leerMas)}
                 >
@@ -215,14 +215,23 @@ export function EventDetailsComponent() {
                                 )}
                             </div>
 
-                            <button
-                                type="button"
-                                className="details-delete-btn"
-                                data-testid="eliminar-evento-btn"
-                                onClick={handleEliminarClick}
-                            >
-                                Eliminar evento
-                            </button>
+                            <div className="details-actions">
+                                <button
+                                    type="button"
+                                    className="details-action-btn details-edit-btn"
+                                    onClick={() => navigate(`/form/${id}`)}
+                                >
+                                    Editar evento
+                                </button>
+                                <button
+                                    type="button"
+                                    className="details-action-btn details-delete-btn"
+                                    data-testid="eliminar-evento-btn"
+                                    onClick={handleEliminarClick}
+                                >
+                                    Eliminar evento
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </article>

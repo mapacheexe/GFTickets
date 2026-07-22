@@ -35,6 +35,13 @@ export class UserProfileComponent implements OnInit {
     this.loadUser();
   }
 
+  protected initials(displayName: string): string {
+    const nameParts = displayName.trim().split(/\s+/).filter(Boolean);
+    const firstInitial = nameParts[0]?.charAt(0) ?? '';
+    const lastInitial = nameParts.length > 1 ? nameParts.at(-1)?.charAt(0) ?? '' : '';
+    return `${firstInitial}${lastInitial}`.toUpperCase();
+  }
+
   private loadUser(): void {
     this.loading.set(true);
     this.error.set(null);

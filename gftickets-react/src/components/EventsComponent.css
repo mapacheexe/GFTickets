@@ -1,69 +1,75 @@
 .list-page {
-  width: min(1180px, calc(100% - 2rem));
+  width: min(1320px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 2rem 0 4rem;
+  padding: 1.5rem 0 3rem;
 }
 
+/* HEADER — toolbar de panel, no hero de marketing */
 .list-page .page-header {
-  margin: 0 0 2rem;
-  padding: 1.5rem 1.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 1.5rem;
+  padding: 1.1rem 1.5rem;
+  border: 1px solid #dbe1ea;
+  border-radius: 0.5rem;
   background: #ffffff;
-  box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
 }
 
 .list-page .eyebrow {
   display: block;
-  margin: 0 0 0.4rem;
-  color: #e11d48;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
+  margin: 0 0 0.25rem;
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .list-page h1 {
-  margin: 0 0 0.5rem;
+  margin: 0;
   color: #0f172a;
-  font-size: clamp(1.6rem, 3vw, 2.1rem);
-  letter-spacing: -0.02em;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .list-page .subtitle {
-  margin: 0;
+  margin: 0.2rem 0 0;
   color: #64748b;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
 
-/* GRID */
+/* GRID — más columnas, más denso */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
 }
 
-/* CARD */
+/* CARD — se comporta como fila de datos, no como pieza editorial */
 .list-page .event-card {
   overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100%;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.9rem;
+  border: 1px solid #dbe1ea;
+  border-radius: 0.5rem;
   background: #ffffff;
-  box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
 }
 
 .list-page .event-card:hover {
-  border-color: #fecdd3;
-  box-shadow: 0 4px 14px rgb(225 29 72 / 10%);
+  border-color: #94a3b8;
+  box-shadow: 0 2px 8px rgb(15 23 42 / 8%);
+  transform: translateY(-1px);
 }
 
 .list-page .event-image {
   position: relative;
-  height: 180px;
+  height: 120px;
   background: #1e293b;
 }
 
@@ -71,36 +77,41 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: saturate(0.9);
 }
 
 .list-page .image-placeholder {
   height: 100%;
   display: grid;
   place-items: center;
-  gap: 0.4rem;
-  color: #94a3b8;
+  gap: 0.35rem;
+  color: #64748b;
+  background: #f1f5f9;
   text-align: center;
 }
 
 .list-page .image-placeholder-icon {
-  font-size: 3rem;
+  font-size: 2.25rem;
+  opacity: 0.6;
 }
 
 .list-page .image-placeholder-text {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
 }
 
+/* Badge tipo "tag de sistema", no chip promocional */
 .list-page .genre {
   position: absolute;
-  top: 0.85rem;
-  left: 0.85rem;
-  padding: 0.3rem 0.65rem;
-  border-radius: 0.4rem;
-  background: rgb(15 23 42 / 82%);
-  color: #ffffff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
+  top: 0.6rem;
+  left: 0.6rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid rgb(255 255 255 / 25%);
+  border-radius: 0.3rem;
+  background: rgb(15 23 42 / 78%);
+  color: #e2e8f0;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -108,22 +119,23 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 1.1rem 1.25rem;
+  padding: 0.9rem 1rem;
 }
 
 .list-page .event-content h2 {
-  margin: 0 0 0.85rem;
+  margin: 0 0 0.6rem;
   color: #0f172a;
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 600;
   line-height: 1.3;
 }
 
 .list-page .event-info {
   display: grid;
-  gap: 0.4rem;
-  color: #64748b;
-  font-size: 0.88rem;
+  gap: 0.3rem;
+  color: #475569;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .list-page .event-info p {
@@ -134,74 +146,84 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1.1rem;
-  padding-top: 1.1rem;
-  border-top: 1px solid #f1f5f9;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid #eef1f5;
 }
 
 .list-page footer strong {
   color: #0f172a;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
+/* Acción como botón de tabla de admin, no CTA de marketing */
 .list-page .card-link {
-  padding: 0.45rem 0.8rem;
-  border-radius: 0.5rem;
-  color: #e11d48;
-  background: #ffe4e6;
-  font-size: 0.85rem;
-  font-weight: 700;
-  transition: background 150ms ease, color 150ms ease;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.35rem;
+  color: #334155;
+  background: #f8fafc;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
 }
 
 .list-page .event-card:hover .card-link {
-  background: #e11d48;
+  border-color: #334155;
+  background: #334155;
   color: #ffffff;
 }
 
 /* STATES */
 .list-page .state-card {
-  min-height: 320px;
+  min-height: 280px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
   padding: 2rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.9rem;
-  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 0.5rem;
+  background: #f8fafc;
   text-align: center;
 }
 
 .list-page .state-icon {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.5rem;
+  height: 2.5rem;
   display: grid;
   place-items: center;
-  border-radius: 50%;
-  background: #ffe4e6;
-  color: #be123c;
-  font-weight: 900;
+  border-radius: 0.4rem;
+  background: #e2e8f0;
+  color: #334155;
+  font-weight: 800;
 }
 
 .list-page .state-card button {
-  margin-top: 0.5rem;
-  padding: 0.55rem 1rem;
-  border: none;
-  border-radius: 0.5rem;
-  background: #e11d48;
+  margin-top: 0.4rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #334155;
+  border-radius: 0.35rem;
+  background: #334155;
   color: #ffffff;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.list-page .state-card button:hover {
+  background: #1e293b;
 }
 
 .list-page .spinner {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2rem;
+  height: 2rem;
   border: 3px solid #e2e8f0;
-  border-top-color: #e11d48;
+  border-top-color: #334155;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -213,6 +235,11 @@
 @media (max-width: 600px) {
   .list-page {
     width: calc(100% - 1rem);
+  }
+
+  .list-page .page-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .list-page footer {

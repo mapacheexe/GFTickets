@@ -28,7 +28,8 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <EventsComponent /> },
       { path: "/eventos/:id", element: <EventDetailsComponent /> },
-      { path: "/form", element: <EventFormComponent />}
+      { path: "/form", element: <EventFormComponent />},
+      { path: "/form/:id", element: <EventFormComponent /> }
     ],
   },
 ]);

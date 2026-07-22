@@ -14,31 +14,22 @@
     <article class="profile-card">
       <header>
         <div class="avatar" aria-hidden="true">
-          {{ currentUser.nombre.charAt(0) }}{{ currentUser.apellidos.charAt(0) }}
+          {{ initials(currentUser.displayName) }}
         </div>
         <div>
           <p class="eyebrow">Mis datos</p>
-          <h1>{{ currentUser.nombre }} {{ currentUser.apellidos }}</h1>
-          <p class="username">&#64;{{ currentUser.nombreUsuario }}</p>
+          <h1>{{ currentUser.displayName }}</h1>
         </div>
       </header>
 
       <dl>
         <div>
-          <dt>Nombre</dt>
-          <dd>{{ currentUser.nombre }}</dd>
-        </div>
-        <div>
-          <dt>Apellidos</dt>
-          <dd>{{ currentUser.apellidos }}</dd>
+          <dt>Nombre completo</dt>
+          <dd>{{ currentUser.displayName }}</dd>
         </div>
         <div>
           <dt>Correo electrónico</dt>
           <dd>{{ currentUser.email }}</dd>
-        </div>
-        <div>
-          <dt>Nombre de usuario</dt>
-          <dd>{{ currentUser.nombreUsuario }}</dd>
         </div>
       </dl>
     </article>

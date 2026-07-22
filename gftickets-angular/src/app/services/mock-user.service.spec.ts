@@ -2,17 +2,16 @@ import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 
 import { RegistroUsuario } from '../models/usuario.model';
-import { MockUserService, USER_STORAGE, UserStorage } from './mock-user.service';
+import { MockUserService } from './mock-user.service';
+import { USER_STORAGE, UserStorage } from './user.service';
 
 describe('MockUserService', () => {
   let storedValue: string | null;
   let storage: UserStorage;
 
   const registro: RegistroUsuario = {
-    nombre: 'Julia',
-    apellidos: 'Adell Pérez',
+    displayName: 'Julia María Adell Pérez',
     email: 'julia@example.com',
-    nombreUsuario: 'julia.adell',
     password: 'segura123',
   };
 
@@ -39,7 +38,7 @@ describe('MockUserService', () => {
     const user = await firstValueFrom(service.registerUser(registro));
     const currentUser = await firstValueFrom(service.getCurrentUser());
 
-    expect(user.nombreUsuario).toBe('julia.adell');
+    expect(user.displayName).toBe('Julia María Adell Pérez');
     expect(currentUser).toEqual(user);
     expect(storedValue).not.toContain(registro.password);
   });
@@ -49,7 +48,7 @@ describe('MockUserService', () => {
     const service = TestBed.inject(MockUserService);
 
     await expect(firstValueFrom(service.registerUser(registro))).resolves.toEqual(
-      expect.objectContaining({ id: 12345 }),
+      expect.objectContaining({ id: '12345' }),
     );
   });
 
@@ -61,21 +60,7 @@ describe('MockUserService', () => {
       firstValueFrom(
         service.registerUser({
           ...registro,
-          nombreUsuario: 'otro.usuario',
-        }),
-      ),
-    ).rejects.toThrow('ya está registrado');
-  });
-
-  it('rechaza un nombre de usuario ya registrado', async () => {
-    const service = TestBed.inject(MockUserService);
-    await firstValueFrom(service.registerUser(registro));
-
-    await expect(
-      firstValueFrom(
-        service.registerUser({
-          ...registro,
-          email: 'otro@example.com',
+          displayName: 'Otro nombre',
         }),
       ),
     ).rejects.toThrow('ya está registrado');

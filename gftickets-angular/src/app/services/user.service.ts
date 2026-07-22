@@ -9,3 +9,14 @@ export interface UserService {
 }
 
 export const USER_SERVICE = new InjectionToken<UserService>('USER_SERVICE');
+
+export interface UserStorage {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+}
+
+export const USER_STORAGE = new InjectionToken<UserStorage>('USER_STORAGE', {
+  providedIn: 'root',
+  factory: () => window.localStorage,
+});

@@ -8,22 +8,32 @@ import { UserProfileComponent } from './user-profile';
 
 describe('UserProfileComponent', () => {
   const user: Usuario = {
-    id: 1,
-    nombre: 'Julia',
-    apellidos: 'Adell Pérez',
+    id: 'firebase-user-id',
+    displayName: 'Julia María Adell Pérez',
     email: 'julia@example.com',
-    nombreUsuario: 'julia.adell',
   };
   let getCurrentUser: ReturnType<typeof vi.fn>;
 
-  it('muestra todos los datos públicos del usuario', async () => {
+  it('solicita al servicio la información del usuario autenticado al acceder', async () => {
+    await createComponent(of(user));
+
+    expect(getCurrentUser).toHaveBeenCalledOnce();
+  });
+
+  it('muestra correctamente todos los datos recibidos', async () => {
     const fixture = await createComponent(of(user));
     const content = fixture.nativeElement.textContent as string;
 
-    expect(content).toContain('Julia Adell Pérez');
+    expect(content).toContain('Julia María Adell Pérez');
     expect(content).toContain('julia@example.com');
-    expect(content).toContain('julia.adell');
-    expect(getCurrentUser).toHaveBeenCalledOnce();
+    expect(fixture.nativeElement.querySelector('.avatar')?.textContent.trim()).toBe('JP');
+  });
+
+  it('muestra la información correspondiente al usuario autenticado', async () => {
+    const fixture = await createComponent(of(user));
+
+    expect(fixture.nativeElement.textContent).toContain(user.displayName);
+    expect(fixture.nativeElement.textContent).toContain(user.email);
   });
 
   it('muestra el indicador de carga mientras espera los datos', async () => {
@@ -34,7 +44,7 @@ describe('UserProfileComponent', () => {
     expect(fixture.nativeElement.querySelector('[role="status"]')).not.toBeNull();
   });
 
-  it('ofrece crear una cuenta cuando no existe un usuario actual', async () => {
+  it('bloquea el acceso a datos personales cuando no existe una sesión activa', async () => {
     const fixture = await createComponent(of(null));
 
     expect(fixture.nativeElement.textContent).toContain('Todavía no hay datos de usuario');
@@ -55,16 +65,16 @@ describe('UserProfileComponent', () => {
 
     userUpdates.next(user);
     fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('Julia Adell Pérez');
+    expect(fixture.nativeElement.textContent).toContain('Julia María Adell Pérez');
 
     userUpdates.next({
       ...user,
-      nombre: 'Julia María',
+      displayName: 'Julia María de los Ángeles Adell Pérez',
       email: 'julia.maria@example.com',
     });
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Julia María Adell Pérez');
+    expect(fixture.nativeElement.textContent).toContain('Julia María de los Ángeles Adell Pérez');
     expect(fixture.nativeElement.textContent).toContain('julia.maria@example.com');
     expect(fixture.nativeElement.textContent).not.toContain('julia@example.com');
   });

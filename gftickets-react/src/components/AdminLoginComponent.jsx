@@ -1,7 +1,9 @@
 import {useNavigate} from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext.jsx";
 export function AdminLoginComponent() {
-
+    
+    const { login } = useAuth();
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -9,7 +11,8 @@ export function AdminLoginComponent() {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        if (username === 'admin' && password === '123456') {
+        if (username === import.meta.env.VITE_ADMIN_USERNAME && password === import.meta.env.VITE_ADMIN_PASSWORD) {
+            login();
             navigate('/');
         } else {
             setError('Nombre de usuario o contraseña incorrectos');

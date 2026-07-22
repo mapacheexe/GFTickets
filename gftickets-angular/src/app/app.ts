@@ -8,4 +8,11 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   styleUrl: './app.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class App {}
+export class App {
+  sessionHasToken(): boolean {
+    if(sessionStorage.getItem('gftickets.firebase-session')){
+      return true;
+    }
+    return false;
+  }
+}

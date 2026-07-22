@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { createEvent, updateEvent, findEventById } from "../services/EventsService";
 import './EventFormComponent.css';
 
+const CAMPOS_OBLIGATORIOS = ["nombre", "descripcion", "fechaEvento", "horaEvento", "localidad", "genero"];
+
 export function EventFormComponent() {
     const navigate = useNavigate();
     const {id} = useParams();
@@ -21,6 +23,7 @@ export function EventFormComponent() {
         "imagenUrl": ""
     });
     const [error, setError] = useState(null);
+    const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -41,35 +44,50 @@ export function EventFormComponent() {
             ...prevData,
             [name]: value,
         }));
+
+        // Limpia el error de ese campo en cuanto el usuario lo corrige
+        if (fieldErrors[name]) {
+            setFieldErrors((prev) => {
+                const next = { ...prev };
+                delete next[name];
+                return next;
+            });
+        }
     };
 
-    const validarPrecios = (precioMinimo, precioMaximo) => {
-        if (precioMinimo < 0 || precioMaximo < 0) {
-            return "Los precios no pueden ser negativos.";
+    const validarFormulario = (data) => {
+        const errores = {};
+
+        CAMPOS_OBLIGATORIOS.forEach((campo) => {
+            if (!data[campo]) {
+                errores[campo] = "Este campo es obligatorio.";
+            }
+        });
+
+        const precioMinimo = Number(data.precioMinimo);
+        const precioMaximo = Number(data.precioMaximo);
+
+        if (precioMinimo < 0) {
+            errores.precioMinimo = "El precio mínimo no puede ser negativo.";
         }
-        if (precioMaximo < precioMinimo) {
-            return "El precio máximo no puede ser menor que el precio mínimo.";
+        if (precioMaximo < 0) {
+            errores.precioMaximo = "El precio máximo no puede ser negativo.";
         }
-        return null;
+        if (!errores.precioMinimo && !errores.precioMaximo && precioMaximo < precioMinimo) {
+            errores.precioMaximo = "No puede ser menor que el precio mínimo.";
+        }
+
+        return errores;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
 
-        const camposObligatorios = ["nombre", "descripcion", "fechaEvento", "horaEvento", "localidad", "genero"];
-        const faltaAlgunCampo = camposObligatorios.some((campo) => !formData[campo]);
-        if (faltaAlgunCampo) {
-            setError("Por favor, completa todos los campos obligatorios.");
-            return;
-        }
+        const errores = validarFormulario(formData);
+        setFieldErrors(errores);
 
-        const precioMinimo = Number(formData.precioMinimo);
-        const precioMaximo = Number(formData.precioMaximo);
-
-        const errorValidacion = validarPrecios(precioMinimo, precioMaximo);
-        if (errorValidacion) {
-            setError(errorValidacion);
+        if (Object.keys(errores).length > 0) {
             return;
         }
 
@@ -77,8 +95,8 @@ export function EventFormComponent() {
 
         const datosParaEnviar = {
             ...formData,
-            precioMinimo,
-            precioMaximo,
+            precioMinimo: Number(formData.precioMinimo),
+            precioMaximo: Number(formData.precioMaximo),
         };
 
         try {
@@ -110,93 +128,112 @@ export function EventFormComponent() {
             </header>
             <form onSubmit={handleSubmit} noValidate>
                 <h1>{id ? 'Editar Evento' : 'Crear Nuevo Evento'}</h1>
+                <p className="required-hint">
+                    Los campos marcados con <span className="required-asterisk">*</span> son obligatorios.
+                </p>
                 {error && <p className="error-message">{error}</p>}
+
                 <label>
-                    Nombre:
+                    Nombre <span className="required-asterisk">*</span>
                     <input
                         type="text"
                         name="nombre"
                         value={formData.nombre}
                         onChange={handleChange}
-                        required
+                        aria-invalid={!!fieldErrors.nombre}
                     />
+                    {fieldErrors.nombre && <span className="field-error">{fieldErrors.nombre}</span>}
                 </label>
+
                 <label>
-                    Descripcion:
+                    Descripcion <span className="required-asterisk">*</span>
                     <input
                         type="text"
                         name="descripcion"
                         value={formData.descripcion}
                         onChange={handleChange}
-                        required
+                        aria-invalid={!!fieldErrors.descripcion}
                     />
+                    {fieldErrors.descripcion && <span className="field-error">{fieldErrors.descripcion}</span>}
                 </label>
+
                 <label>
-                    Fecha:
+                    Fecha <span className="required-asterisk">*</span>
                     <input
                         type="date"
                         name="fechaEvento"
                         value={formData.fechaEvento}
                         onChange={handleChange}
-                        required
+                        aria-invalid={!!fieldErrors.fechaEvento}
                     />
+                    {fieldErrors.fechaEvento && <span className="field-error">{fieldErrors.fechaEvento}</span>}
                 </label>
 
                 <label>
-                    Hora:
+                    Hora <span className="required-asterisk">*</span>
                     <input
                         type="time"
                         name="horaEvento"
                         value={formData.horaEvento}
                         onChange={handleChange}
                         step="1"
-                        required
+                        aria-invalid={!!fieldErrors.horaEvento}
                     />
+                    {fieldErrors.horaEvento && <span className="field-error">{fieldErrors.horaEvento}</span>}
                 </label>
+
                 <label>
-                    Precio Mínimo:
+                    Precio Mínimo <span className="required-asterisk">*</span>
                     <input
                         type="number"
                         name="precioMinimo"
                         value={formData.precioMinimo}
                         onChange={handleChange}
                         min="0"
-                        required
+                        aria-invalid={!!fieldErrors.precioMinimo}
                     />
+                    {fieldErrors.precioMinimo && <span className="field-error">{fieldErrors.precioMinimo}</span>}
                 </label>
+
                 <label>
-                    Precio Máximo:
+                    Precio Máximo <span className="required-asterisk">*</span>
                     <input
                         type="number"
                         name="precioMaximo"
                         value={formData.precioMaximo}
                         onChange={handleChange}
                         min="0"
-                        required
+                        aria-invalid={!!fieldErrors.precioMaximo}
                     />
+                    {fieldErrors.precioMaximo && <span className="field-error">{fieldErrors.precioMaximo}</span>}
                 </label>
+
                 <label>
-                    Localidad:
+                    Localidad <span className="required-asterisk">*</span>
                     <input
                         type="text"
                         name="localidad"
                         value={formData.localidad}
                         onChange={handleChange}
-                        required
+                        aria-invalid={!!fieldErrors.localidad}
                     />
+                    {fieldErrors.localidad && <span className="field-error">{fieldErrors.localidad}</span>}
                 </label>
+
                 <label>
-                    Género:
+                    Género <span className="required-asterisk">*</span>
                     <input
                         type="text"
                         name="genero"
                         value={formData.genero}
                         onChange={handleChange}
-                        required
+                        aria-invalid={!!fieldErrors.genero}
                     />
+                    {fieldErrors.genero && <span className="field-error">{fieldErrors.genero}</span>}
                 </label>
+
                 <label>
-                    Nombre del Recinto:
+                    Nombre del Recinto
                     <input
                         type="text"
                         name="nombreRecinto"
@@ -204,8 +241,9 @@ export function EventFormComponent() {
                         onChange={handleChange}
                     />
                 </label>
+
                 <label>
-                    URL de la Imagen:
+                    URL de la Imagen
                     <input
                         type="text"
                         name="imagenUrl"
@@ -213,6 +251,7 @@ export function EventFormComponent() {
                         onChange={handleChange}
                     />
                 </label>
+
                 <button type="submit" disabled={loading}>
                     {loading
                         ? (id ? 'Actualizando...' : 'Creando...')

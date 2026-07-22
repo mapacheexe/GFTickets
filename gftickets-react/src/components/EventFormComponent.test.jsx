@@ -51,14 +51,14 @@ describe("EventFormComponent", () => {
     });
 
     const rellenarFormulario = () => {
-        fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: "Concierto Rock" } });
-        fireEvent.change(screen.getByLabelText(/Descripcion:/i), { target: { value: "Gran concierto de rock" } });
-        fireEvent.change(screen.getByLabelText(/Fecha:/i), { target: { value: "2026-10-15" } });
-        fireEvent.change(screen.getByLabelText(/Hora:/i), { target: { value: "21:00:00" } });
-        fireEvent.change(screen.getByLabelText(/Precio Mínimo:/i), { target: { value: "15" } });
-        fireEvent.change(screen.getByLabelText(/Precio Máximo:/i), { target: { value: "50" } });
-        fireEvent.change(screen.getByLabelText(/Localidad:/i), { target: { value: "Madrid" } });
-        fireEvent.change(screen.getByLabelText(/Género:/i), { target: { value: "Rock" } });
+        fireEvent.change(screen.getByLabelText(/Nombre \*/i), { target: { value: "Concierto Rock" } });
+        fireEvent.change(screen.getByLabelText(/Descripcion \*/i), { target: { value: "Gran concierto de rock" } });
+        fireEvent.change(screen.getByLabelText(/Fecha \*/i), { target: { value: "2026-10-15" } });
+        fireEvent.change(screen.getByLabelText(/Hora \*/i), { target: { value: "21:00:00" } });
+        fireEvent.change(screen.getByLabelText(/Precio Mínimo \*/i), { target: { value: "15" } });
+        fireEvent.change(screen.getByLabelText(/Precio Máximo \*/i), { target: { value: "50" } });
+        fireEvent.change(screen.getByLabelText(/Localidad \*/i), { target: { value: "Madrid" } });
+        fireEvent.change(screen.getByLabelText(/Género \*/i), { target: { value: "Rock" } });
     };
 
     test("1. Si la creación falla, se muestra un mensaje de error al usuario", async () => {
@@ -71,7 +71,7 @@ describe("EventFormComponent", () => {
         );
 
         rellenarFormulario();
-        
+
         const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
         fireEvent.click(botonEnviar);
 
@@ -91,7 +91,35 @@ describe("EventFormComponent", () => {
         fireEvent.click(botonEnviar);
 
         expect(createEvent).not.toHaveBeenCalled();
+
+        // Ahora los errores aparecen debajo de cada campo obligatorio vacío
+        const mensajesError = screen.getAllByText(/Este campo es obligatorio\./i);
+        expect(mensajesError.length).toBeGreaterThan(0);
     });
+
+    test("2b. Los errores de campo desaparecen al corregir el valor", () => {
+    render(
+        <BrowserRouter>
+            <EventFormComponent />
+        </BrowserRouter>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /Crear Evento/i }));
+
+    const inputNombre = screen.getByLabelText(/Nombre \*/i);
+
+    // El error debería estar presente justo después del input
+    expect(inputNombre.nextSibling).toHaveTextContent(/Este campo es obligatorio\./i);
+
+    fireEvent.change(inputNombre, { target: { value: "Concierto Rock" } });
+
+    // El span de error se elimina del DOM (nextSibling ahora es null)
+    expect(inputNombre.nextSibling).toBeNull();
+
+    // Y el mensaje ya no está presente en ningún sitio cerca de este campo
+    const label = inputNombre.closest("label");
+    expect(label).not.toHaveTextContent(/Este campo es obligatorio\./i);
+});
 
     test("3. Mientras se procesa la creación, el botón de guardar permanece deshabilitado", async () => {
         let resolverPromesa;
@@ -134,6 +162,7 @@ describe("EventFormComponent", () => {
             expect(mockNavigate).toHaveBeenCalledWith("/");
         });
     });
+
     test("5. No se permite crear un evento si el precio máximo es menor que el mínimo", () => {
         render(
             <BrowserRouter>
@@ -143,13 +172,13 @@ describe("EventFormComponent", () => {
 
         rellenarFormulario();
 
-        fireEvent.change(screen.getByLabelText(/Precio Mínimo:/i), { target: { value: "50" } });
-        fireEvent.change(screen.getByLabelText(/Precio Máximo:/i), { target: { value: "10" } });
+        fireEvent.change(screen.getByLabelText(/Precio Mínimo \*/i), { target: { value: "50" } });
+        fireEvent.change(screen.getByLabelText(/Precio Máximo \*/i), { target: { value: "10" } });
 
         const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
         fireEvent.click(botonEnviar);
 
-        expect(screen.getByText(/El precio máximo no puede ser menor que el precio mínimo\./i)).toBeInTheDocument();
+        expect(screen.getByText(/No puede ser menor que el precio mínimo\./i)).toBeInTheDocument();
         expect(createEvent).not.toHaveBeenCalled();
     });
 
@@ -162,13 +191,13 @@ describe("EventFormComponent", () => {
 
         rellenarFormulario();
 
-        fireEvent.change(screen.getByLabelText(/Precio Mínimo:/i), { target: { value: "-5" } });
-        fireEvent.change(screen.getByLabelText(/Precio Máximo:/i), { target: { value: "50" } });
+        fireEvent.change(screen.getByLabelText(/Precio Mínimo \*/i), { target: { value: "-5" } });
+        fireEvent.change(screen.getByLabelText(/Precio Máximo \*/i), { target: { value: "50" } });
 
         const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
         fireEvent.click(botonEnviar);
 
-        expect(screen.getByText(/Los precios no pueden ser negativos\./i)).toBeInTheDocument();
+        expect(screen.getByText(/El precio mínimo no puede ser negativo\./i)).toBeInTheDocument();
         expect(createEvent).not.toHaveBeenCalled();
     });
 
@@ -181,13 +210,13 @@ describe("EventFormComponent", () => {
 
         rellenarFormulario();
 
-        fireEvent.change(screen.getByLabelText(/Precio Mínimo:/i), { target: { value: "0" } });
-        fireEvent.change(screen.getByLabelText(/Precio Máximo:/i), { target: { value: "-10" } });
+        fireEvent.change(screen.getByLabelText(/Precio Mínimo \*/i), { target: { value: "0" } });
+        fireEvent.change(screen.getByLabelText(/Precio Máximo \*/i), { target: { value: "-10" } });
 
         const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
         fireEvent.click(botonEnviar);
 
-        expect(screen.getByText(/Los precios no pueden ser negativos\./i)).toBeInTheDocument();
+        expect(screen.getByText(/El precio máximo no puede ser negativo\./i)).toBeInTheDocument();
         expect(createEvent).not.toHaveBeenCalled();
     });
 
@@ -202,8 +231,8 @@ describe("EventFormComponent", () => {
 
         rellenarFormulario();
 
-        fireEvent.change(screen.getByLabelText(/Precio Mínimo:/i), { target: { value: "20" } });
-        fireEvent.change(screen.getByLabelText(/Precio Máximo:/i), { target: { value: "20" } });
+        fireEvent.change(screen.getByLabelText(/Precio Mínimo \*/i), { target: { value: "20" } });
+        fireEvent.change(screen.getByLabelText(/Precio Máximo \*/i), { target: { value: "20" } });
 
         const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
         fireEvent.click(botonEnviar);
@@ -211,6 +240,16 @@ describe("EventFormComponent", () => {
         await waitFor(() => {
             expect(createEvent).toHaveBeenCalledTimes(1);
         });
+    });
+
+    test("9. El formulario informa de que los campos con * son obligatorios", () => {
+        render(
+            <BrowserRouter>
+                <EventFormComponent />
+            </BrowserRouter>
+        );
+
+        expect(screen.getByText(/son obligatorios/i)).toBeInTheDocument();
     });
 });
 
@@ -220,25 +259,25 @@ describe("EventFormComponent - Edición de evento existente", () => {
         findEventById.mockResolvedValue(eventoExistente);
     });
 
-    test("9. Cuando hay un id en la ruta, carga los datos del evento y los muestra en el formulario", async () => {
+    test("10. Cuando hay un id en la ruta, carga los datos del evento y los muestra en el formulario", async () => {
         renderEnModoEdicion("1");
 
         expect(findEventById).toHaveBeenCalledWith("1");
 
         await waitFor(() => {
-            expect(screen.getByLabelText(/Nombre:/i)).toHaveValue("Concierto Rock");
+            expect(screen.getByLabelText(/Nombre \*/i)).toHaveValue("Concierto Rock");
         });
-        expect(screen.getByLabelText(/Localidad:/i)).toHaveValue("Madrid");
+        expect(screen.getByLabelText(/Localidad \*/i)).toHaveValue("Madrid");
     });
 
-    test("10. En modo edición se muestra el título 'Editar Evento' y el botón 'Actualizar Evento'", async () => {
+    test("11. En modo edición se muestra el título 'Editar Evento' y el botón 'Actualizar Evento'", async () => {
         renderEnModoEdicion("1");
 
         expect(await screen.findByRole("heading", { name: /Editar Evento/i })).toBeInTheDocument();
         expect(screen.getByRole("button", { name: /^Actualizar Evento$/i })).toBeInTheDocument();
     });
 
-    test("11. Si falla la carga del evento a editar, se muestra un mensaje de error", async () => {
+    test("12. Si falla la carga del evento a editar, se muestra un mensaje de error", async () => {
         findEventById.mockRejectedValueOnce(new Error("Evento no encontrado"));
 
         renderEnModoEdicion("1");
@@ -247,16 +286,16 @@ describe("EventFormComponent - Edición de evento existente", () => {
         expect(mensajeError).toBeInTheDocument();
     });
 
-    test("12. Al enviar el formulario en modo edición, se llama a updateEvent (y no a createEvent) con el id y los datos", async () => {
+    test("13. Al enviar el formulario en modo edición, se llama a updateEvent (y no a createEvent) con el id y los datos", async () => {
         updateEvent.mockResolvedValueOnce({ success: true });
 
         renderEnModoEdicion("1");
 
         await waitFor(() => {
-            expect(screen.getByLabelText(/Nombre:/i)).toHaveValue("Concierto Rock");
+            expect(screen.getByLabelText(/Nombre \*/i)).toHaveValue("Concierto Rock");
         });
 
-        fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: "Concierto Rock Actualizado" } });
+        fireEvent.change(screen.getByLabelText(/Nombre \*/i), { target: { value: "Concierto Rock Actualizado" } });
 
         const botonEnviar = screen.getByRole("button", { name: /^Actualizar Evento$/i });
         fireEvent.click(botonEnviar);
@@ -271,13 +310,13 @@ describe("EventFormComponent - Edición de evento existente", () => {
         expect(datosEnviados.nombre).toBe("Concierto Rock Actualizado");
     });
 
-    test("13. Tras una actualización satisfactoria, el formulario redirige a la raíz", async () => {
+    test("14. Tras una actualización satisfactoria, el formulario redirige a la raíz", async () => {
         updateEvent.mockResolvedValueOnce({ success: true });
 
         renderEnModoEdicion("1");
 
         await waitFor(() => {
-            expect(screen.getByLabelText(/Nombre:/i)).toHaveValue("Concierto Rock");
+            expect(screen.getByLabelText(/Nombre \*/i)).toHaveValue("Concierto Rock");
         });
 
         const botonEnviar = screen.getByRole("button", { name: /^Actualizar Evento$/i });
@@ -288,13 +327,13 @@ describe("EventFormComponent - Edición de evento existente", () => {
         });
     });
 
-    test("14. Si la actualización falla, se muestra un mensaje de error específico de edición", async () => {
+    test("15. Si la actualización falla, se muestra un mensaje de error específico de edición", async () => {
         updateEvent.mockRejectedValueOnce(new Error("Error 500 Internal Server Error"));
 
         renderEnModoEdicion("1");
 
         await waitFor(() => {
-            expect(screen.getByLabelText(/Nombre:/i)).toHaveValue("Concierto Rock");
+            expect(screen.getByLabelText(/Nombre \*/i)).toHaveValue("Concierto Rock");
         });
 
         const botonEnviar = screen.getByRole("button", { name: /^Actualizar Evento$/i });
@@ -304,7 +343,7 @@ describe("EventFormComponent - Edición de evento existente", () => {
         expect(mensajeError).toBeInTheDocument();
     });
 
-    test("15. Mientras se procesa la actualización, el botón permanece deshabilitado y muestra 'Actualizando...'", async () => {
+    test("16. Mientras se procesa la actualización, el botón permanece deshabilitado y muestra 'Actualizando...'", async () => {
         let resolverPromesa;
         updateEvent.mockReturnValueOnce(new Promise((resolve) => {
             resolverPromesa = resolve;
@@ -313,7 +352,7 @@ describe("EventFormComponent - Edición de evento existente", () => {
         renderEnModoEdicion("1");
 
         await waitFor(() => {
-            expect(screen.getByLabelText(/Nombre:/i)).toHaveValue("Concierto Rock");
+            expect(screen.getByLabelText(/Nombre \*/i)).toHaveValue("Concierto Rock");
         });
 
         const botonEnviar = screen.getByRole("button", { name: /^Actualizar Evento$/i });

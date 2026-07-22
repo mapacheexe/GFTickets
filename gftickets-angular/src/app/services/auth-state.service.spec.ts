@@ -30,6 +30,7 @@ describe('AuthStateService', () => {
 
     expect(storage.getItem).toHaveBeenCalledWith(AUTH_SESSION_STORAGE_KEY);
     expect(service.isAuthenticated()).toBe(true);
+    expect(service.getIdToken()).toBe('firebase-token');
   });
 
   it('considera no autenticada una sesión inexistente o dañada', () => {
@@ -40,6 +41,7 @@ describe('AuthStateService', () => {
     storedSession = '{sesion-dañada';
     const serviceWithDamagedSession = createService();
     expect(serviceWithDamagedSession.isAuthenticated()).toBe(false);
+    expect(serviceWithDamagedSession.getIdToken()).toBeNull();
   });
 
   it('actualiza de forma reactiva el estado de autenticación', () => {
@@ -54,10 +56,7 @@ describe('AuthStateService', () => {
 
   function createService(): AuthStateService {
     TestBed.configureTestingModule({
-      providers: [
-        AuthStateService,
-        { provide: AUTH_SESSION_STORAGE, useValue: storage },
-      ],
+      providers: [AuthStateService, { provide: AUTH_SESSION_STORAGE, useValue: storage }],
     });
     return TestBed.inject(AuthStateService);
   }

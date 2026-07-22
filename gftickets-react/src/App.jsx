@@ -1,6 +1,7 @@
 import './App.css'
 import { EventsComponent } from './components/EventsComponent.jsx';
 import { EventDetailsComponent } from './components/EventDetailsComponent.jsx';
+import { AdminLoginComponent } from './components/AdminLoginComponent.jsx';
 import { createBrowserRouter, RouterProvider, Outlet, Link } from "react-router-dom";
 import { EventFormComponent } from './components/EventFormComponent.jsx';
 
@@ -15,6 +16,7 @@ function Layout() {
         <nav aria-label="Navegación principal">
           <Link to="/">Eventos</Link>
           <Link to="/form">Añadir Evento</Link>
+          <Link to="/login">Iniciar Sesión</Link>
         </nav>
       </header>
       <Outlet />
@@ -29,7 +31,8 @@ const router = createBrowserRouter([
       { path: "/", element: <EventsComponent /> },
       { path: "/eventos/:id", element: <EventDetailsComponent /> },
       { path: "/form", element: <EventFormComponent />},
-      { path: "/form/:id", element: <EventFormComponent /> }
+      { path: "/form/:id", element: <EventFormComponent /> },
+      { path: "/login", element: <AdminLoginComponent /> },
     ],
   },
 ]);

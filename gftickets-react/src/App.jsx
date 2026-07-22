@@ -4,7 +4,8 @@ import { EventDetailsComponent } from './components/EventDetailsComponent.jsx';
 import { AdminLoginComponent } from './components/AdminLoginComponent.jsx';
 import { createBrowserRouter, RouterProvider, Outlet, Link } from "react-router-dom";
 import { EventFormComponent } from './components/EventFormComponent.jsx';
-import { AuthProvider, useAuth } from './context/AuthContext.jsx';
+import { AuthProvider} from './context/AuthContext.jsx';
+import { useAuth } from './context/useAuth.js';
 import { ProtectedRoute } from './components/ProtectedRoute.jsx';
 
 function Layout() {

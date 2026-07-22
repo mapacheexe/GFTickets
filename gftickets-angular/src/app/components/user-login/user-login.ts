@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { FirebaseUserService } from '../../services/firebase-user.service';
+import { timeout } from 'rxjs';
 
 @Component({
   selector: 'app-user-login',
@@ -56,6 +57,9 @@ export class UserLogin {
         email: this.loginForm.value.email!,
         password: this.loginForm.value.password!
       })
+      .pipe(
+        timeout(10000)
+      )
       .subscribe({
 
         next: () => {

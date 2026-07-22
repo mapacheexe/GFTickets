@@ -5,6 +5,7 @@ import { Transaction } from '../models/transaction.model';
 export interface PurchaseRepository {
   save(transaction: Transaction): void;
   findByUser(userEmail: string): Transaction[];
+  removeById(transactionId: string, userEmail: string): boolean;
 }
 
 export interface PurchaseStorage {
@@ -33,6 +34,23 @@ export class LocalPurchaseRepository implements PurchaseRepository {
     return this.readTransactions().filter(
       (transaction) => transaction.userEmail.toLowerCase() === normalizedEmail,
     );
+  }
+
+  removeById(transactionId: string, userEmail: string): boolean {
+    const transactions = this.readTransactions();
+    const normalizedId = transactionId.trim();
+    const normalizedEmail = userEmail.trim().toLowerCase();
+    const remainingTransactions = transactions.filter(
+      (transaction) =>
+        transaction.id !== normalizedId || transaction.userEmail.toLowerCase() !== normalizedEmail,
+    );
+
+    if (remainingTransactions.length === transactions.length) {
+      return false;
+    }
+
+    this.storage.setItem(this.storageKey, JSON.stringify(remainingTransactions));
+    return true;
   }
 
   private readTransactions(): Transaction[] {

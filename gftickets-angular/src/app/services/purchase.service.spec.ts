@@ -32,10 +32,12 @@ describe('PurchaseService', () => {
   let service: PurchaseService;
   let http: HttpTestingController;
   let saveTransaction: ReturnType<typeof vi.fn>;
+  let removeTransactionById: ReturnType<typeof vi.fn>;
   let idToken: string | null;
 
   beforeEach(() => {
     saveTransaction = vi.fn();
+    removeTransactionById = vi.fn();
     idToken = 'firebase-id-token';
     TestBed.configureTestingModule({
       providers: [
@@ -48,7 +50,11 @@ describe('PurchaseService', () => {
         },
         {
           provide: LocalPurchaseRepository,
-          useValue: { save: saveTransaction, findByUser: vi.fn() },
+          useValue: {
+            save: saveTransaction,
+            findByUser: vi.fn(),
+            removeById: removeTransactionById,
+          },
         },
       ],
     });
@@ -115,6 +121,24 @@ describe('PurchaseService', () => {
       .flush({ status: 'KO', message: ['400.0001'] });
 
     expect(saveTransaction).not.toHaveBeenCalled();
+  });
+
+  it('cancela una compra del usuario autenticado', async () => {
+    removeTransactionById.mockReturnValue(true);
+
+    await expect(
+      firstValueFrom(service.cancelPurchase('transaction-1', 'user@example.com')),
+    ).resolves.toBe(true);
+    expect(removeTransactionById).toHaveBeenCalledWith('transaction-1', 'user@example.com');
+  });
+
+  it('no intenta cancelar una compra sin un token de sesión', async () => {
+    idToken = null;
+
+    await expect(
+      firstValueFrom(service.cancelPurchase('transaction-1', 'user@example.com')),
+    ).rejects.toThrow('No existe una sesión válida para cancelar la compra.');
+    expect(removeTransactionById).not.toHaveBeenCalled();
   });
 
   it.each([

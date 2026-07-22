@@ -1,11 +1,12 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 
 import { CreditCard } from '../models/credit-card.model';
 import { Invoice } from '../models/invoice.model';
 import { AuthStateService } from './auth-state.service';
+import { EventService } from './event.service';
 import { LocalPurchaseRepository } from './purchase.repository';
 import { PurchaseService } from './purchase.service';
 
@@ -35,12 +36,14 @@ describe('PurchaseService', () => {
   let removeTransactionById: ReturnType<typeof vi.fn>;
   let idToken: string | null;
   let findTransactionById: ReturnType<typeof vi.fn>;
+  let findEventById: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     saveTransaction = vi.fn();
     removeTransactionById = vi.fn();
     idToken = 'firebase-id-token';
     findTransactionById = vi.fn();
+    findEventById = vi.fn();
     TestBed.configureTestingModule({
       providers: [
         PurchaseService,
@@ -58,6 +61,10 @@ describe('PurchaseService', () => {
             removeById: removeTransactionById,
             findById: findTransactionById,
           },
+        },
+        {
+          provide: EventService,
+          useValue: { findEventById },
         },
       ],
     });
@@ -165,6 +172,44 @@ describe('PurchaseService', () => {
     });
 
     expect(findTransactionById).toHaveBeenCalledWith('transaction-1', 'user@example.com');
+  });
+
+  it('recupera el detalle de la entrada y completa los datos del festival', async () => {
+    const transaction = {
+      id: 'transaction-1',
+      userEmail: 'user@example.com',
+      createdAt: '2026-07-17T10:00:00.000Z',
+      invoice,
+    };
+    const event = {
+      id: 7,
+      nombre: 'Festival',
+      descripcion: 'Festival de verano',
+      fechaEvento: '2026-07-20',
+      horaEvento: { hour: 21, minute: 0, second: 0, nano: 0 },
+      precioMinimo: 17.5,
+      precioMaximo: 35,
+      localidad: 'Barcelona',
+      genero: 'Música',
+      nombreRecinto: 'Parc del Fòrum',
+      imagenUrl: 'https://example.com/festival.jpg',
+    };
+    findTransactionById.mockReturnValue(transaction);
+    findEventById.mockReturnValue(of(event));
+
+    await expect(
+      firstValueFrom(service.getTicketDetail('transaction-1', 'user@example.com')),
+    ).resolves.toEqual({ transaction, event });
+    expect(findEventById).toHaveBeenCalledWith(7);
+  });
+
+  it('no consulta el festival si la entrada no existe o pertenece a otro usuario', async () => {
+    findTransactionById.mockReturnValue(null);
+
+    await expect(
+      firstValueFrom(service.getTicketDetail('missing', 'user@example.com')),
+    ).resolves.toBeNull();
+    expect(findEventById).not.toHaveBeenCalled();
   });
 
   it.each([

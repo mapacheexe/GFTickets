@@ -1,13 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, of, tap, throwError } from 'rxjs';
+import { Observable, map, of, switchMap, tap, throwError } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { CompraEntrada, PurchaseResult, RespuestaCompra } from '../models/compra-entrada.model';
 import { CreditCard } from '../models/credit-card.model';
 import { Invoice } from '../models/invoice.model';
+import { TicketDetail } from '../models/ticket-detail.model';
 import { Transaction } from '../models/transaction.model';
 import { AuthStateService } from './auth-state.service';
+import { EventService } from './event.service';
 import { LocalPurchaseRepository } from './purchase.repository';
 
 const PAYMENT_RESPONSE_MESSAGES: Readonly<Record<string, string>> = {
@@ -27,6 +29,7 @@ const PAYMENT_RESPONSE_MESSAGES: Readonly<Record<string, string>> = {
 export class PurchaseService {
   private readonly http = inject(HttpClient);
   private readonly authState = inject(AuthStateService);
+  private readonly eventService = inject(EventService);
   private readonly purchaseRepository = inject(LocalPurchaseRepository);
   private readonly apiUrl = `${environment.apiBaseUrl}/pasarela/compra`;
 
@@ -67,6 +70,20 @@ export class PurchaseService {
 
   getPurchaseById(purchaseId: string, userEmail: string): Observable<Transaction | null> {
     return of(this.purchaseRepository.findById(purchaseId, userEmail));
+  }
+
+  getTicketDetail(ticketId: string, userEmail: string): Observable<TicketDetail | null> {
+    return this.getPurchaseById(ticketId, userEmail).pipe(
+      switchMap((transaction) => {
+        if (transaction === null) {
+          return of(null);
+        }
+
+        return this.eventService
+          .findEventById(transaction.invoice.eventId)
+          .pipe(map((event) => ({ transaction, event })));
+      }),
+    );
   }
 
   validatePurchase(response: RespuestaCompra): PurchaseResult {

@@ -1,14 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import './EventsComponent.css';
 import { findAllEvents } from '../services/EventsService';
 import { useNavigate } from 'react-router-dom';
 import { formatearFecha } from '../utils/dateUtils.js';
 import { EventImage } from './EventImage.jsx';
 
+const normalizar = (texto = '') =>
+  texto
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // quita tildes/diacríticos
+    .toLowerCase()
+    .trim();
+
+const coincideConBusqueda = (nombreEvento, busqueda) => {
+  const nombreNormalizado = normalizar(nombreEvento);
+  const palabrasBusqueda = normalizar(busqueda).split(/\s+/).filter(Boolean);
+
+  // cada palabra escrita debe aparecer en el nombre del evento, en cualquier orden
+  return palabrasBusqueda.every((palabra) => nombreNormalizado.includes(palabra));
+};
+
 export const EventsComponent = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
   const loadEvents = async () => {
@@ -29,10 +45,25 @@ export const EventsComponent = () => {
     loadEvents();
   }, []);
 
+  const filteredEvents = useMemo(() => {
+    if (!search.trim()) return events;
+    return events.filter((ev) => coincideConBusqueda(ev.nombre, search));
+  }, [events, search]);
+
   return (
     <main className="list-page">
       <header className="page-header">
         <p className="eyebrow">Eventos</p>
+        <div className="search-bar">
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar evento por nombre..."
+            aria-label="Buscar evento por nombre"
+            data-testid="buscador-eventos"
+          />
+        </div>
       </header>
 
       {loading ? (
@@ -54,9 +85,17 @@ export const EventsComponent = () => {
           <h2>No hay eventos disponibles</h2>
           <p data-testid="no-eventos">Actualmente no existen eventos.</p>
         </section>
+      ) : filteredEvents.length === 0 ? (
+        <section className="state-card">
+          <span className="state-icon" aria-hidden="true">🔍</span>
+          <h2>Sin resultados</h2>
+          <p data-testid="sin-resultados-busqueda">
+            No hemos encontrado ningún evento que coincida con &quot;{search}&quot;.
+          </p>
+        </section>
       ) : (
         <section className="events-grid" aria-label="Listado de eventos">
-          {events.map((ev) => (
+          {filteredEvents.map((ev) => (
             <article
               className="event-card"
               key={ev.id}

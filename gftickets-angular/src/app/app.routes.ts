@@ -61,6 +61,14 @@ export const routes: Routes = [
     title: 'Detalle de compra | GFTickets',
   },
   {
+    path: 'entradas/:ticketId',
+    loadComponent: () =>
+      import('./components/ticket-detail/ticket-detail').then(
+        (module) => module.TicketDetailComponent,
+      ),
+    title: 'Detalle de entrada | GFTickets',
+  },
+  {
     path: '',
     redirectTo: 'eventos',
     pathMatch: 'full',

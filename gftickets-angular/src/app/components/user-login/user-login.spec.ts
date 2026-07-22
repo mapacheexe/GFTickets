@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
+import { signal } from '@angular/core';
 
 import { UserLogin } from './user-login';
 import { FirebaseUserService } from '../../services/firebase-user.service';
@@ -113,7 +114,7 @@ describe('UserLogin', () => {
     component.login();
 
     expect(navigate).toHaveBeenCalledWith(['/']);
-    expect(component.loading).toBe(false);
+    expect(component.loading()).toBe(false);
 
   });
 
@@ -132,9 +133,9 @@ describe('UserLogin', () => {
     component.login();
 
     expect(
-      component.errorMessage
+      component.errorMessage()
     ).toBe('El correo o la contraseña no son correctos.');
-    expect(component.loading).toBe(false);
+    expect(component.loading()).toBe(false);
 
   });
 

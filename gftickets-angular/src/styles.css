@@ -51,3 +51,8 @@ app-event-detail .description-toggle:focus-visible {
   outline: 3px solid rgb(225 29 72 / 25%);
   outline-offset: 3px;
 }
+
+app-event-detail .detail-page .purchase-link {
+  align-self: center;
+  margin-top: 1.5rem;
+}

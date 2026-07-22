@@ -1,10 +1,17 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable, InjectionToken, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, defer, map, of, switchMap, throwError } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { RegistroUsuario, Usuario } from '../models/usuario.model';
-import { UserService, UserStorage } from './user.service';
+import {
+  AUTH_SESSION_STORAGE,
+  AUTH_SESSION_STORAGE_KEY,
+  AuthStateService,
+} from './auth-state.service';
+import { UserService } from './user.service';
+
+export { AUTH_SESSION_STORAGE as FIREBASE_SESSION_STORAGE } from './auth-state.service';
 
 export interface LoginRequest {
   email: string;
@@ -38,21 +45,13 @@ interface FirebaseSession {
   user: Usuario;
 }
 
-export const FIREBASE_SESSION_STORAGE = new InjectionToken<UserStorage>(
-  'FIREBASE_SESSION_STORAGE',
-  {
-    providedIn: 'root',
-    factory: () => window.sessionStorage,
-  },
-);
-
 @Injectable({ providedIn: 'root' })
 export class FirebaseUserService implements UserService {
   private readonly http = inject(HttpClient);
-  private readonly storage = inject(FIREBASE_SESSION_STORAGE);
+  private readonly storage = inject(AUTH_SESSION_STORAGE);
+  private readonly authState = inject(AuthStateService);
   private readonly apiKey = environment.firebase.apiKey;
   private readonly authUrl = 'https://identitytoolkit.googleapis.com/v1';
-  private readonly storageKey = 'gftickets.firebase-session';
 
   registerUser(registration: RegistroUsuario): Observable<Usuario> {
     const displayName = registration.displayName.trim();
@@ -151,7 +150,7 @@ export class FirebaseUserService implements UserService {
               id: firebaseUser.localId,
               email: firebaseUser.email,
             };
-            this.storage.setItem(this.storageKey, JSON.stringify({ ...session, user }));
+            this.storage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify({ ...session, user }));
             return user;
           }),
           catchError((error: unknown) => {
@@ -172,11 +171,12 @@ export class FirebaseUserService implements UserService {
       refreshToken: response.refreshToken,
       user,
     };
-    this.storage.setItem(this.storageKey, JSON.stringify(session));
+    this.storage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify(session));
+    this.authState.setAuthenticated(true);
   }
 
   private readSession(): FirebaseSession | null {
-    const storedSession = this.storage.getItem(this.storageKey);
+    const storedSession = this.storage.getItem(AUTH_SESSION_STORAGE_KEY);
 
     if (storedSession === null) {
       return null;
@@ -200,7 +200,8 @@ export class FirebaseUserService implements UserService {
   }
 
   private clearSession(): void {
-    this.storage.removeItem(this.storageKey);
+    this.storage.removeItem(AUTH_SESSION_STORAGE_KEY);
+    this.authState.setAuthenticated(false);
   }
 
   private toAuthenticationError(error: unknown, fallbackMessage: string): Error {

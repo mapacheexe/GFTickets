@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -21,8 +21,8 @@ export class UserLogin {
   private readonly firebaseUserService = inject(FirebaseUserService);
   private readonly router = inject(Router);
 
-  loading = false;
-  errorMessage = '';
+  loading = signal(false);
+  errorMessage = signal('');
 
   loginForm = this.fb.group({
     email: [
@@ -48,8 +48,8 @@ export class UserLogin {
       return;
     }
 
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
 
     this.firebaseUserService
       .loginUser({
@@ -59,17 +59,19 @@ export class UserLogin {
       .subscribe({
 
         next: () => {
-          this.loading = false;
+          this.loading.set(false);
           this.router.navigate(['/']);
         },
 
         error: (error: unknown) => {
-          this.loading = false;
+          console.error('Error al iniciar sesión:', error);
+          this.loading.set(false);
 
-          this.errorMessage = error instanceof Error ? error.message : 'Error al iniciar sesión';
+          this.errorMessage.set(error instanceof Error ? error.message : 'Error al iniciar sesión');
         }
 
       });
+
   }
 
 }

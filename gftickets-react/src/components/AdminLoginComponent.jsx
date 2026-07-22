@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useAuth } from "../context/useAuth.js";
+import { useAuth } from '../context/useAuth.js';
 
 export function AdminLoginComponent() {
     const navigate = useNavigate();

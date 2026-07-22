@@ -1,9 +1,11 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { firstValueFrom } from 'rxjs';
 
 import { CreditCard } from '../models/credit-card.model';
 import { Invoice } from '../models/invoice.model';
+import { AuthStateService } from './auth-state.service';
 import { LocalPurchaseRepository } from './purchase.repository';
 import { PurchaseService } from './purchase.service';
 
@@ -30,14 +32,20 @@ describe('PurchaseService', () => {
   let service: PurchaseService;
   let http: HttpTestingController;
   let saveTransaction: ReturnType<typeof vi.fn>;
+  let idToken: string | null;
 
   beforeEach(() => {
     saveTransaction = vi.fn();
+    idToken = 'firebase-id-token';
     TestBed.configureTestingModule({
       providers: [
         PurchaseService,
         provideHttpClient(),
         provideHttpClientTesting(),
+        {
+          provide: AuthStateService,
+          useValue: { getIdToken: () => idToken },
+        },
         {
           provide: LocalPurchaseRepository,
           useValue: { save: saveTransaction, findByUser: vi.fn() },
@@ -57,6 +65,7 @@ describe('PurchaseService', () => {
       'http://teacherbanking.us-east-1.elasticbeanstalk.com/pasarela/compra',
     );
     expect(request.request.method).toBe('POST');
+    expect(request.request.headers.get('Authorization')).toBe('Bearer firebase-id-token');
     expect(request.request.body).toEqual({
       nombreTitular: 'Julia Adell',
       numeroTarjeta: '4111111111111111',
@@ -68,6 +77,16 @@ describe('PurchaseService', () => {
       cantidad: '35.00',
     });
     request.flush({ status: 'OK', message: ['200.0001'] });
+  });
+
+  it('no llama a la pasarela cuando no existe un token de sesión', async () => {
+    idToken = null;
+
+    await expect(
+      firstValueFrom(service.buyTickets('user@example.com', card, invoice)),
+    ).rejects.toThrow('No existe una sesión válida para registrar la compra.');
+    http.expectNone('http://teacherbanking.us-east-1.elasticbeanstalk.com/pasarela/compra');
+    expect(saveTransaction).not.toHaveBeenCalled();
   });
 
   it('persiste la transacción aprobada sin almacenar los datos de tarjeta', () => {

@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, afterEach } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { EventsComponent } from './EventsComponent';
 import { findAllEvents } from '../services/EventsService';
@@ -41,6 +41,47 @@ const eventosMock = [
     imagenUrl: 'https://example.com/img2.jpg',
   },
 ];
+
+const eventosBusquedaMock = [
+  {
+    id: 1,
+    nombre: 'Concierto de Coldplay',
+    genero: 'Rock',
+    localidad: 'Madrid',
+    nombreRecinto: 'Wanda Metropolitano',
+    fechaEvento: '2026-09-10',
+    horaEvento: '21:00:00',
+    precioMinimo: 45,
+    imagenUrl: '',
+  },
+  {
+    id: 2,
+    nombre: 'Gran Festival Internacional de Jazz de Madrid',
+    genero: 'Jazz',
+    localidad: 'Madrid',
+    nombreRecinto: 'Auditorio Nacional',
+    fechaEvento: '2026-10-05',
+    horaEvento: '19:30:00',
+    precioMinimo: 30,
+    imagenUrl: '',
+  },
+  {
+    id: 3,
+    nombre: 'Ópera: La Traviata',
+    genero: 'Ópera',
+    localidad: 'Valencia',
+    nombreRecinto: 'Palau de les Arts',
+    fechaEvento: '2026-11-20',
+    horaEvento: '20:00:00',
+    precioMinimo: 25,
+    imagenUrl: '',
+  },
+];
+
+async function buscar(texto) {
+  const input = await screen.findByTestId('buscador-eventos');
+  fireEvent.change(input, { target: { value: texto } });
+}
 
 describe('EventsComponent', () => {
   afterEach(() => {
@@ -125,5 +166,66 @@ describe('EventsComponent', () => {
     findAllEvents.mockResolvedValue([eventoSinPrecio]);
     render(<EventsComponent />);
     expect(await screen.findByTestId('precios-no-disponibles')).toBeInTheDocument();
+  });
+
+  test('8. buscar evento por nombre existente lo encuentra', async () => {
+    findAllEvents.mockResolvedValue(eventosBusquedaMock);
+
+    render(<EventsComponent />);
+    await screen.findAllByRole('article');
+
+    await buscar('Concierto de Coldplay');
+
+    expect(screen.getByText('Concierto de Coldplay')).toBeInTheDocument();
+    expect(screen.queryByText('Ópera: La Traviata')).not.toBeInTheDocument();
+  });
+
+  test('9. normalización de caracteres si el usuario escribe mayúsculas o tildes', async () => {
+    findAllEvents.mockResolvedValue(eventosBusquedaMock);
+
+    render(<EventsComponent />);
+    await screen.findAllByRole('article');
+
+    await buscar('OPERA');
+
+    expect(screen.getByText('Ópera: La Traviata')).toBeInTheDocument();
+    expect(screen.queryByText('Concierto de Coldplay')).not.toBeInTheDocument();
+  });
+
+  test('10. el usuario puede escribir partes del nombre del evento y este aparece correctamente (ex: "cold" para "concierto de coldplay")', async () => {
+    findAllEvents.mockResolvedValue(eventosBusquedaMock);
+
+    render(<EventsComponent />);
+    await screen.findAllByRole('article');
+
+    await buscar('cold');
+
+    expect(screen.getByText('Concierto de Coldplay')).toBeInTheDocument();
+    expect(screen.queryByText('Gran Festival Internacional de Jazz de Madrid')).not.toBeInTheDocument();
+  });
+
+  test('11. si el nombre no existe, se muestra un mensaje amigable de que el nombre no coincide con ningún evento', async () => {
+    findAllEvents.mockResolvedValue(eventosBusquedaMock);
+
+    render(<EventsComponent />);
+    await screen.findAllByRole('article');
+
+    await buscar('reggaeton inexistente xyz');
+
+    expect(await screen.findByTestId('sin-resultados-busqueda')).toBeInTheDocument();
+    expect(screen.queryByText('Concierto de Coldplay')).not.toBeInTheDocument();
+  });
+
+  test('12. el usuario puede buscar por palabras clave (ex: "Festival Jazz Madrid" para "Gran Festival Internacional de Jazz de Madrid")', async () => {
+    findAllEvents.mockResolvedValue(eventosBusquedaMock);
+
+    render(<EventsComponent />);
+    await screen.findAllByRole('article');
+
+    await buscar('Festival Jazz Madrid');
+
+    expect(screen.getByText('Gran Festival Internacional de Jazz de Madrid')).toBeInTheDocument();
+    expect(screen.queryByText('Concierto de Coldplay')).not.toBeInTheDocument();
+    await waitFor(() => {}); // deja el microtask queue asentarse si hubiera algún estado pendiente
   });
 });

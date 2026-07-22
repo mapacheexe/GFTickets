@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, tap, throwError } from 'rxjs';
+import { Observable, of, tap, throwError } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { CompraEntrada, PurchaseResult, RespuestaCompra } from '../models/compra-entrada.model';
@@ -59,6 +59,14 @@ export class PurchaseService {
           }
         }),
       );
+  }
+
+  cancelPurchase(purchaseId: string, userEmail: string): Observable<boolean> {
+    if (this.authState.getIdToken() === null) {
+      return throwError(() => new Error('No existe una sesión válida para cancelar la compra.'));
+    }
+
+    return of(this.purchaseRepository.removeById(purchaseId, userEmail));
   }
 
   validatePurchase(response: RespuestaCompra): PurchaseResult {

@@ -1,0 +1,39 @@
+<main class="cancel-page">
+  @if (loading()) {
+    <section class="cancel-card" aria-live="polite">
+      <span class="spinner" aria-hidden="true"></span>
+      <h1>Preparando cancelación</h1>
+    </section>
+  } @else if (cancelled()) {
+    <section class="cancel-card success" role="status">
+      <p class="eyebrow">Compra cancelada</p>
+      <h1>La entrada se ha cancelado correctamente</h1>
+      <p>La compra ya no aparecerá entre tus entradas.</p>
+      <a routerLink="/eventos">Volver a eventos</a>
+    </section>
+  } @else {
+    <section class="cancel-card">
+      <p class="eyebrow">Cancelar compra</p>
+      <h1>¿Quieres cancelar esta entrada?</h1>
+      @if (purchaseId(); as currentPurchaseId) {
+        <p class="reference">Referencia: {{ currentPurchaseId }}</p>
+      }
+      <p>Esta acción eliminará la compra guardada y no se puede deshacer.</p>
+
+      @if (error(); as errorMessage) {
+        <p class="message error" role="alert">{{ errorMessage }}</p>
+      }
+
+      <div class="actions">
+        <a routerLink="/eventos">Conservar compra</a>
+        <button
+          type="button"
+          [disabled]="submitting() || error() !== null"
+          (click)="confirmCancellation()"
+        >
+          {{ submitting() ? 'Cancelando…' : 'Confirmar cancelación' }}
+        </button>
+      </div>
+    </section>
+  }
+</main>

@@ -49,6 +49,30 @@ describe('LocalPurchaseRepository', () => {
     expect(repository.findByUser('other@example.com')).toEqual([]);
   });
 
+  it('cancela únicamente la compra perteneciente al usuario', () => {
+    const otherTransaction: Transaction = {
+      ...transaction,
+      id: 'transaction-2',
+      userEmail: 'other@example.com',
+    };
+    repository.save(transaction);
+    repository.save(otherTransaction);
+
+    expect(repository.removeById(' transaction-1 ', ' USER@EXAMPLE.COM ')).toBe(true);
+    expect(repository.findByUser('user@example.com')).toEqual([]);
+    expect(repository.findByUser('other@example.com')).toEqual([otherTransaction]);
+  });
+
+  it('no modifica las compras si se cancela una referencia inexistente o ajena', () => {
+    repository.save(transaction);
+    vi.mocked(storage.setItem).mockClear();
+
+    expect(repository.removeById('missing-transaction', 'user@example.com')).toBe(false);
+    expect(repository.removeById('transaction-1', 'other@example.com')).toBe(false);
+    expect(storage.setItem).not.toHaveBeenCalled();
+    expect(repository.findByUser('user@example.com')).toEqual([transaction]);
+  });
+
   it('elimina datos locales dañados y devuelve una lista vacía', () => {
     storedValue = '{invalid-json';
 

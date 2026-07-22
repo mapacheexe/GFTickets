@@ -113,7 +113,7 @@ describe('UserLogin', () => {
     component.login();
 
     expect(navigate).toHaveBeenCalledWith(['/']);
-    expect(component.loading).toBe(false);
+    expect(component.loading()).toBe(false);
 
   });
 
@@ -132,9 +132,9 @@ describe('UserLogin', () => {
     component.login();
 
     expect(
-      component.errorMessage
+      component.errorMessage()
     ).toBe('El correo o la contraseña no son correctos.');
-    expect(component.loading).toBe(false);
+    expect(component.loading()).toBe(false);
 
   });
 

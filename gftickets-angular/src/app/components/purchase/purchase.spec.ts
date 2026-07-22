@@ -51,6 +51,24 @@ describe('PurchaseComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Introduce el nombre del titular.');
   });
 
+  it('muestra que la fecha de caducidad es obligatoria cuando está vacía', async () => {
+    await createComponent(of(event));
+    setValidCard();
+    fixture.componentInstance['form'].patchValue({
+      mesCaducidad: '',
+      yearCaducidad: '',
+    });
+
+    submitForm();
+
+    const monthInput = fixture.nativeElement.querySelector('#mesCaducidad') as HTMLInputElement;
+    const yearInput = fixture.nativeElement.querySelector('#yearCaducidad') as HTMLInputElement;
+    expect(buyTickets).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain('Rellena la fecha de caducidad.');
+    expect(monthInput.getAttribute('aria-invalid')).toBe('true');
+    expect(yearInput.getAttribute('aria-invalid')).toBe('true');
+  });
+
   it('normaliza los datos y registra una compra válida', async () => {
     await createComponent(of(event));
     setValidCard();

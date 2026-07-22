@@ -1,0 +1,114 @@
+/* Botón de cerrar sesión en el header */
+.site-header nav button {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.site-header nav button:hover {
+  color: #ffffff;
+  background: rgb(255 255 255 / 8%);
+}
+
+/* Admin Login */
+.login-page {
+  min-height: calc(100dvh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background: #eef1f6;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  padding: 2.25rem 2rem;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 6%), 0 8px 24px rgb(15 23 42 / 8%);
+  border: 1px solid #e2e8f0;
+}
+
+.login-card h2 {
+  margin: 0 0 1.5rem;
+  color: #0f172a;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.login-card .field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.login-card label {
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.login-card input {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  color: #0f172a;
+  background: #f8fafc;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.login-card input:focus {
+  outline: none;
+  border-color: #e11d48;
+  box-shadow: 0 0 0 3px rgb(225 29 72 / 12%);
+  background: #ffffff;
+}
+
+.login-card .error {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  background: rgb(225 29 72 / 8%);
+  color: #e11d48;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.login-card button[type="submit"] {
+  margin-top: 0.4rem;
+  padding: 0.65rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: #e11d48;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+.login-card button[type="submit"]:hover {
+  background: #be123c;
+}
+
+.login-card button[type="submit"]:active {
+  transform: scale(0.98);
+}

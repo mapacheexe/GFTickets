@@ -45,6 +45,18 @@
   letter-spacing: -0.01em;
 }
 
+.required-hint {
+  margin: 0 0 0.2rem;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.required-asterisk {
+  color: #dc2626;
+  font-weight: 700;
+}
+
 .form-container label {
   display: flex;
   flex-direction: column;
@@ -80,8 +92,16 @@
   box-shadow: 0 0 0 3px rgb(51 65 85 / 12%);
 }
 
-.form-container input:invalid:not(:placeholder-shown) {
+.form-container input[aria-invalid="true"] {
   border-color: #fca5a5;
+  background: #fef2f2;
+}
+
+.field-error {
+  margin-top: -0.1rem;
+  color: #b91c1c;
+  font-size: 0.76rem;
+  font-weight: 500;
 }
 
 /* Fila de precios lado a lado */

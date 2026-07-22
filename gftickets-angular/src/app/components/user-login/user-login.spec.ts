@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
-import { signal } from '@angular/core';
 
 import { UserLogin } from './user-login';
 import { FirebaseUserService } from '../../services/firebase-user.service';

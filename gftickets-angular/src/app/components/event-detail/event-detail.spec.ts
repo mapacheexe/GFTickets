@@ -1,12 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
-import { Component, LOCALE_ID } from '@angular/core';
+import { Component, LOCALE_ID, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
 
 import { Evento } from '../../models/evento.model';
+import { AuthStateService } from '../../services/auth-state.service';
 import { EventService } from '../../services/event.service';
 import { EventDetailComponent } from './event-detail';
 
@@ -21,6 +22,7 @@ class PurchaseStubComponent {}
 describe('EventDetailComponent', () => {
   let fixture: ComponentFixture<EventDetailComponent>;
   let findEventById: ReturnType<typeof vi.fn>;
+  const authenticated = signal(true);
 
   const evento: Evento = {
     id: 7,
@@ -38,6 +40,7 @@ describe('EventDetailComponent', () => {
 
   async function configurarTest(respuesta: Observable<Evento | null>): Promise<void> {
     findEventById = vi.fn().mockReturnValue(respuesta);
+    authenticated.set(true);
 
     await TestBed.configureTestingModule({
       imports: [EventDetailComponent],
@@ -54,6 +57,10 @@ describe('EventDetailComponent', () => {
         {
           provide: EventService,
           useValue: { findEventById },
+        },
+        {
+          provide: AuthStateService,
+          useValue: { isAuthenticated: authenticated.asReadonly() },
         },
       ],
     }).compileComponents();
@@ -130,6 +137,14 @@ describe('EventDetailComponent', () => {
     await fixture.whenStable();
 
     expect(TestBed.inject(Router).url).toBe('/compra/7');
+  });
+
+  it('no debe mostrar la compra si el usuario no está autenticado', async () => {
+    await configurarTest(of(evento));
+    authenticated.set(false);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.purchase-link')).toBeNull();
   });
 
   it('debe desplegar y contraer una descripción larga', async () => {

@@ -1,12 +1,15 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { EventCardComponent } from './event-card';
 import { Evento } from '../../models/evento.model';
+import { AuthStateService } from '../../services/auth-state.service';
 
 describe('EventCardComponent', () => {
   let fixture: ComponentFixture<EventCardComponent>;
   let component: EventCardComponent;
+  const authenticated = signal(false);
 
   const event: Evento = {
     id: 7,
@@ -28,9 +31,17 @@ describe('EventCardComponent', () => {
   };
 
   beforeEach(async () => {
+    authenticated.set(false);
+
     await TestBed.configureTestingModule({
       imports: [EventCardComponent],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        {
+          provide: AuthStateService,
+          useValue: { isAuthenticated: authenticated.asReadonly() },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EventCardComponent);
@@ -126,5 +137,21 @@ describe('EventCardComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('Precio no disponible');
+  });
+
+  it('no muestra la compra en el listado cuando el usuario no está autenticado', () => {
+    expect(fixture.nativeElement.querySelector('.purchase-link')).toBeNull();
+  });
+
+  it('muestra la compra en el listado cuando el usuario está autenticado', () => {
+    authenticated.set(true);
+    fixture.detectChanges();
+
+    const purchaseLink = fixture.nativeElement.querySelector(
+      '.purchase-link',
+    ) as HTMLAnchorElement;
+
+    expect(purchaseLink.textContent).toContain('Comprar entrada');
+    expect(purchaseLink.getAttribute('href')).toBe('/compra/7');
   });
 });

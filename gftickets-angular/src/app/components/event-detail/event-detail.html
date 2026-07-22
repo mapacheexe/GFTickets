@@ -96,7 +96,11 @@
           <span class="availability">Disponible</span>
         </div>
 
-        @if (eventoActual.precioMinimo >= 0) {
+        @if (
+          isAuthenticated() &&
+          eventoActual.precioMinimo >= 0 &&
+          eventoActual.precioMaximo >= 0
+        ) {
           <a class="purchase-link" [routerLink]="['/compra', eventoActual.id]">
             Comprar entrada
           </a>

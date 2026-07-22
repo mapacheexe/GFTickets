@@ -58,6 +58,18 @@
           {{ event().precioMinimo | currency:'EUR':'symbol':'1.0-0' }}
         }
       </strong>
+      @if (
+        isAuthenticated() && event().precioMinimo >= 0 && event().precioMaximo >= 0
+      ) {
+        <a
+          class="purchase-link"
+          [routerLink]="['/compra', event().id]"
+          [attr.aria-label]="'Comprar entrada para ' + event().nombre"
+          (click)="$event.stopPropagation()"
+        >
+          Comprar entrada
+        </a>
+      }
     </footer>
   </div>
 

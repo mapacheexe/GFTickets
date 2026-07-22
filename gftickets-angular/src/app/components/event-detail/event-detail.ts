@@ -16,6 +16,7 @@ import { EVENT_DESCRIPTION_PREVIEW_LIMIT } from '../../constants/event.constants
 import { Evento } from '../../models/evento.model';
 import { HoraEvento } from '../../models/hora-evento.model';
 import { EventService } from '../../services/event.service';
+import { AuthStateService } from '../../services/auth-state.service';
 
 @Component({
   selector: 'app-event-detail',
@@ -27,6 +28,7 @@ import { EventService } from '../../services/event.service';
 export class EventDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly eventService = inject(EventService);
+  private readonly authState = inject(AuthStateService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly event = signal<Evento | null>(null);
@@ -34,6 +36,7 @@ export class EventDetailComponent implements OnInit {
   protected readonly error = signal<string | null>(null);
   protected readonly isImageAvailable = signal(false);
   protected readonly expandedDescription = signal(false);
+  protected readonly isAuthenticated = this.authState.isAuthenticated;
 
   private eventoId: number | null = null;
 

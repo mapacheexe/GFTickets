@@ -69,6 +69,10 @@ export class PurchaseService {
     return of(this.purchaseRepository.removeById(purchaseId, userEmail));
   }
 
+  getPurchaseById(purchaseId: string, userEmail: string): Observable<Transaction | null> {
+    return of(this.purchaseRepository.findById(purchaseId, userEmail));
+  }
+
   validatePurchase(response: RespuestaCompra): PurchaseResult {
     const responseText = [response.error, ...(response.message ?? []), response.infoadicional]
       .filter((value): value is string => Boolean(value))

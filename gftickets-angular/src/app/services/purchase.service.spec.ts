@@ -34,11 +34,13 @@ describe('PurchaseService', () => {
   let saveTransaction: ReturnType<typeof vi.fn>;
   let removeTransactionById: ReturnType<typeof vi.fn>;
   let idToken: string | null;
+  let findTransactionById: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     saveTransaction = vi.fn();
     removeTransactionById = vi.fn();
     idToken = 'firebase-id-token';
+    findTransactionById = vi.fn();
     TestBed.configureTestingModule({
       providers: [
         PurchaseService,
@@ -54,6 +56,7 @@ describe('PurchaseService', () => {
             save: saveTransaction,
             findByUser: vi.fn(),
             removeById: removeTransactionById,
+            findById: findTransactionById,
           },
         },
       ],
@@ -139,6 +142,22 @@ describe('PurchaseService', () => {
       firstValueFrom(service.cancelPurchase('transaction-1', 'user@example.com')),
     ).rejects.toThrow('No existe una sesión válida para cancelar la compra.');
     expect(removeTransactionById).not.toHaveBeenCalled();
+  });
+
+  it('recupera una compra por identificador para el usuario autenticado', () => {
+    const transaction = {
+      id: 'transaction-1',
+      userEmail: 'user@example.com',
+      createdAt: '2026-07-17T10:00:00.000Z',
+      invoice,
+    };
+    findTransactionById.mockReturnValue(transaction);
+
+    service.getPurchaseById('transaction-1', 'user@example.com').subscribe((result) => {
+      expect(result).toEqual(transaction);
+    });
+
+    expect(findTransactionById).toHaveBeenCalledWith('transaction-1', 'user@example.com');
   });
 
   it.each([

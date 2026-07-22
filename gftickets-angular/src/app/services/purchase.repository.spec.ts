@@ -73,6 +73,19 @@ describe('LocalPurchaseRepository', () => {
     expect(repository.findByUser('user@example.com')).toEqual([transaction]);
   });
 
+  it('recupera una compra por identificador para su usuario', () => {
+    repository.save(transaction);
+
+    expect(repository.findById(' transaction-1 ', ' USER@EXAMPLE.COM ')).toEqual(transaction);
+  });
+
+  it('no expone una compra a otro usuario ni devuelve identificadores inexistentes', () => {
+    repository.save(transaction);
+
+    expect(repository.findById('transaction-1', 'other@example.com')).toBeNull();
+    expect(repository.findById('missing-transaction', 'user@example.com')).toBeNull();
+  });
+
   it('elimina datos locales dañados y devuelve una lista vacía', () => {
     storedValue = '{invalid-json';
 

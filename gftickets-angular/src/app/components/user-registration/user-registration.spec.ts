@@ -82,6 +82,32 @@ describe('UserRegistrationComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Introduce un correo electrónico válido.');
   });
 
+  it('muestra el límite correcto cuando el nombre completo es demasiado largo', () => {
+    setValidValues();
+    fixture.componentInstance['form'].controls.displayName.setValue('a'.repeat(161));
+    submitForm();
+
+    expect(registerUser).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain(
+      'El nombre completo no puede superar los 160 caracteres.',
+    );
+    expect(fixture.nativeElement.textContent).not.toContain('Introduce tu nombre completo.');
+  });
+
+  it('muestra el límite correcto cuando la contraseña es demasiado larga', () => {
+    const longPassword = 'a'.repeat(73);
+    setValidValues();
+    fixture.componentInstance['form'].controls.password.setValue(longPassword);
+    fixture.componentInstance['form'].controls.passwordConfirmation.setValue(longPassword);
+    submitForm();
+
+    expect(registerUser).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain(
+      'La contraseña no puede superar los 72 caracteres.',
+    );
+    expect(fixture.nativeElement.textContent).not.toContain('Debe tener al menos 6 caracteres.');
+  });
+
   it('llama al servicio al introducir datos válidos', () => {
     setValidValues();
     submitForm();

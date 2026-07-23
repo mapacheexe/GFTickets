@@ -31,12 +31,15 @@ import { USER_SERVICE } from '../../services/user.service';
 function validCardNumber(control: AbstractControl): ValidationErrors | null {
   const value = String(control.value).trim();
   if (!/^[\d -]+$/.test(value)) {
-    return { invalidCardNumber: true };
+    return { invalidCardFormat: true };
   }
 
   const digits = value.replace(/\D/g, '');
-  const hasValidLength = digits.length >= 13 && digits.length <= 19;
-  return hasValidLength && passesLuhnCheck(digits) ? null : { invalidCardNumber: true };
+  if (digits.length < 13 || digits.length > 19) {
+    return { invalidCardLength: true };
+  }
+
+  return passesLuhnCheck(digits) ? null : { invalidCardNumber: true };
 }
 
 function passesLuhnCheck(digits: string): boolean {

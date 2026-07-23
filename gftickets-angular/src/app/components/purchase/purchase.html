@@ -100,8 +100,17 @@
               autocomplete="cc-number"
               placeholder="4111 1111 1111 1111"
             />
-            @if (form.controls.numeroTarjeta.touched && form.controls.numeroTarjeta.invalid) {
-              <small>Introduce un número de tarjeta válido de entre 13 y 19 dígitos.</small>
+            @if (form.controls.numeroTarjeta.touched) {
+              @if (form.controls.numeroTarjeta.hasError('required')) {
+                <small>Introduce el número de tarjeta.</small>
+              } @else if (form.controls.numeroTarjeta.hasError('invalidCardNumber')) {
+                <small>El número de tarjeta no es válido.</small>
+              } @else if (
+                form.controls.numeroTarjeta.hasError('invalidCardLength') ||
+                form.controls.numeroTarjeta.hasError('invalidCardFormat')
+              ) {
+                <small>Introduce entre 13 y 19 dígitos.</small>
+              }
             }
           </div>
 

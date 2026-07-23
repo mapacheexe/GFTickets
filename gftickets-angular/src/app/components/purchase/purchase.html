@@ -83,6 +83,7 @@
               type="text"
               formControlName="nombreTitular"
               autocomplete="cc-name"
+              placeholder="Nombre Apellidos"
             />
             @if (form.controls.nombreTitular.touched && form.controls.nombreTitular.invalid) {
               <small>Introduce el nombre del titular.</small>
@@ -97,10 +98,10 @@
               formControlName="numeroTarjeta"
               inputmode="numeric"
               autocomplete="cc-number"
-              placeholder="1234 5678 9012 3456"
+              placeholder="4111 1111 1111 1111"
             />
             @if (form.controls.numeroTarjeta.touched && form.controls.numeroTarjeta.invalid) {
-              <small>Introduce entre 13 y 19 dígitos.</small>
+              <small>Introduce un número de tarjeta válido de entre 13 y 19 dígitos.</small>
             }
           </div>
 

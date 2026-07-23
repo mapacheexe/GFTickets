@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map, of, switchMap, tap, throwError } from 'rxjs';
 
@@ -87,7 +87,8 @@ export class PurchaseService {
   }
 
   validatePurchase(response: RespuestaCompra): PurchaseResult {
-    const responseText = [response.error, ...(response.message ?? []), response.infoadicional]
+    const messages = Array.isArray(response.message) ? response.message : [response.message];
+    const responseText = [response.error, ...messages, response.infoadicional]
       .filter((value): value is string => Boolean(value))
       .join(' ');
     const code = responseText.match(/\b(?:200|400|500)\.\d{4}\b/)?.[0];
@@ -104,6 +105,22 @@ export class PurchaseService {
     };
   }
 
+  purchaseErrorMessage(error: HttpErrorResponse): string {
+    if (error.status === 0) {
+      return 'No se ha podido conectar con la pasarela de pago.';
+    }
+
+    const response = this.toPurchaseResponse(error.error);
+    if (response !== null) {
+      const result = this.validatePurchase(response);
+      if (result.code !== undefined || response.status?.toUpperCase() === 'KO') {
+        return result.message;
+      }
+    }
+
+    return 'No se ha podido registrar la compra. Revisa los datos e inténtalo de nuevo.';
+  }
+
   private createTransaction(userEmail: string, invoice: Invoice): Transaction {
     return {
       id: crypto.randomUUID(),
@@ -111,5 +128,13 @@ export class PurchaseService {
       invoice,
       createdAt: new Date().toISOString(),
     };
+  }
+
+  private toPurchaseResponse(value: unknown): RespuestaCompra | null {
+    if (typeof value === 'string') {
+      return { status: 'KO', error: value };
+    }
+
+    return typeof value === 'object' && value !== null ? (value as RespuestaCompra) : null;
   }
 }

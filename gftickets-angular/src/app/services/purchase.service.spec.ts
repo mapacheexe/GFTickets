@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of } from 'rxjs';
@@ -236,5 +236,22 @@ describe('PurchaseService', () => {
       code: '200.0001',
       message: 'Compra registrada correctamente.',
     });
+  });
+
+  it('traduce el código devuelto dentro de un error HTTP de la pasarela', () => {
+    const error = new HttpErrorResponse({
+      status: 400,
+      error: { status: 'KO', message: ['400.0003'] },
+    });
+
+    expect(service.purchaseErrorMessage(error)).toBe('El número de tarjeta no es válido.');
+  });
+
+  it('mantiene un mensaje genérico si la pasarela no informa del motivo', () => {
+    const error = new HttpErrorResponse({ status: 400 });
+
+    expect(service.purchaseErrorMessage(error)).toBe(
+      'No se ha podido registrar la compra. Revisa los datos e inténtalo de nuevo.',
+    );
   });
 });

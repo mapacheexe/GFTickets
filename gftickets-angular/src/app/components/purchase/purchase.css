@@ -48,6 +48,15 @@ h2 {
   color: #0f172a;
 }
 
+.summary h1 {
+  display: -webkit-box;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
 .summary dl {
   display: grid;
   gap: 1rem;

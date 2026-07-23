@@ -13,7 +13,7 @@ export interface RespuestaCompra {
   timestamp?: string;
   status?: string;
   error?: string;
-  message?: string[];
+  message?: string[] | string;
   infoadicional?: string;
 }
 

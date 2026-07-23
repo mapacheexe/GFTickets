@@ -48,7 +48,7 @@ describe('UserProfileComponent', () => {
     const fixture = await createComponent(of(null));
 
     expect(fixture.nativeElement.textContent).toContain('Todavía no hay datos de usuario');
-    expect(fixture.nativeElement.querySelector('a')?.getAttribute('href')).toBe('/registro');
+    expect(fixture.nativeElement.querySelector('a')?.getAttribute('href')).toBe('/inicio-sesion');
     expect(fixture.nativeElement.textContent).not.toContain('julia@example.com');
   });
 

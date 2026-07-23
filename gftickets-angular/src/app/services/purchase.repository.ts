@@ -6,6 +6,7 @@ export interface PurchaseRepository {
   save(transaction: Transaction): void;
   findByUser(userEmail: string): Transaction[];
   removeById(transactionId: string, userEmail: string): boolean;
+  findById(transactionId: string, userEmail: string): Transaction | null;
 }
 
 export interface PurchaseStorage {
@@ -51,6 +52,19 @@ export class LocalPurchaseRepository implements PurchaseRepository {
 
     this.storage.setItem(this.storageKey, JSON.stringify(remainingTransactions));
     return true;
+  }
+
+  findById(transactionId: string, userEmail: string): Transaction | null {
+    const normalizedId = transactionId.trim();
+    const normalizedEmail = userEmail.trim().toLowerCase();
+
+    return (
+      this.readTransactions().find(
+        (transaction) =>
+          transaction.id === normalizedId &&
+          transaction.userEmail.toLowerCase() === normalizedEmail,
+      ) ?? null
+    );
   }
 
   private readTransactions(): Transaction[] {

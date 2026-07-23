@@ -1,0 +1,63 @@
+<main class="purchase-detail-page">
+  <a class="back-link" routerLink="/eventos">← Volver a eventos</a>
+
+  @if (loading()) {
+    <section class="state-card" aria-live="polite">
+      <span class="spinner" aria-hidden="true"></span>
+      <h1>Cargando compra</h1>
+    </section>
+  } @else if (error(); as errorMessage) {
+    <section class="state-card error" role="alert">
+      <h1>No se puede mostrar la compra</h1>
+      <p>{{ errorMessage }}</p>
+    </section>
+  } @else if (purchase(); as currentPurchase) {
+    <article class="purchase-card">
+      <header>
+        <p class="eyebrow">Detalle de compra</p>
+        <h1>{{ currentPurchase.invoice.eventName }}</h1>
+        <p class="purchase-id">Referencia: {{ currentPurchase.id }}</p>
+      </header>
+
+      <section aria-labelledby="purchase-data-title">
+        <h2 id="purchase-data-title">Datos de la compra</h2>
+        <dl class="data-grid">
+          <div>
+            <dt>Fecha de compra</dt>
+            <dd>{{ currentPurchase.createdAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
+          </div>
+          <div>
+            <dt>Correo</dt>
+            <dd>{{ currentPurchase.userEmail }}</dd>
+          </div>
+          <div>
+            <dt>Fecha del evento</dt>
+            <dd>{{ currentPurchase.invoice.eventDate | date: 'dd/MM/yyyy' : 'UTC' }}</dd>
+          </div>
+          <div>
+            <dt>Recinto</dt>
+            <dd>{{ currentPurchase.invoice.venueName }}</dd>
+          </div>
+          <div>
+            <dt>Entradas</dt>
+            <dd>{{ currentPurchase.invoice.ticketQuantity }}</dd>
+          </div>
+          <div>
+            <dt>Precio por entrada</dt>
+            <dd>{{ currentPurchase.invoice.unitPrice | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <footer>
+        <div>
+          <span>Importe total</span>
+          <strong>{{
+            currentPurchase.invoice.totalAmount | currency: 'EUR' : 'symbol' : '1.2-2'
+          }}</strong>
+        </div>
+        <a [routerLink]="['/eventos', currentPurchase.invoice.eventId]">Ver evento</a>
+      </footer>
+    </article>
+  }
+</main>

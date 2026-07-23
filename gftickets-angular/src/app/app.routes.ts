@@ -51,6 +51,14 @@ export const routes: Routes = [
     title: 'Cancelar compra | GFTickets',
   },
   {
+    path: 'compras/:purchaseId',
+    loadComponent: () =>
+      import('./components/purchase-detail/purchase-detail').then(
+        (module) => module.PurchaseDetailComponent,
+      ),
+    title: 'Detalle de compra | GFTickets',
+  },
+  {
     path: '',
     redirectTo: 'eventos',
     pathMatch: 'full',

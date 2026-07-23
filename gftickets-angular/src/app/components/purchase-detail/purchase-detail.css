@@ -99,6 +99,18 @@ footer a {
   text-decoration: none;
 }
 
+.footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.footer-actions a:last-child {
+  color: #334155;
+  background: #e2e8f0;
+}
+
 .state-card {
   text-align: center;
 }
@@ -136,6 +148,14 @@ footer a {
 
   footer a {
     text-align: center;
+  }
+
+  .footer-actions {
+    justify-content: stretch;
+  }
+
+  .footer-actions a {
+    flex: 1;
   }
 }
 

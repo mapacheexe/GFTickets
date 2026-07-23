@@ -1,0 +1,97 @@
+<main class="ticket-detail-page">
+  <a class="back-link" routerLink="/eventos">← Volver a eventos</a>
+
+  @if (loading()) {
+    <section class="state-card" role="status" aria-live="polite">
+      <span class="spinner" aria-hidden="true"></span>
+      <h1>Cargando entrada</h1>
+    </section>
+  } @else if (error(); as errorMessage) {
+    <section class="state-card error" role="alert">
+      <h1>No se puede mostrar la entrada</h1>
+      <p>{{ errorMessage }}</p>
+    </section>
+  } @else if (ticket(); as currentTicket) {
+    <article class="ticket-card">
+      <div class="event-image">
+        @if (currentTicket.event.imagenUrl && !imageUnavailable()) {
+          <img
+            [src]="currentTicket.event.imagenUrl"
+            [alt]="'Imagen de ' + currentTicket.event.nombre"
+            (error)="imageUnavailable.set(true)"
+          />
+        } @else {
+          <div class="image-placeholder" role="img" aria-label="Imagen no disponible">
+            <span aria-hidden="true">♪</span>
+          </div>
+        }
+      </div>
+
+      <div class="ticket-content">
+        <header>
+          <p class="eyebrow">Tu entrada</p>
+          <h1>{{ currentTicket.event.nombre }}</h1>
+          <p class="location">
+            {{ currentTicket.event.nombreRecinto }}, {{ currentTicket.event.localidad }}
+          </p>
+        </header>
+
+        <p class="description">{{ currentTicket.event.descripcion }}</p>
+
+        <section aria-labelledby="festival-data-title">
+          <h2 id="festival-data-title">Datos del festival</h2>
+          <dl class="data-grid">
+            <div>
+              <dt>Fecha</dt>
+              <dd>{{ formatEventDate(currentTicket.event.fechaEvento) }}</dd>
+            </div>
+            <div>
+              <dt>Hora</dt>
+              <dd>{{ formatEventTime(currentTicket.event.horaEvento) }}</dd>
+            </div>
+            <div>
+              <dt>Género</dt>
+              <dd>{{ currentTicket.event.genero }}</dd>
+            </div>
+            <div>
+              <dt>Recinto</dt>
+              <dd>{{ currentTicket.event.nombreRecinto }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section aria-labelledby="ticket-data-title">
+          <h2 id="ticket-data-title">Datos de la entrada</h2>
+          <dl class="data-grid">
+            <div>
+              <dt>Referencia</dt>
+              <dd>{{ currentTicket.transaction.id }}</dd>
+            </div>
+            <div>
+              <dt>Fecha de compra</dt>
+              <dd>{{ currentTicket.transaction.createdAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
+            </div>
+            <div>
+              <dt>Cantidad</dt>
+              <dd>{{ currentTicket.transaction.invoice.ticketQuantity }}</dd>
+            </div>
+            <div>
+              <dt>Importe total</dt>
+              <dd>
+                {{
+                  currentTicket.transaction.invoice.totalAmount
+                    | currency: 'EUR' : 'symbol' : '1.2-2'
+                }}
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <footer>
+          <a [routerLink]="['/eventos', currentTicket.event.id]">Ver ficha del evento</a>
+          <a [routerLink]="['/compras', currentTicket.transaction.id]">Ver compra</a>
+        </footer>
+      </div>
+    </article>
+  }
+</main>

@@ -62,6 +62,7 @@ export const routes: Routes = [
   },
   {
     path: 'entradas/:ticketId',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./components/ticket-detail/ticket-detail').then(
         (module) => module.TicketDetailComponent,

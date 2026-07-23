@@ -56,7 +56,10 @@
             currentPurchase.invoice.totalAmount | currency: 'EUR' : 'symbol' : '1.2-2'
           }}</strong>
         </div>
-        <a [routerLink]="['/eventos', currentPurchase.invoice.eventId]">Ver evento</a>
+        <div class="footer-actions">
+          <a [routerLink]="['/eventos', currentPurchase.invoice.eventId]">Ver evento</a>
+          <a [routerLink]="['/entradas', currentPurchase.id]">Ver entrada</a>
+        </div>
       </footer>
     </article>
   }

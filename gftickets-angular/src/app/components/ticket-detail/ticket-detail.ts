@@ -79,4 +79,9 @@ export class TicketDetailComponent implements OnInit {
     const minute = String(time.minute).padStart(2, '0');
     return `${hour}:${minute}`;
   }
+
+  protected formatEventDate(date: string): string {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+    return match ? `${match[3]}/${match[2]}/${match[1]}` : date;
+  }
 }

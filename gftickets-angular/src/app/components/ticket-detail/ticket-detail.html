@@ -43,7 +43,7 @@
           <dl class="data-grid">
             <div>
               <dt>Fecha</dt>
-              <dd>{{ currentTicket.event.fechaEvento | date: 'dd/MM/yyyy' : 'UTC' }}</dd>
+              <dd>{{ formatEventDate(currentTicket.event.fechaEvento) }}</dd>
             </div>
             <div>
               <dt>Hora</dt>

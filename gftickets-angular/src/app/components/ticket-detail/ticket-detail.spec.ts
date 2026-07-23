@@ -60,6 +60,7 @@ describe('TicketDetailComponent', () => {
     expect(content).toContain('Música al aire libre junto al mar.');
     expect(content).toContain('Parc del Fòrum, Barcelona');
     expect(content).toContain('09:05');
+    expect(content).toContain('20/07/2026');
     expect(content).toContain('transaction-1');
     expect(content).toContain('35,00');
     expect(links[0].getAttribute('href')).toBe('/eventos/7');

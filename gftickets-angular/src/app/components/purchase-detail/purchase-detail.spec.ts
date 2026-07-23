@@ -31,14 +31,17 @@ describe('PurchaseDetailComponent', () => {
     await createComponent(of(transaction));
 
     const content = fixture.nativeElement.textContent;
-    const eventLink = fixture.nativeElement.querySelector('footer a') as HTMLAnchorElement;
+    const links = fixture.nativeElement.querySelectorAll(
+      '.footer-actions a',
+    ) as NodeListOf<HTMLAnchorElement>;
     expect(getPurchaseById).toHaveBeenCalledWith('transaction-1', 'julia@example.com');
     expect(content).toContain('Festival de verano');
     expect(content).toContain('transaction-1');
     expect(content).toContain('julia@example.com');
     expect(content).toContain('Parc del Fòrum');
     expect(content).toContain('2');
-    expect(eventLink.getAttribute('href')).toBe('/eventos/7');
+    expect(links[0].getAttribute('href')).toBe('/eventos/7');
+    expect(links[1].getAttribute('href')).toBe('/entradas/transaction-1');
   });
 
   it('muestra un error 404 cuando la compra no existe', async () => {

@@ -190,6 +190,19 @@ describe('PurchaseComponent', () => {
     );
   });
 
+  it.each([
+    ['mínimo', { ...event, precioMinimo: -1 }],
+    ['máximo', { ...event, precioMaximo: -1 }],
+  ])('bloquea la pasarela cuando el precio %s es negativo', async (_price, invalidEvent) => {
+    await createComponent(of(invalidEvent));
+
+    expect(fixture.nativeElement.querySelector('form')).toBeNull();
+    expect(fixture.nativeElement.textContent).toContain(
+      'Este evento no tiene entradas disponibles para comprar.',
+    );
+    expect(buyTickets).not.toHaveBeenCalled();
+  });
+
   async function createComponent(
     eventResponse: Observable<Evento>,
     purchaseResponse: Observable<RespuestaCompra> = of({ status: 'OK' }),

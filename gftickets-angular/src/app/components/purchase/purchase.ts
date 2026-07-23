@@ -149,7 +149,7 @@ export class PurchaseComponent implements OnInit {
       return;
     }
 
-    if (currentEvent.precioMinimo < 0) {
+    if (!this.hasAvailablePrice(currentEvent)) {
       this.error.set('Este evento no tiene entradas disponibles para comprar.');
       return;
     }
@@ -211,7 +211,15 @@ export class PurchaseComponent implements OnInit {
         finalize(() => this.loading.set(false)),
       )
       .subscribe({
-        next: (event) => this.event.set(event),
+        next: (event) => {
+          if (!this.hasAvailablePrice(event)) {
+            this.event.set(null);
+            this.error.set('Este evento no tiene entradas disponibles para comprar.');
+            return;
+          }
+
+          this.event.set(event);
+        },
         error: (error: HttpErrorResponse) => {
           this.error.set(
             error.status === 404
@@ -220,6 +228,10 @@ export class PurchaseComponent implements OnInit {
           );
         },
       });
+  }
+
+  private hasAvailablePrice(event: Evento): boolean {
+    return event.precioMinimo >= 0 && event.precioMaximo >= 0;
   }
 
   private handleResponse(response: RespuestaCompra): void {

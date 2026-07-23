@@ -69,9 +69,18 @@ describe('PurchaseComponent', () => {
     submitForm();
 
     expect(buyTickets).not.toHaveBeenCalled();
-    expect(fixture.nativeElement.textContent).toContain(
-      'Introduce un número de tarjeta válido de entre 13 y 19 dígitos.',
-    );
+    expect(fixture.nativeElement.textContent).toContain('El número de tarjeta no es válido.');
+  });
+
+  it('distingue una tarjeta con una cantidad de dígitos incorrecta', async () => {
+    await createComponent(of(event));
+    setValidCard();
+    fixture.componentInstance['form'].controls.numeroTarjeta.setValue('411111111111');
+
+    submitForm();
+
+    expect(buyTickets).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain('Introduce entre 13 y 19 dígitos.');
   });
 
   it('muestra que la fecha de caducidad es obligatoria cuando está vacía', async () => {

@@ -35,7 +35,28 @@ function validCardNumber(control: AbstractControl): ValidationErrors | null {
   }
 
   const digits = value.replace(/\D/g, '');
-  return digits.length >= 13 && digits.length <= 19 ? null : { invalidCardNumber: true };
+  const hasValidLength = digits.length >= 13 && digits.length <= 19;
+  return hasValidLength && passesLuhnCheck(digits) ? null : { invalidCardNumber: true };
+}
+
+function passesLuhnCheck(digits: string): boolean {
+  let sum = 0;
+  let shouldDouble = false;
+
+  for (let index = digits.length - 1; index >= 0; index -= 1) {
+    let digit = Number(digits[index]);
+    if (shouldDouble) {
+      digit *= 2;
+      if (digit > 9) {
+        digit -= 9;
+      }
+    }
+
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+
+  return sum % 10 === 0;
 }
 
 function validExpiryDate(control: AbstractControl): ValidationErrors | null {
@@ -184,11 +205,7 @@ export class PurchaseComponent implements OnInit {
       .subscribe({
         next: (response) => this.handleResponse(response),
         error: (error: HttpErrorResponse) => {
-          this.error.set(
-            error.status === 0
-              ? 'No se ha podido conectar con la pasarela de pago.'
-              : 'No se ha podido registrar la compra. Revisa los datos e inténtalo de nuevo.',
-          );
+          this.error.set(this.purchaseService.purchaseErrorMessage(error));
         },
       });
   }

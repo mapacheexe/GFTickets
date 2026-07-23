@@ -61,6 +61,19 @@ describe('PurchaseComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Introduce el nombre del titular.');
   });
 
+  it('rechaza un número de tarjeta que no supera la validación bancaria', async () => {
+    await createComponent(of(event));
+    setValidCard();
+    fixture.componentInstance['form'].controls.numeroTarjeta.setValue('1234456789799');
+
+    submitForm();
+
+    expect(buyTickets).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain(
+      'Introduce un número de tarjeta válido de entre 13 y 19 dígitos.',
+    );
+  });
+
   it('muestra que la fecha de caducidad es obligatoria cuando está vacía', async () => {
     await createComponent(of(event));
     setValidCard();
@@ -190,6 +203,23 @@ describe('PurchaseComponent', () => {
     );
   });
 
+  it('muestra el motivo específico cuando la pasarela rechaza los datos', async () => {
+    await createComponent(
+      of(event),
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 400,
+            error: { status: 'KO', message: ['400.0003'] },
+          }),
+      ),
+    );
+    setValidCard();
+    submitForm();
+
+    expect(fixture.nativeElement.textContent).toContain('El número de tarjeta no es válido.');
+  });
+
   it('no registra la compra si no existe un usuario autenticado', async () => {
     await createComponent(of(event), of({ status: 'OK' }), '7', null);
     setValidCard();
@@ -259,8 +289,18 @@ describe('PurchaseComponent', () => {
             validatePurchase: (response: RespuestaCompra) => ({
               successful: response.status !== 'KO' && !response.error,
               message:
-                response.message?.join(' ') || response.error || 'Compra registrada correctamente.',
+                (Array.isArray(response.message)
+                  ? response.message.join(' ')
+                  : response.message) ||
+                response.error ||
+                'Compra registrada correctamente.',
             }),
+            purchaseErrorMessage: (error: HttpErrorResponse) =>
+              error.status === 0
+                ? 'No se ha podido conectar con la pasarela de pago.'
+                : error.error?.message?.includes('400.0003')
+                  ? 'El número de tarjeta no es válido.'
+                  : 'No se ha podido registrar la compra. Revisa los datos e inténtalo de nuevo.',
           },
         },
         {

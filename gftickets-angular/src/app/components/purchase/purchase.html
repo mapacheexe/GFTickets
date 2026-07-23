@@ -181,7 +181,9 @@
           <button
             class="purchase-submit"
             type="submit"
-            [disabled]="submitting() || currentEvent.precioMinimo < 0"
+            [disabled]="
+              submitting() || currentEvent.precioMinimo < 0 || currentEvent.precioMaximo < 0
+            "
           >
             {{ submitting() ? 'Registrando compra…' : 'Confirmar compra' }}
           </button>

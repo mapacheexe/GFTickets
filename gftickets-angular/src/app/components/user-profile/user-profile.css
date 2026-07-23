@@ -3,7 +3,9 @@
 }
 
 .profile-page {
+  min-height: 100%;
   padding: 3rem 1rem;
+  background: #f8fafc;
 }
 
 .profile-card,
@@ -16,6 +18,8 @@
   background: #fff;
   box-shadow: 0 20px 50px rgb(15 23 42 / 8%);
 }
+
+/* HEADER */
 
 .profile-card header {
   display: flex;
@@ -47,35 +51,34 @@
   text-transform: uppercase;
 }
 
-h1,
-.username {
-  margin: 0;
-}
-
 h1 {
+  margin: 0;
   color: #0f172a;
 }
 
-.username,
-.state-card p {
-  color: #64748b;
-}
+/* DATOS */
 
 dl {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
-  margin: 2rem 0 0;
+  margin: 2rem 0;
 }
 
-dl div {
-  padding: 1rem;
-  border-radius: 12px;
+.profile-field {
+  padding: 1.2rem;
+  border-radius: 14px;
   background: #f8fafc;
+  transition: 0.2s ease;
+}
+
+.profile-field:has(input) {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
 }
 
 dt {
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.4rem;
   color: #64748b;
   font-size: 0.78rem;
   font-weight: 750;
@@ -89,22 +92,107 @@ dd {
   font-weight: 700;
 }
 
-.state-card {
-  text-align: center;
+/* INPUT */
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  color: #0f172a;
+  background: white;
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.state-card a,
-button {
-  display: inline-block;
+input:focus {
+  border-color: #e11d48;
+  box-shadow: 0 0 0 4px rgb(225 29 72 / 15%);
+}
+
+/* BOTONES */
+
+button,
+.state-card a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-top: 0.75rem;
   padding: 0.7rem 1.1rem;
   border: 0;
   border-radius: 10px;
-  color: #fff;
+  color: white;
   background: #e11d48;
   font-weight: 800;
   text-decoration: none;
   cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    opacity 0.2s ease;
+}
+
+button:hover:not(:disabled),
+.state-card a:hover {
+  background: #be123c;
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.edit-button {
+  margin-top: 1rem;
+}
+
+.logout-button {
+  width: 100%;
+}
+
+/* EDICIÓN */
+
+.edit-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.edit-actions button {
+  margin-top: 0;
+}
+
+.secondary {
+  background: #64748b;
+}
+
+.secondary:hover:not(:disabled) {
+  background: #475569;
+}
+
+/* ESTADOS */
+
+.state-card {
+  text-align: center;
+}
+
+.state-card p {
+  color: #64748b;
+}
+
+.error {
+  border-color: #fecaca;
 }
 
 .spinner {
@@ -124,8 +212,28 @@ button {
   }
 }
 
+/* RESPONSIVE */
+
 @media (max-width: 600px) {
+  .profile-page {
+    padding: 1.5rem 1rem;
+  }
+
+  .profile-card header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   dl {
     grid-template-columns: 1fr;
+  }
+
+  .edit-actions {
+    flex-direction: column;
+  }
+
+  button,
+  .state-card a {
+    width: 100%;
   }
 }

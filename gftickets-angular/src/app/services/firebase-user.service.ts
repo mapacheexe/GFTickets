@@ -223,4 +223,38 @@ export class FirebaseUserService implements UserService {
 
     return error instanceof Error ? error : new Error(fallbackMessage);
   }
+
+
+  updateDisplayName(displayName: string): Observable<Usuario> {
+    const session = this.readSession();
+
+    if (!session) {
+      return throwError(() => new Error('No hay una sesión activa.'));
+    }
+
+    return this.http
+      .post<FirebaseAuthResponse>(
+        `${this.authUrl}/accounts:update?key=${this.apiKey}`,
+        {
+          idToken: session.idToken,
+          displayName: displayName.trim(),
+          returnSecureToken: true,
+        }
+      )
+      .pipe(
+        map((response) => {
+          const user: Usuario = {
+            ...session.user,
+            displayName: response.displayName ?? displayName.trim(),
+          };
+
+          this.saveSession(response, user);
+
+          return user;
+        }),
+        catchError((error: unknown) =>
+          throwError(() => this.toAuthenticationError(error, 'No se ha podido actualizar el perfil.'))
+        )
+      );
+  }
 }

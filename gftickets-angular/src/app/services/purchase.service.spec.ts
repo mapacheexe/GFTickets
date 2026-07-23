@@ -112,8 +112,15 @@ describe('PurchaseService', () => {
       }),
     );
     const storedTransaction = saveTransaction.mock.calls[0][0];
-    expect(JSON.stringify(storedTransaction)).not.toContain(card.cardNumber);
-    expect(JSON.stringify(storedTransaction)).not.toContain(card.securityCode);
+    expect(Object.keys(storedTransaction).sort()).toEqual([
+      'createdAt',
+      'id',
+      'invoice',
+      'userEmail',
+    ]);
+    expect(storedTransaction.invoice).toEqual(invoice);
+    expect(storedTransaction).not.toHaveProperty('cardNumber');
+    expect(storedTransaction).not.toHaveProperty('securityCode');
   });
 
   it('no persiste la transacción cuando la pasarela rechaza la compra', () => {

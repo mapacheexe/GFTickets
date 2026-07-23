@@ -113,6 +113,10 @@
               inputmode="numeric"
               autocomplete="cc-exp-month"
               placeholder="MM"
+              [attr.aria-invalid]="
+                form.controls.mesCaducidad.touched && form.controls.mesCaducidad.invalid
+              "
+              aria-describedby="expiry-date-error"
             />
           </div>
 
@@ -125,8 +129,29 @@
               inputmode="numeric"
               autocomplete="cc-exp-year"
               placeholder="AAAA"
+              [attr.aria-invalid]="
+                form.controls.yearCaducidad.touched && form.controls.yearCaducidad.invalid
+              "
+              aria-describedby="expiry-date-error"
             />
           </div>
+
+          @if (
+            (form.controls.mesCaducidad.touched || form.controls.yearCaducidad.touched) &&
+            (form.controls.mesCaducidad.hasError('required') ||
+              form.controls.yearCaducidad.hasError('required'))
+          ) {
+            <small id="expiry-date-error" class="full-width">
+              Rellena la fecha de caducidad.
+            </small>
+          } @else if (
+            (form.controls.mesCaducidad.touched || form.controls.yearCaducidad.touched) &&
+            (form.controls.mesCaducidad.invalid || form.controls.yearCaducidad.invalid)
+          ) {
+            <small id="expiry-date-error" class="full-width">
+              Introduce una fecha de caducidad válida.
+            </small>
+          }
 
           <div class="field">
             <label for="cvv">CVV</label>

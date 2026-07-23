@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { Observable, Subject, of, throwError } from 'rxjs';
 
 import { Usuario } from '../../models/usuario.model';
-import { USER_SERVICE } from '../../services/user.service';
+import { FirebaseUserService } from '../../services/firebase-user.service';
 import { UserProfileComponent } from './user-profile';
 
 describe('UserProfileComponent', () => {
@@ -27,8 +27,10 @@ describe('UserProfileComponent', () => {
 
     expect(content).toContain('Julia María Adell Pérez');
     expect(content).toContain('julia@example.com');
-    expect(fixture.nativeElement.querySelector('.avatar')?.textContent.trim())
-      .toBe('JP');
+
+    expect(
+      fixture.nativeElement.querySelector('.avatar')?.textContent.trim(),
+    ).toBe('JP');
   });
 
   it('muestra la información correspondiente al usuario autenticado', async () => {
@@ -118,7 +120,6 @@ describe('UserProfileComponent', () => {
       .toContain('Todavía no hay datos de usuario');
   });
 
-
   it('muestra el botón para editar el nombre', async () => {
     const fixture = await createComponent(of(user));
 
@@ -126,11 +127,13 @@ describe('UserProfileComponent', () => {
       .toBeDefined();
   });
 
-
   it('abre el formulario de edición del nombre', async () => {
     const fixture = await createComponent(of(user));
 
     getButton(fixture, 'Editar nombre')?.click();
+
+    fixture.detectChanges();
+    await fixture.whenStable();
     fixture.detectChanges();
 
     const input = fixture.nativeElement.querySelector(
@@ -141,7 +144,6 @@ describe('UserProfileComponent', () => {
     expect(input.value)
       .toBe(user.displayName);
   });
-
 
   it('cancela la edición del nombre', async () => {
     const fixture = await createComponent(of(user));
@@ -159,7 +161,6 @@ describe('UserProfileComponent', () => {
     expect(fixture.nativeElement.textContent)
       .toContain(user.displayName);
   });
-
 
   it('actualiza el nombre usando el servicio', async () => {
     const updatedUser: Usuario = {
@@ -199,7 +200,6 @@ describe('UserProfileComponent', () => {
       .toContain('Julia Actualizada Pérez');
   });
 
-
   it('muestra error cuando falla la actualización del nombre', async () => {
     const updateDisplayName = vi.fn()
       .mockReturnValue(
@@ -223,7 +223,6 @@ describe('UserProfileComponent', () => {
       .toContain('No se pudo actualizar el nombre.');
   });
 
-
   function getButton(
     fixture: ComponentFixture<UserProfileComponent>,
     text: string,
@@ -236,7 +235,6 @@ describe('UserProfileComponent', () => {
       button.textContent?.includes(text),
     );
   }
-
 
   async function createComponent(
     response: Observable<Usuario | null>,
@@ -252,7 +250,7 @@ describe('UserProfileComponent', () => {
       providers: [
         provideRouter([]),
         {
-          provide: USER_SERVICE,
+          provide: FirebaseUserService,
           useValue: {
             getCurrentUser,
             registerUser: vi.fn(),

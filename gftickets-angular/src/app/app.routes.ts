@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { EventDetailComponent } from './components/event-detail/event-detail';
 import { EventListComponent } from './components/event-list/event-list';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -38,6 +39,7 @@ export const routes: Routes = [
   },
   {
     path: 'compra/:eventoId',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./components/purchase/purchase').then((module) => module.PurchaseComponent),
     title: 'Comprar entrada | GFTickets',

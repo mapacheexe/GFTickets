@@ -48,17 +48,13 @@ export class PurchaseService {
       cantidad: invoice.totalAmount.toFixed(2),
     };
 
-    return this.http
-      .post<RespuestaCompra>(this.apiUrl, request, {
-        headers: { Authorization: `Bearer ${idToken}` },
-      })
-      .pipe(
-        tap((response) => {
-          if (this.validatePurchase(response).successful) {
-            this.purchaseRepository.save(this.createTransaction(userEmail, invoice));
-          }
-        }),
-      );
+    return this.http.post<RespuestaCompra>(this.apiUrl, request).pipe(
+      tap((response) => {
+        if (this.validatePurchase(response).successful) {
+          this.purchaseRepository.save(this.createTransaction(userEmail, invoice));
+        }
+      }),
+    );
   }
 
   cancelPurchase(purchaseId: string, userEmail: string): Observable<boolean> {

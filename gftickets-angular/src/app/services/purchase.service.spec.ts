@@ -71,7 +71,7 @@ describe('PurchaseService', () => {
       'http://teacherbanking.us-east-1.elasticbeanstalk.com/pasarela/compra',
     );
     expect(request.request.method).toBe('POST');
-    expect(request.request.headers.get('Authorization')).toBe('Bearer firebase-id-token');
+    expect(request.request.headers.has('Authorization')).toBe(false);
     expect(request.request.body).toEqual({
       nombreTitular: 'Julia Adell',
       numeroTarjeta: '4111111111111111',

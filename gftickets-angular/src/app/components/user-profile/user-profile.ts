@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 
 import { Usuario } from '../../models/usuario.model';
 import { USER_SERVICE } from '../../services/user.service';
+import { AuthStateService } from '../../services/auth-state.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -22,6 +23,7 @@ import { USER_SERVICE } from '../../services/user.service';
 export class UserProfileComponent implements OnInit {
   private readonly userService = inject(USER_SERVICE);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly authState = inject(AuthStateService);
 
   protected readonly user = signal<Usuario | null>(null);
   protected readonly loading = signal(true);
@@ -59,5 +61,10 @@ export class UserProfileComponent implements OnInit {
           this.loading.set(false);
         },
       });
+  }
+  logout(): void {
+    sessionStorage.removeItem('gftickets.firebase-session');
+    this.user.set(null);
+    this.authState.setAuthenticated(false);
   }
 }

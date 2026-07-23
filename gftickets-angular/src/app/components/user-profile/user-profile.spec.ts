@@ -48,7 +48,7 @@ describe('UserProfileComponent', () => {
     const fixture = await createComponent(of(null));
 
     expect(fixture.nativeElement.textContent).toContain('Todavía no hay datos de usuario');
-    expect(fixture.nativeElement.querySelector('a')?.getAttribute('href')).toBe('/registro');
+    expect(fixture.nativeElement.querySelector('a')?.getAttribute('href')).toBe('/inicio-sesion');
     expect(fixture.nativeElement.textContent).not.toContain('julia@example.com');
   });
 
@@ -77,6 +77,18 @@ describe('UserProfileComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Julia María de los Ángeles Adell Pérez');
     expect(fixture.nativeElement.textContent).toContain('julia.maria@example.com');
     expect(fixture.nativeElement.textContent).not.toContain('julia@example.com');
+  });
+
+  it('permite cerrar sesión y elimina la información del usuario', async () => {
+    const fixture = await createComponent(of(user));
+    const logoutButton = fixture.nativeElement.querySelector('button');
+    if (logoutButton) {
+      logoutButton.click();
+    }
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Todavía no hay datos de usuario');
+    expect(fixture.nativeElement.querySelector('a')?.getAttribute('href')).toBe('/inicio-sesion');
   });
 
   async function createComponent(

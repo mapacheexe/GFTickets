@@ -43,6 +43,16 @@ describe('PurchaseComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('15,00');
   });
 
+  it('muestra el botón de compra con el estilo centrado', async () => {
+    await createComponent(of(event));
+
+    const submitButton = fixture.nativeElement.querySelector(
+      'button[type="submit"]',
+    ) as HTMLButtonElement;
+
+    expect(submitButton.classList.contains('purchase-submit')).toBe(true);
+  });
+
   it('no registra una compra con datos de pago inválidos', async () => {
     await createComponent(of(event));
     submitForm();

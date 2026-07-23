@@ -79,6 +79,18 @@ describe('UserProfileComponent', () => {
     expect(fixture.nativeElement.textContent).not.toContain('julia@example.com');
   });
 
+  it('permite cerrar sesión y elimina la información del usuario', async () => {
+    const fixture = await createComponent(of(user));
+    const logoutButton = fixture.nativeElement.querySelector('button');
+    if (logoutButton) {
+      logoutButton.click();
+    }
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Todavía no hay datos de usuario');
+    expect(fixture.nativeElement.querySelector('a')?.getAttribute('href')).toBe('/inicio-sesion');
+  });
+
   async function createComponent(
     response: Observable<Usuario | null>,
   ): Promise<ComponentFixture<UserProfileComponent>> {

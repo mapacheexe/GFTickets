@@ -60,4 +60,8 @@ export class UserProfileComponent implements OnInit {
         },
       });
   }
+  logout(): void {
+    sessionStorage.removeItem('gftickets.firebase-session');
+    this.user.set(null);
+  }
 }

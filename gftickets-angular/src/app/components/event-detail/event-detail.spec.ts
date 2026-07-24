@@ -139,14 +139,6 @@ describe('EventDetailComponent', () => {
     expect(TestBed.inject(Router).url).toBe('/compra/7');
   });
 
-  it('no debe mostrar la compra si el usuario no está autenticado', async () => {
-    await configurarTest(of(evento));
-    authenticated.set(false);
-    fixture.detectChanges();
-
-    expect(fixture.nativeElement.querySelector('.purchase-link')).toBeNull();
-  });
-
   it('debe desplegar y contraer una descripción larga', async () => {
     const descripcionLarga = 'Descripción extensa del evento. '.repeat(10);
     await configurarTest(of({ ...evento, descripcion: descripcionLarga }));

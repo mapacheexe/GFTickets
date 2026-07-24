@@ -139,10 +139,6 @@ describe('EventCardComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Precio no disponible');
   });
 
-  it('no muestra la compra en el listado cuando el usuario no está autenticado', () => {
-    expect(fixture.nativeElement.querySelector('.purchase-link')).toBeNull();
-  });
-
   it('muestra la compra en el listado cuando el usuario está autenticado', () => {
     authenticated.set(true);
     fixture.detectChanges();

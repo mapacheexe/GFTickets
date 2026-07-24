@@ -101,23 +101,42 @@ export class PurchaseComponent implements OnInit {
     {
       nombreTitular: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(100)],
+        validators: [
+          Validators.required,
+          Validators.maxLength(100),
+        ],
       }),
       numeroTarjeta: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, validCardNumber],
+        validators: [
+          Validators.required,
+          Validators.maxLength(19), // 19 dígitos máximo
+          validCardNumber,
+        ],
       }),
       mesCaducidad: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.pattern(/^(0?[1-9]|1[0-2])$/)],
+        validators: [
+          Validators.required,
+          Validators.maxLength(2),
+          Validators.pattern(/^(0?[1-9]|1[0-2])$/),
+        ],
       }),
       yearCaducidad: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.pattern(/^\d{4}$/)],
+        validators: [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(/^\d{4}$/),
+        ],
       }),
       cvv: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.pattern(/^\d{3,4}$/)],
+        validators: [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(/^\d{3,4}$/),
+        ],
       }),
       emisor: new FormControl('', {
         nonNullable: true,
@@ -125,7 +144,12 @@ export class PurchaseComponent implements OnInit {
       }),
       ticketQuantity: new FormControl(1, {
         nonNullable: true,
-        validators: [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)],
+        validators: [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(999), // por ejemplo
+          Validators.pattern(/^\d+$/),
+        ],
       }),
     },
     { validators: validExpiryDate },

@@ -82,6 +82,7 @@
               id="nombreTitular"
               type="text"
               formControlName="nombreTitular"
+              maxlength="100"
               autocomplete="cc-name"
               placeholder="Nombre Apellidos"
             />
@@ -96,6 +97,7 @@
               id="numeroTarjeta"
               type="text"
               formControlName="numeroTarjeta"
+              maxlength="19"
               inputmode="numeric"
               autocomplete="cc-number"
               placeholder="4111 1111 1111 1111"
@@ -127,6 +129,7 @@
                 form.controls.mesCaducidad.touched && form.controls.mesCaducidad.invalid
               "
               aria-describedby="expiry-date-error"
+              maxlength="2"
             />
           </div>
 
@@ -143,6 +146,7 @@
                 form.controls.yearCaducidad.touched && form.controls.yearCaducidad.invalid
               "
               aria-describedby="expiry-date-error"
+              maxlength="4"
             />
           </div>
 
@@ -171,6 +175,8 @@
               formControlName="cvv"
               inputmode="numeric"
               autocomplete="cc-csc"
+              placeholder="123"
+              maxlength="4"
             />
           </div>
 

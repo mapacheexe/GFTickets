@@ -4,6 +4,8 @@ import { createEvent, updateEvent, findEventById } from "../services/EventsServi
 import './EventFormComponent.css';
 
 const CAMPOS_OBLIGATORIOS = ["nombre", "descripcion", "fechaEvento", "horaEvento", "localidad", "genero"];
+const NOMBRE_MAX_LENGTH = 100;
+const DESCRIPCION_MAX_LENGTH = 500;
 
 export function EventFormComponent() {
     const navigate = useNavigate();
@@ -63,6 +65,14 @@ export function EventFormComponent() {
                 errores[campo] = "Este campo es obligatorio.";
             }
         });
+
+        if (!errores.nombre && data.nombre && data.nombre.length >= NOMBRE_MAX_LENGTH) {
+            errores.nombre = `El nombre no puede tener ${NOMBRE_MAX_LENGTH} caracteres o más.`;
+        }
+
+        if (!errores.descripcion && data.descripcion && data.descripcion.length > DESCRIPCION_MAX_LENGTH) {
+            errores.descripcion = `La descripción no puede superar los ${DESCRIPCION_MAX_LENGTH} caracteres.`;
+        }
 
         const precioMinimo = Number(data.precioMinimo);
         const precioMaximo = Number(data.precioMaximo);

@@ -251,6 +251,88 @@ describe("EventFormComponent", () => {
 
         expect(screen.getByText(/son obligatorios/i)).toBeInTheDocument();
     });
+
+    test("17. No se permite crear un evento si el nombre tiene 100 caracteres o más", () => {
+        render(
+            <BrowserRouter>
+                <EventFormComponent />
+            </BrowserRouter>
+        );
+
+        rellenarFormulario();
+
+        const nombreLargo = "a".repeat(100);
+        fireEvent.change(screen.getByLabelText(/Nombre \*/i), { target: { value: nombreLargo } });
+
+        const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
+        fireEvent.click(botonEnviar);
+
+        expect(screen.getByText(/El nombre no puede tener 100 caracteres o más\./i)).toBeInTheDocument();
+        expect(createEvent).not.toHaveBeenCalled();
+    });
+
+    test("18. Se permite crear un evento cuando el nombre tiene 99 caracteres (justo por debajo del límite)", async () => {
+        createEvent.mockResolvedValueOnce({ success: true });
+
+        render(
+            <BrowserRouter>
+                <EventFormComponent />
+            </BrowserRouter>
+        );
+
+        rellenarFormulario();
+
+        const nombreValido = "a".repeat(99);
+        fireEvent.change(screen.getByLabelText(/Nombre \*/i), { target: { value: nombreValido } });
+
+        const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
+        fireEvent.click(botonEnviar);
+
+        await waitFor(() => {
+            expect(createEvent).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    test("19. No se permite crear un evento si la descripción supera los 500 caracteres", () => {
+        render(
+            <BrowserRouter>
+                <EventFormComponent />
+            </BrowserRouter>
+        );
+
+        rellenarFormulario();
+
+        const descripcionLarga = "a".repeat(501);
+        fireEvent.change(screen.getByLabelText(/Descripcion \*/i), { target: { value: descripcionLarga } });
+
+        const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
+        fireEvent.click(botonEnviar);
+
+        expect(screen.getByText(/La descripción no puede superar los 500 caracteres\./i)).toBeInTheDocument();
+        expect(createEvent).not.toHaveBeenCalled();
+    });
+
+    test("20. Se permite crear un evento cuando la descripción tiene exactamente 500 caracteres", async () => {
+        createEvent.mockResolvedValueOnce({ success: true });
+
+        render(
+            <BrowserRouter>
+                <EventFormComponent />
+            </BrowserRouter>
+        );
+
+        rellenarFormulario();
+
+        const descripcionValida = "a".repeat(500);
+        fireEvent.change(screen.getByLabelText(/Descripcion \*/i), { target: { value: descripcionValida } });
+
+        const botonEnviar = screen.getByRole("button", { name: /Crear Evento/i });
+        fireEvent.click(botonEnviar);
+
+        await waitFor(() => {
+            expect(createEvent).toHaveBeenCalledTimes(1);
+        });
+    });
 });
 
 describe("EventFormComponent - Edición de evento existente", () => {
@@ -361,5 +443,22 @@ describe("EventFormComponent - Edición de evento existente", () => {
         expect(screen.getByRole("button", { name: /Actualizando.../i })).toBeDisabled();
 
         resolverPromesa();
+    });
+
+    test("21. En modo edición también se valida la longitud máxima del nombre", async () => {
+        renderEnModoEdicion("1");
+
+        await waitFor(() => {
+            expect(screen.getByLabelText(/Nombre \*/i)).toHaveValue("Concierto Rock");
+        });
+
+        const nombreLargo = "a".repeat(100);
+        fireEvent.change(screen.getByLabelText(/Nombre \*/i), { target: { value: nombreLargo } });
+
+        const botonEnviar = screen.getByRole("button", { name: /^Actualizar Evento$/i });
+        fireEvent.click(botonEnviar);
+
+        expect(screen.getByText(/El nombre no puede tener 100 caracteres o más\./i)).toBeInTheDocument();
+        expect(updateEvent).not.toHaveBeenCalled();
     });
 });
